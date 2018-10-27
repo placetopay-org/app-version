@@ -26,7 +26,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "PlacetoPay\\AppInfo\\VersionServiceProvider"
+                "PlacetoPay\\AppVersion\\VersionServiceProvider"
             ]
         }
     }
