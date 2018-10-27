@@ -1,0 +1,33 @@
+{
+    "name": "placetopay/app-version",
+    "description": "Provides information about the current app",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Diego Calle",
+            "email": "dnetix@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "illuminate/support": "~5.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "dev-master",
+        "phpunit/phpunit": "^7.0",
+        "orchestra/testbench": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "PlacetoPay\\AppVersion\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PlacetoPay\\AppInfo\\VersionServiceProvider"
+            ]
+        }
+    }
+}
