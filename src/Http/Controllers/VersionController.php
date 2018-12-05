@@ -16,7 +16,8 @@ class VersionController extends Controller
                 'branch' => exec('git symbolic-ref -q --short HEAD'),
                 'date' => date('c'),
             ])->withHeaders([
-                'Access-Control-Allow-Origin' => '*'
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => 'GET',
             ]);
     }
 
