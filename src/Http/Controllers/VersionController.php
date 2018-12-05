@@ -9,12 +9,15 @@ class VersionController extends Controller
 
     public function version()
     {
-        return [
-            'hash' => exec('git rev-parse HEAD'),
-            'version' => exec('git describe --tags'),
-            'branch' => exec('git symbolic-ref -q --short HEAD'),
-            'date' => date('c'),
-        ];
+        return response()
+            ->json([
+                'hash' => exec('git rev-parse HEAD'),
+                'version' => exec('git describe --tags'),
+                'branch' => exec('git symbolic-ref -q --short HEAD'),
+                'date' => date('c'),
+            ])->withHeaders([
+                'Access-Control-Allow-Origin' => '*'
+            ]);
     }
 
 }
