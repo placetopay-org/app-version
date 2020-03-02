@@ -24,3 +24,14 @@ composer require placetopay/app-version
 ## Usage
 
 Once the package is installed the `/version` will be available to check the current git version
+
+## Envoyer
+
+With the new deploys made with Envoyer now the projects does not have git available, so you need to create a deployment hook
+
+```
+cd {{ release }}
+echo {{ sha }} >> storage/version.txt
+echo {{ time }} >> storage/version.txt
+echo {{ branch }} >> storage/version.txt
+```
