@@ -1,7 +1,10 @@
 <?php
 
+namespace PlacetoPay\AppVersion\Tests;
 
-class VersionTest extends Orchestra\Testbench\TestCase
+use Orchestra\Testbench\TestCase;
+
+class VersionTest extends TestCase
 {
 
     protected function getPackageProviders($app)
