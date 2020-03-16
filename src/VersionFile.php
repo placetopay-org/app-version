@@ -41,6 +41,6 @@ class VersionFile
      */
     public static function readSha(): string
     {
-        return self::read()['sha'];
+        return self::read()['sha'] ?? '';
     }
 }
