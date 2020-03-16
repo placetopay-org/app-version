@@ -17,7 +17,8 @@
   "require-dev": {
     "mockery/mockery": "dev-master",
     "phpunit/phpunit": "^8.0",
-    "orchestra/testbench": "^4.0"
+    "orchestra/testbench": "^4.0",
+    "friendsofphp/php-cs-fixer": "^2.16"
   },
   "autoload": {
     "psr-4": {
@@ -28,6 +29,9 @@
     "psr-4": {
       "PlacetoPay\\AppVersion\\Tests\\": "tests"
     }
+  },
+  "scripts": {
+    "php-cs-fixer": "vendor/bin/php-cs-fixer fix --config=.php_cs"
   },
   "minimum-stability": "stable",
   "extra": {

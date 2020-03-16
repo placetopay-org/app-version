@@ -2,16 +2,11 @@
 
 namespace PlacetoPay\AppVersion\Tests;
 
-use Orchestra\Testbench\TestCase;
+use PlacetoPay\AppVersion\VersionFile;
 
 class VersionTest extends TestCase
 {
-
-    protected function getPackageProviders($app)
-    {
-        return [\PlacetoPay\AppVersion\VersionServiceProvider::class];
-    }
-
+    /** @test */
     public function testItVisitsTheInformationEndpoint()
     {
         $response = $this->get('/version');
@@ -26,4 +21,20 @@ class VersionTest extends TestCase
         $this->assertArrayHasKey('date', $data);
     }
 
+    /** @test **/
+    public function it_returns_version_file_content()
+    {
+        $input = [
+            'sha' => 'abcdef',
+            'time' => '20200315170330',
+            'project' => 'test-project',
+            'branch' => 'master',
+        ];
+
+        VersionFile::generate($input);
+
+        $this->get('/version')
+            ->assertSuccessful()
+            ->assertJson($input);
+    }
 }

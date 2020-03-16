@@ -2,40 +2,20 @@
 
 namespace PlacetoPay\AppVersion\Tests\Sentry;
 
-use Orchestra\Testbench\TestCase;
-use PlacetoPay\AppVersion\Sentry\SentryApi;
-use PlacetoPay\AppVersion\Tests\Mocks\FakeClient;
+use PlacetoPay\AppVersion\Tests\Mocks\InteractsWithFakeClient;
+use PlacetoPay\AppVersion\Tests\TestCase;
 
-class CreateReleaseTest extends TestCase
+class SentryApiTest extends TestCase
 {
-    /**
-     * @var \PlacetoPay\AppVersion\Sentry\SentryApi
-     */
-    private $sentry;
-
-    /**
-     * @var \PlacetoPay\AppVersion\Tests\Mocks\FakeClient
-     */
-    private $fakeClient;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->fakeClient = new FakeClient();
-
-        $this->sentry = new SentryApi(
-            $this->fakeClient,
-            'organization'
-        );
-    }
+    use InteractsWithFakeClient;
 
     /** @test **/
     public function can_create_a_sentry_release()
     {
+        $this->bindFakeClient();
         $this->fakeClient->push('success_release');
 
-        $this->sentry->createRelease(
+        $this->sentryApi()->createRelease(
             'aaaaab', 'placetopay/app-version', 'test-project'
         );
 
@@ -47,9 +27,10 @@ class CreateReleaseTest extends TestCase
     /** @test **/
     public function can_create_a_sentry_deploy()
     {
+        $this->bindFakeClient();
         $this->fakeClient->push('success_deploy');
 
-        $this->sentry->createDeploy('aaaaab', 'local',);
+        $this->sentryApi()->createDeploy('asdfg2', 'local', );
 
         $this->fakeClient->assertLastRequestHas('environment', 'local');
     }

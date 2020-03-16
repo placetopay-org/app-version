@@ -70,48 +70,48 @@ class FakeClient extends HttpClient
     {
         if ($case === 'success_deploy') {
             $this->nextResponse = [
-                "name" => null,
-                "url" => null,
-                "environment" => "local",
-                "dateStarted" => null,
-                "dateFinished" => "2020-03-13T21:59:45.030847Z",
-                "id" => "5563424",
+                'name' => null,
+                'url' => null,
+                'environment' => 'local',
+                'dateStarted' => null,
+                'dateFinished' => '2020-03-13T21:59:45.030847Z',
+                'id' => '5563424',
             ];
         }
 
         if ($case === 'success_release') {
             $this->nextResponse = [
-                "dateReleased" => null,
-                "newGroups" => 0,
-                "commitCount" => 0,
-                "url" => null,
-                "data" => [],
-                "lastDeploy" => null,
-                "deployCount" => 0,
-                "dateCreated" => "2020-03-13T21:41:41.032208Z",
-                "lastEvent" => null,
-                "version" => "aaaaab",
-                "firstEvent" => null,
-                "lastCommit" => null,
-                "shortVersion" => "aaaaab",
-                "authors" => [],
-                "owner" => null,
-                "versionInfo" => [
-                    "buildHash" => null,
-                    "version" => [
-                        "raw" => "aaaaab",
+                'dateReleased' => null,
+                'newGroups' => 0,
+                'commitCount' => 0,
+                'url' => null,
+                'data' => [],
+                'lastDeploy' => null,
+                'deployCount' => 0,
+                'dateCreated' => '2020-03-13T21:41:41.032208Z',
+                'lastEvent' => null,
+                'version' => 'aaaaab',
+                'firstEvent' => null,
+                'lastCommit' => null,
+                'shortVersion' => 'aaaaab',
+                'authors' => [],
+                'owner' => null,
+                'versionInfo' => [
+                    'buildHash' => null,
+                    'version' => [
+                        'raw' => 'aaaaab',
                     ],
-                    "description" => "aaaaab",
-                    "package" => null,
+                    'description' => 'aaaaab',
+                    'package' => null,
                 ],
-                "ref" => null,
-                "projects" => [
+                'ref' => null,
+                'projects' => [
                     0 => [
-                        "id" => 4615782,
-                        "name" => "test-project",
-                        "slug" => "test-project",
-                    ]
-                ]
+                        'id' => 4615782,
+                        'name' => 'test-project',
+                        'slug' => 'test-project',
+                    ],
+                ],
             ];
         }
     }

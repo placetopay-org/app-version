@@ -32,7 +32,7 @@ class SentryApi
      * @param string $organization
      * @return \PlacetoPay\AppVersion\Sentry\SentryApi
      */
-    public static function create(string $apiKey, string $organization): SentryApi
+    public static function create(string $apiKey, string $organization): self
     {
         return new self(new HttpClient($apiKey), $organization);
     }
@@ -60,11 +60,11 @@ class SentryApi
     public function createRelease(string $version, string $repository, string $sentryProject)
     {
         return $this->client->post("organizations/{$this->organization}/releases/", [
-            "version" =>  $version,
-            "refs" =>  [
-                ["repository" => $repository, "commit" =>  $version]
+            'version' =>  $version,
+            'refs' =>  [
+                ['repository' => $repository, 'commit' =>  $version],
             ],
-            "projects" => [$sentryProject],
+            'projects' => [$sentryProject],
         ]);
     }
 }

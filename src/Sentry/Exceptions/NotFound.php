@@ -1,6 +1,5 @@
 <?php
 
-
 namespace PlacetoPay\AppVersion\Sentry\Exceptions;
 
 use PlacetoPay\AppVersion\Sentry\Http\Response;
