@@ -7,29 +7,6 @@ use PlacetoPay\AppVersion\VersionFile;
 
 class VersionController extends Controller
 {
-    protected function envoyerVersionFile()
-    {
-        return storage_path('version.txt');
-    }
-
-    protected function envoyerVersionHook()
-    {
-        return file_exists($this->envoyerVersionFile());
-    }
-
-    protected function parseEnvoyerText()
-    {
-        $content = file_get_contents($this->envoyerVersionFile());
-        $data = explode("\n", $content);
-
-        return [
-            'hash' => $data[0],
-            'branch' => $data[2],
-            'release' => $data[1],
-            'date' => date('c'),
-        ];
-    }
-
     public function version()
     {
         if (VersionFile::exists()) {
