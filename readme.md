@@ -8,17 +8,6 @@ It can be integrated with [Sentry](https://sentry.io) to help you keep track of 
 
 ## Installation
 
-Add the private repository information to your `composer.json` file
-
-```json
-{
-  "repositories": [{
-    "type": "composer",
-    "url": "https://dev.placetopay.com/repository"
-  }]
-}
-```
-
 Install using composer
 
 ```bash
