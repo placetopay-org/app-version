@@ -53,7 +53,7 @@ class VersionFileTest extends TestCase
 
         $content = VersionFile::read();
 
-        $this->assertEquals(json_encode($this->input), $content);
+        $this->assertEquals($this->input, $content);
     }
 
     protected function tearDown(): void
