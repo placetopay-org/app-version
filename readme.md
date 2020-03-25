@@ -1,5 +1,7 @@
 # Track the version of your app
 
+[![Build Status](https://travis-ci.org/placetopay-org/app-version.svg?branch=master)](https://travis-ci.org/placetopay-org/app-version)
+
 The `placetopay/app-version` package provides a way to know which version of your app is currently deployed.
 
 It can be used with [Envoyer](https://envoyer.io/) deployment hooks
