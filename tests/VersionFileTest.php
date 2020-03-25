@@ -13,13 +13,13 @@ class VersionFileTest extends TestCase
         'branch' => 'master',
     ];
 
-    /** @test * */
+    /** @test */
     public function can_get_the_path()
     {
         $this->assertEquals(storage_path('app/app-version.json'), VersionFile::path());
     }
 
-    /** @test * */
+    /** @test */
     public function can_generate_the_file()
     {
         VersionFile::generate($this->input);
@@ -28,7 +28,7 @@ class VersionFileTest extends TestCase
         $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($this->input));
     }
 
-    /** @test * */
+    /** @test */
     public function can_delete_the_file()
     {
         VersionFile::generate($this->input);
@@ -38,7 +38,7 @@ class VersionFileTest extends TestCase
         $this->assertFileNotExists(VersionFile::path());
     }
 
-    /** @test * */
+    /** @test */
     public function can_read_the_sha()
     {
         VersionFile::generate($this->input);

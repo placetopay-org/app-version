@@ -9,7 +9,7 @@ class CreateReleaseCommandTest extends TestCase
 {
     use InteractsWithFakeClient;
 
-    /** @test * */
+    /** @test */
     public function can_create_a_release()
     {
         $this->bindFakeClient();

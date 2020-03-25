@@ -33,8 +33,8 @@ class CreateDeploy extends Command
         try {
             $sentry->createDeploy(
                 $config->get('app-version.version'),
-                $config->get('app.env'),
-                );
+                $config->get('app.env')
+            );
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
 

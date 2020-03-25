@@ -52,7 +52,7 @@ class FakeClient extends HttpClient
 
         $lastPayload = Arr::last($this->requests)['arguments'];
 
-        Assert::assertTrue(Arr::has($lastPayload, $key), 'The last payload doesnt have the expected key. '.print_r($lastPayload, true));
+        Assert::assertTrue(Arr::has($lastPayload, $key), 'The last payload doesnt have the expected key. ' . print_r($lastPayload, true));
 
         if ($expectedContent === null) {
             return;
