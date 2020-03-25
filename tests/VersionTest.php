@@ -21,7 +21,7 @@ class VersionTest extends TestCase
         $this->assertArrayHasKey('date', $data);
     }
 
-    /** @test **/
+    /** @test */
     public function it_returns_version_file_content()
     {
         $input = [

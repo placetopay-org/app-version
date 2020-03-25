@@ -14,7 +14,7 @@ class CreateVersionFileCommandTest extends TestCase
         VersionFile::delete();
     }
 
-    /** @test * */
+    /** @test */
     public function can_create_version_file()
     {
         $input = [

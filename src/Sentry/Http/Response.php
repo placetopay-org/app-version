@@ -71,10 +71,10 @@ class Response
      */
     public function getHttpResponseCode()
     {
-        if (! isset($this->headers['http_code'])) {
+        if (!isset($this->headers['http_code'])) {
             return;
         }
 
-        return (int) $this->headers['http_code'];
+        return (int)$this->headers['http_code'];
     }
 }

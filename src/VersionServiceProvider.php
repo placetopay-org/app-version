@@ -35,7 +35,7 @@ class VersionServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app['router']->get('/version', ['uses' => VersionController::class.'@version', 'as' => 'app.version']);
+        $this->app['router']->get('/version', ['uses' => VersionController::class . '@version', 'as' => 'app.version']);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -53,7 +53,7 @@ class VersionServiceProvider extends ServiceProvider
         });
 
         $this->publishes([
-            __DIR__.'/../config/app-version.php' => config_path('app-version.php'),
+            __DIR__ . '/../config/app-version.php' => config_path('app-version.php'),
         ]);
     }
 }
