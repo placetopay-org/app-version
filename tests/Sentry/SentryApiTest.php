@@ -30,7 +30,7 @@ class SentryApiTest extends TestCase
         $this->bindFakeClient();
         $this->fakeClient->push('success_deploy');
 
-        $this->sentryApi()->createDeploy('asdfg2', 'local', );
+        $this->sentryApi()->createDeploy('asdfg2', 'local');
 
         $this->fakeClient->assertLastRequestHas('environment', 'local');
     }
