@@ -29,8 +29,8 @@ class CreateRelease extends Command
             $sentry->createRelease(
                 $config->get('app-version.version'),
                 $config->get('app-version.sentry.repository'),
-                $config->get('app-version.sentry.project'),
-                );
+                $config->get('app-version.sentry.project')
+            );
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
 
