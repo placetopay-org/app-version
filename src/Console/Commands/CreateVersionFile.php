@@ -41,7 +41,7 @@ class CreateVersionFile extends Command
         VersionFile::generate([
             'sha' => $options['sha'],
             'time' => $options['time'],
-            'project' => $options['project'],
+            'project' => $options['project']?? '',
             'branch' => $options['branch'],
         ]);
 
@@ -58,7 +58,7 @@ class CreateVersionFile extends Command
         return $validator->make($this->options(), [
             'sha' => 'required',
             'time' => 'required',
-            'project' => 'required',
+            'project' => 'nullable',
             'branch' => 'required',
         ])->validate();
     }

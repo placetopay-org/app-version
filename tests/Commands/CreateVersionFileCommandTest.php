@@ -35,6 +35,25 @@ class CreateVersionFileCommandTest extends TestCase
         $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($input));
     }
 
+    /** @test */
+    public function can_create_version_file_without_project_variable()
+    {
+        $input = [
+            'sha' => 'abcdef',
+            'time' => '20200315170330',
+            'branch' => 'master',
+        ];
+
+        $this->artisan('app-version:create', [
+            '--sha' => $input['sha'],
+            '--time' => $input['time'],
+            '--branch' => $input['branch'],
+        ])->assertExitCode(0);
+
+        $this->assertFileExists(VersionFile::path());
+        $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($input));
+    }
+
     protected function tearDown(): void
     {
         VersionFile::delete();
