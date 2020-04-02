@@ -42,6 +42,7 @@ class CreateVersionFileCommandTest extends TestCase
             'sha' => 'abcdef',
             'time' => '20200315170330',
             'branch' => 'master',
+            'project' => '',
         ];
 
         $this->artisan('app-version:create', [
