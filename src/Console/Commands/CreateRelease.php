@@ -21,11 +21,15 @@ class CreateRelease extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a new Sentry release';
+    protected $description = 'Creates a new release';
 
-    public function handle(Repository $config, SentryApi $sentry)
+    public function handle(Repository $config): int
     {
         try {
+            $sentry = SentryApi::create(
+                $config->get('app-version.sentry.auth_token'),
+                $config->get('app-version.sentry.organization')
+            );
             $sentry->createRelease(
                 $config->get('app-version.version'),
                 $config->get('app-version.sentry.repository'),
