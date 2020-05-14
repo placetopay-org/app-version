@@ -28,7 +28,7 @@ class CreateVersionFile extends Command
      */
     protected $description = 'Creates or updates the version file, file is stored as \'storage/app/app-version.json\'';
 
-    public function handle(Factory $validator)
+    public function handle(Factory $validator): int
     {
         try {
             $options = $this->validateOptions($validator);
@@ -49,11 +49,11 @@ class CreateVersionFile extends Command
     }
 
     /**
-     * @param \Illuminate\Validation\Factory $validator
+     * @param Factory $validator
      * @return array
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
-    private function validateOptions(Factory $validator)
+    private function validateOptions(Factory $validator): array
     {
         return $validator->make($this->options(), [
             'sha' => 'required',
