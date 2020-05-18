@@ -1,6 +1,6 @@
 <?php
 
-namespace PlacetoPay\AppVersion\Sentry\Http;
+namespace PlacetoPay\AppVersion\Helpers;
 
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 use PlacetoPay\AppVersion\Sentry\Exceptions\InvalidData;
@@ -8,16 +8,6 @@ use PlacetoPay\AppVersion\Sentry\Exceptions\NotFound;
 
 class HttpClient
 {
-    /**
-     * @var string
-     */
-    private $apiToken;
-
-    /**
-     * @var string
-     */
-    private $baseUrl;
-
     /**
      * @var int
      */
@@ -28,16 +18,14 @@ class HttpClient
      */
     private $lastRequest;
 
+    private $headers = [];
+
     /**
      * HttpClient constructor.
-     * @param string $apiToken
-     * @param string $baseUrl
      * @param int $timeout
      */
-    public function __construct(string $apiToken, string $baseUrl = 'https://sentry.io/api/0', int $timeout = 10)
+    public function __construct(int $timeout = 10)
     {
-        $this->apiToken = $apiToken;
-        $this->baseUrl = $baseUrl;
         $this->timeout = $timeout;
     }
 
@@ -61,13 +49,9 @@ class HttpClient
      * @return array
      * @throws \PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode
      */
-    public function makeRequest(string $httpVerb, string $url, array $arguments = [])
+    public function makeRequest(string $method, string $url, array $arguments = [])
     {
-        $headers = ["Authorization: Bearer {$this->apiToken}"];
-
-        $fullUrl = "{$this->baseUrl}/{$url}";
-
-        $response = $this->makeCurlRequest($httpVerb, $fullUrl, $headers, $arguments);
+        $response = $this->makeCurlRequest($method, $url, $this->headers, $arguments);
 
         if ($response->getHttpResponseCode() === 422) {
             throw InvalidData::createForResponse($response);
@@ -143,8 +127,13 @@ class HttpClient
     private function attachRequestPayload(&$curlHandle, array $data)
     {
         $encoded = json_encode($data);
-
         $this->lastRequest['body'] = $encoded;
         curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $encoded);
+    }
+
+    public function addHeaders(array $headers): self
+    {
+        $this->headers = $headers;
+        return $this;
     }
 }
