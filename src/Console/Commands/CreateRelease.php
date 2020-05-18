@@ -4,8 +4,8 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class CreateRelease extends Command
 {
@@ -26,10 +26,7 @@ class CreateRelease extends Command
     public function handle(Repository $config): int
     {
         try {
-            $sentry = SentryApi::create(
-                $config->get('app-version.sentry.auth_token'),
-                $config->get('app-version.sentry.organization')
-            );
+            $sentry = ApiFactory::sentryApi();
             $sentry->createRelease(
                 $config->get('app-version.version'),
                 $config->get('app-version.sentry.repository'),
