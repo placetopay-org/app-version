@@ -20,6 +20,8 @@ class CreateDeployCommandTest extends TestCase
         $this->artisan('app-version:create-deploy')->assertExitCode(0);
 
         $this->fakeClient->assertLastRequestHas('environment', 'testing');
+
+        $this->assertStringContainsString('Authorization: Bearer', $this->fakeClient->lastRequest()['headers'][0]);
     }
 
     /** @test */
