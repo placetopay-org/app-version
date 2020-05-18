@@ -38,5 +38,7 @@ class CreateDeployCommandTest extends TestCase
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
+
+        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'X-Api-Key: ' . config('app-version.newrelic.api_key'));
     }
 }

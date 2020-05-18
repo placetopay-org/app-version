@@ -47,6 +47,11 @@ class FakeSentryClient extends HttpClient
         Assert::assertEquals($expectedContent, $actualContent);
     }
 
+    public function lastRequest(): array
+    {
+        return array_pop($this->requests) ?: [];
+    }
+
     /**
      * @param $case
      */
