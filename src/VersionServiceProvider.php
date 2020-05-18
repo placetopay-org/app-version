@@ -8,6 +8,7 @@ use PlacetoPay\AppVersion\Console\Commands\CreateDeploy;
 use PlacetoPay\AppVersion\Console\Commands\CreateRelease;
 use PlacetoPay\AppVersion\Console\Commands\CreateVersionFile;
 use PlacetoPay\AppVersion\Http\Controllers\VersionController;
+use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class VersionServiceProvider extends ServiceProvider
@@ -37,6 +38,16 @@ class VersionServiceProvider extends ServiceProvider
                 );
             });
         }
+
+        if (config()->get('app-version.newrelic.api_key')) {
+            $this->app->singleton(NewRelicApi::class, function (Application $app) {
+                return NewRelicApi::create(
+                    $app['config']->get('app-version.newrelic.api_key'),
+                    $app['config']->get('app-version.newrelic.application_id')
+                );
+            });
+        }
+
         $this->publishes([
             __DIR__ . '/../config/app-version.php' => config_path('app-version.php'),
         ]);
