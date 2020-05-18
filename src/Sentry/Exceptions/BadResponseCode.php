@@ -3,13 +3,10 @@
 namespace PlacetoPay\AppVersion\Sentry\Exceptions;
 
 use Exception;
-use PlacetoPay\AppVersion\Sentry\Http\Response;
+use PlacetoPay\AppVersion\Helpers\Response;
 
 class BadResponseCode extends Exception
 {
-    /**
-     * @var \PlacetoPay\AppVersion\Sentry\Http\Response
-     */
     public $response;
 
     /**
@@ -17,10 +14,6 @@ class BadResponseCode extends Exception
      */
     public $errors;
 
-    /**
-     * @param \PlacetoPay\AppVersion\Sentry\Http\Response $response
-     * @return static
-     */
     public static function createForResponse(Response $response): self
     {
         $exception = new static(static::getMessageForResponse($response));
@@ -34,10 +27,6 @@ class BadResponseCode extends Exception
         return $exception;
     }
 
-    /**
-     * @param \PlacetoPay\AppVersion\Sentry\Http\Response $response
-     * @return string
-     */
     public static function getMessageForResponse(Response $response): string
     {
         return "Response code {$response->getHttpResponseCode()} returned";
