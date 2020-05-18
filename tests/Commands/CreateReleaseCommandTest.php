@@ -14,7 +14,7 @@ class CreateReleaseCommandTest extends TestCase
     {
         $this->setSentryEnvironmentSetUp();
 
-        $this->bindFakeClient();
+        $this->bindSentryFakeClient();
 
         $this->fakeClient->push('success_release');
 

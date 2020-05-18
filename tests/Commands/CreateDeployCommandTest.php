@@ -14,7 +14,7 @@ class CreateDeployCommandTest extends TestCase
     {
         $this->setSentryEnvironmentSetUp();
 
-        $this->bindFakeClient();
+        $this->bindSentryFakeClient();
         $this->fakeClient->push('success_deploy');
 
         $this->artisan('app-version:create-deploy')->assertExitCode(0);
@@ -27,11 +27,16 @@ class CreateDeployCommandTest extends TestCase
     {
         $this->setNewRelicEnvironmentSetUp();
 
-        $this->bindFakeClient();
+        $this->bindNewRelicFakeClient();
         $this->fakeClient->push('success_deploy');
 
         $this->artisan('app-version:create-deploy')->assertExitCode(0);
 
-        $this->fakeClient->assertLastRequestHas('environment', 'testing');
+        $this->fakeClient->assertLastRequestHas('deployment', [
+            'revision' => 'asdfg2',
+            'changelog' => 'Not available right now',
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]);
     }
 }

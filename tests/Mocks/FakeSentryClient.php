@@ -7,7 +7,7 @@ use PHPUnit\Framework\Assert;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
 use PlacetoPay\AppVersion\Helpers\Response;
 
-class FakeClient extends HttpClient
+class FakeSentryClient extends HttpClient
 {
     /**
      * @var array

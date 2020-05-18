@@ -5,7 +5,6 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
-use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class CreateDeploy extends Command
