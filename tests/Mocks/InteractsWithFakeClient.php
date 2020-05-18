@@ -15,7 +15,7 @@ trait InteractsWithFakeClient
     {
         $this->fakeClient = new FakeClient();
 
-        $fakeSentry = new SentryApi($this->fakeClient, config('app-version.sentry.organization'));
+        $fakeSentry = new SentryApi($this->fakeClient, config('app-version.sentry.auth_token'), config('app-version.sentry.organization'));
 
         $this->swap(SentryApi::class, $fakeSentry);
     }
