@@ -19,21 +19,25 @@ abstract class TestCase extends Orchestra
         return [VersionServiceProvider::class];
     }
 
-    /**
-     * Define environment setup.
-     *
-     * @param \Illuminate\Foundation\Application $app
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
+    protected function setSentryEnvironmentSetUp()
     {
-        $app['config']->set('app-version.sentry', [
+        config()->set('app-version.sentry', [
             'auth_token' => 'abcdefg',
             'organization' => 'placetopay',
             'repository' => 'app-version',
             'project' => 'test-project',
         ]);
 
-        $app['config']->set('app-version.version', 'asdfg2');
+        config()->set('app-version.version', 'asdfg2');
+    }
+
+    protected function setNewRelicEnvironmentSetUp()
+    {
+        config()->set('app-version.newrelic', [
+            'api_key' => 'abcdefg',
+            'application_id' => 'placetopay',
+        ]);
+
+        config()->set('app-version.version', 'asdfg2');
     }
 }
