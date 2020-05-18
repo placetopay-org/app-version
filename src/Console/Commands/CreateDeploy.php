@@ -4,8 +4,9 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use PlacetoPay\AppVersion\Helpers\ApiFactory;
+use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class CreateDeploy extends Command
 {
@@ -21,7 +22,7 @@ class CreateDeploy extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a new Sentry deploy';
+    protected $description = 'Creates a new deploy on the available sources';
 
     /**
      * @param Repository $config
@@ -36,7 +37,6 @@ class CreateDeploy extends Command
             $this->newrelicDeploy($config, $appVersion);
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
-
             return 1;
         }
 
@@ -54,7 +54,7 @@ class CreateDeploy extends Command
         $organization = $config->get('app-version.sentry.organization');
 
         if ($authToken && $organization) {
-            $sentry = SentryApi::create($authToken, $organization);
+            $sentry = ApiFactory::sentryApi();
             $sentry->createDeploy(
                 $version,
                 $config->get('app.env')
@@ -67,8 +67,11 @@ class CreateDeploy extends Command
         $apiKey = $config->get('app-version.newrelic.api_key');
         $applicationId = $config->get('app-version.newrelic.application_id');
         if ($apiKey && $applicationId) {
-            $newrelic = NewRelicApi::create($apiKey, $applicationId);
-            $newrelic->createDeploy();
+            $newrelic = ApiFactory::newRelicApi();
+            $newrelic->createDeploy(
+                $version,
+                $config->get('app.env')
+            );
         }
     }
 }

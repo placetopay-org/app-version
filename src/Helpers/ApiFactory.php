@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Helpers;
 
+use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class ApiFactory
@@ -11,7 +12,8 @@ class ApiFactory
         return app(SentryApi::class);
     }
 
-    public function newRelicApi()
+    public static function newRelicApi(): NewRelicApi
     {
+        return app(NewRelicApi::class);
     }
 }

@@ -41,7 +41,7 @@ class CreateVersionFile extends Command
         VersionFile::generate([
             'sha' => $options['sha'],
             'time' => $options['time'],
-            'project' => $options['project']?? '',
+            'project' => $options['project'] ?? '',
             'branch' => $options['branch'],
         ]);
 
