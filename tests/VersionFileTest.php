@@ -14,28 +14,22 @@ class VersionFileTest extends TestCase
     ];
 
     /** @test */
-    public function can_get_the_path()
-    {
-        $this->assertEquals(storage_path('app/app-version.json'), VersionFile::path());
-    }
-
-    /** @test */
     public function can_generate_the_file()
     {
         VersionFile::generate($this->input);
 
-        $this->assertFileExists(VersionFile::path());
-        $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($this->input));
+        $this->assertTrue(VersionFile::exists());
+        $this->assertEquals(VersionFile::read(), $this->input);
     }
 
     /** @test */
     public function can_delete_the_file()
     {
         VersionFile::generate($this->input);
-        $this->assertFileExists(VersionFile::path());
+        $this->assertTrue(VersionFile::exists());
 
         VersionFile::delete();
-        $this->assertFileNotExists(VersionFile::path());
+        $this->assertFalse(VersionFile::exists());
     }
 
     /** @test */

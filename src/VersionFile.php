@@ -2,34 +2,36 @@
 
 namespace PlacetoPay\AppVersion;
 
+use Illuminate\Support\Facades\Storage;
+
 class VersionFile
 {
     public static function path(): string
     {
-        return storage_path('app/app-version.json');
+        return 'app-version.json';
     }
 
     public static function generate($data)
     {
-        return file_put_contents(self::path(), json_encode($data));
+        return Storage::put(self::path(), json_encode($data));
     }
 
     public static function exists()
     {
-        return file_exists(self::path());
+        return Storage::exists(self::path());
     }
 
     public static function delete(): void
     {
         if (self::exists()) {
-            unlink(self::path());
+            Storage::delete(self::path());
         }
     }
 
     public static function read(): array
     {
         if (self::exists()) {
-            return json_decode(file_get_contents(self::path()), JSON_OBJECT_AS_ARRAY);
+            return json_decode(Storage::get(self::path()), JSON_OBJECT_AS_ARRAY);
         }
 
         return [];
