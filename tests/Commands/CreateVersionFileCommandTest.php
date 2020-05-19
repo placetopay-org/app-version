@@ -31,8 +31,8 @@ class CreateVersionFileCommandTest extends TestCase
             '--branch' => $input['branch'],
         ])->assertExitCode(0);
 
-        $this->assertFileExists(VersionFile::path());
-        $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($input));
+        $this->assertTrue(VersionFile::exists());
+        $this->assertEquals(VersionFile::read(), $input);
     }
 
     /** @test */
@@ -51,8 +51,8 @@ class CreateVersionFileCommandTest extends TestCase
             '--branch' => $input['branch'],
         ])->assertExitCode(0);
 
-        $this->assertFileExists(VersionFile::path());
-        $this->assertJsonStringEqualsJsonFile(VersionFile::path(), json_encode($input));
+        $this->assertTrue(VersionFile::exists());
+        $this->assertEquals(VersionFile::read(), $input);
     }
 
     protected function tearDown(): void
