@@ -1,6 +1,6 @@
 <?php
 
-namespace PlacetoPay\AppVersion\Sentry\Http;
+namespace PlacetoPay\AppVersion\Helpers;
 
 class Response
 {
@@ -28,9 +28,7 @@ class Response
     public function __construct($headers, $body, $error)
     {
         $this->headers = $headers;
-
         $this->body = $body;
-
         $this->error = $error;
     }
 

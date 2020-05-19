@@ -4,8 +4,8 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class CreateDeploy extends Command
 {
@@ -21,26 +21,56 @@ class CreateDeploy extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a new Sentry deploy';
+    protected $description = 'Creates a new deploy on the available sources';
 
     /**
-     * @param \Illuminate\Config\Repository $config
-     * @param \PlacetoPay\AppVersion\Sentry\SentryApi $sentry
+     * @param Repository $config
      * @return int
      */
-    public function handle(Repository $config, SentryApi $sentry)
+    public function handle(Repository $config): int
     {
         try {
-            $sentry->createDeploy(
-                $config->get('app-version.version'),
-                $config->get('app.env')
-            );
+            $appVersion = $config->get('app-version.version');
+
+            $this->sentryDeploy($config, $appVersion);
+            $this->newrelicDeploy($config, $appVersion);
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
-
             return 1;
         }
 
         return 0;
+    }
+
+    /**
+     * @param Repository $config
+     * @param string $version
+     * @throws BadResponseCode
+     */
+    private function sentryDeploy(Repository $config, string $version): void
+    {
+        $authToken = $config->get('app-version.sentry.auth_token');
+        $organization = $config->get('app-version.sentry.organization');
+
+        if ($authToken && $organization) {
+            $sentry = ApiFactory::sentryApi();
+            $sentry->createDeploy(
+                $version,
+                $config->get('app.env')
+            );
+        }
+    }
+
+    private function newrelicDeploy(Repository $config, string $version): void
+    {
+        $apiKey = $config->get('app-version.newrelic.api_key');
+        $applicationId = $config->get('app-version.newrelic.application_id');
+        if ($apiKey && $applicationId) {
+            $newrelic = ApiFactory::newRelicApi();
+            $newrelic->createDeploy(
+                $version,
+                $config->get('app.env')
+            );
+        }
     }
 }

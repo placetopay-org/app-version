@@ -4,10 +4,10 @@ namespace PlacetoPay\AppVersion\Tests\Mocks;
 
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\Assert;
-use PlacetoPay\AppVersion\Sentry\Http\HttpClient;
-use PlacetoPay\AppVersion\Sentry\Http\Response;
+use PlacetoPay\AppVersion\Helpers\HttpClient;
+use PlacetoPay\AppVersion\Helpers\Response;
 
-class FakeClient extends HttpClient
+class FakeSentryClient extends HttpClient
 {
     /**
      * @var array
@@ -19,22 +19,6 @@ class FakeClient extends HttpClient
      */
     private $nextResponse;
 
-    /**
-     * FakeClient constructor.
-     * @param null $apiToken
-     */
-    public function __construct($apiToken = null)
-    {
-        parent::__construct($apiToken ?? uniqid());
-    }
-
-    /**
-     * @param string $httpVerb
-     * @param string $fullUrl
-     * @param array $headers
-     * @param array $arguments
-     * @return \PlacetoPay\AppVersion\Sentry\Http\Response
-     */
     public function makeCurlRequest(string $httpVerb, string $fullUrl, array $headers = [], array $arguments = []): Response
     {
         $this->requests[] = compact('httpVerb', 'fullUrl', 'headers', 'arguments');
@@ -61,6 +45,11 @@ class FakeClient extends HttpClient
         $actualContent = Arr::get($lastPayload, $key);
 
         Assert::assertEquals($expectedContent, $actualContent);
+    }
+
+    public function lastRequest(): array
+    {
+        return array_pop($this->requests) ?: [];
     }
 
     /**

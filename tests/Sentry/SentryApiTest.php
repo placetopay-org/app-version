@@ -12,7 +12,9 @@ class SentryApiTest extends TestCase
     /** @test */
     public function can_create_a_sentry_release()
     {
-        $this->bindFakeClient();
+        $this->setSentryEnvironmentSetUp();
+
+        $this->bindSentryFakeClient();
         $this->fakeClient->push('success_release');
 
         $this->sentryApi()->createRelease(
@@ -27,7 +29,9 @@ class SentryApiTest extends TestCase
     /** @test */
     public function can_create_a_sentry_deploy()
     {
-        $this->bindFakeClient();
+        $this->setSentryEnvironmentSetUp();
+
+        $this->bindSentryFakeClient();
         $this->fakeClient->push('success_deploy');
 
         $this->sentryApi()->createDeploy('asdfg2', 'local');
