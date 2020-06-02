@@ -13,6 +13,7 @@ use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class VersionServiceProvider extends ServiceProvider
 {
+    
     /**
      * Bootstrap the application events.
      *
@@ -30,6 +31,13 @@ class VersionServiceProvider extends ServiceProvider
             ]);
         }
 
+        $this->publishes([
+            __DIR__ . '/../config/app-version.php' => config_path('app-version.php'),
+        ]);
+    }
+
+    public function register()
+    {
         if (config()->get('app-version.sentry.auth_token')) {
             $this->app->singleton(SentryApi::class, function (Application $app) {
                 return SentryApi::create(
@@ -47,9 +55,5 @@ class VersionServiceProvider extends ServiceProvider
                 );
             });
         }
-
-        $this->publishes([
-            __DIR__ . '/../config/app-version.php' => config_path('app-version.php'),
-        ]);
     }
 }
