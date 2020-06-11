@@ -136,4 +136,9 @@ class HttpClient
         $this->headers = $headers;
         return $this;
     }
+
+    public function headers(): array
+    {
+        return $this->headers;
+    }
 }

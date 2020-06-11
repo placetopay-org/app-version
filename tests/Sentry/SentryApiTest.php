@@ -21,6 +21,7 @@ class SentryApiTest extends TestCase
             'aaaaab', 'placetopay/app-version', 'test-project'
         );
 
+        $this->fakeClient->assertAuthenticationHeaderSent(config()->get('app-version.sentry.auth_token'));
         $this->fakeClient->assertLastRequestHas('version', 'aaaaab');
         $this->fakeClient->assertLastRequestHas('refs.0.repository', 'placetopay/app-version');
         $this->fakeClient->assertLastRequestHas('projects.0', 'test-project');

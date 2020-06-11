@@ -47,6 +47,14 @@ class FakeSentryClient extends HttpClient
         Assert::assertEquals($expectedContent, $actualContent);
     }
 
+    public function assertAuthenticationHeaderSent(string $token)
+    {
+        Assert::assertTrue(
+            in_array('Authorization: Bearer ' . $token, $this->headers()),
+            'Authorization token invalid or not provided'
+        );
+    }
+
     public function lastRequest(): array
     {
         return array_pop($this->requests) ?: [];

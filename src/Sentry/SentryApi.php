@@ -6,7 +6,7 @@ use PlacetoPay\AppVersion\Helpers\HttpClient;
 
 class SentryApi
 {
-    const API_URL = 'https://sentry.io/api/0';
+    const API_URL = 'https://sentry.io/api/0/';
 
     /**
      * @var HttpClient
@@ -49,6 +49,10 @@ class SentryApi
 
     public function createRelease(string $version, string $repository, string $sentryProject)
     {
+        $this->client->addHeaders([
+            "Authorization: Bearer {$this->apiKey}",
+        ]);
+
         return $this->client->post($this->constructUrl(), [
             'version' =>  $version,
             'refs' =>  [
