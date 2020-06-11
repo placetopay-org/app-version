@@ -66,7 +66,7 @@ class SentryApi
     {
         $url = self::API_URL . 'organizations/' . $this->organization . '/releases/';
         if ($version) {
-            $url .= $version . 'deploys/';
+            $url .= $version . '/deploys/';
         }
         return $url;
     }

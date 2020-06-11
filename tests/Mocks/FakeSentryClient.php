@@ -55,6 +55,13 @@ class FakeSentryClient extends HttpClient
         );
     }
 
+    public function lastUrl(): string
+    {
+        Assert::assertGreaterThan(0, count($this->requests), 'There were no requests sent');
+
+        return Arr::last($this->requests)['fullUrl'];
+    }
+
     public function lastRequest(): array
     {
         return array_pop($this->requests) ?: [];
