@@ -7,7 +7,7 @@ use PlacetoPay\AppVersion\Helpers\HttpClient;
 
 class NewRelicApi
 {
-    const API_URL = 'https://api.newrelic.com/v2/applications/';
+    public const API_URL = 'https://api.newrelic.com/v2/applications/';
 
     /**
      * @var HttpClient

@@ -13,7 +13,6 @@ use PlacetoPay\AppVersion\Sentry\SentryApi;
 
 class VersionServiceProvider extends ServiceProvider
 {
-    
     /**
      * Bootstrap the application events.
      *
