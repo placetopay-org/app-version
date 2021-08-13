@@ -30,7 +30,7 @@ class CreateDeploy extends Command
     public function handle(Repository $config): int
     {
         try {
-            $appVersion = $config->get('app-version.version');
+            $appVersion = $config->get('app-version.version.sha');
 
             $this->sentryDeploy($config, $appVersion);
             $this->newrelicDeploy($config, $appVersion);

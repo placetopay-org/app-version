@@ -28,7 +28,7 @@ abstract class TestCase extends Orchestra
             'project' => 'test-project',
         ]);
 
-        config()->set('app-version.version', 'asdfg2');
+        config()->set('app-version.version.sha', 'asdfg2');
     }
 
     protected function setNewRelicEnvironmentSetUp()
@@ -38,6 +38,6 @@ abstract class TestCase extends Orchestra
             'application_id' => 'placetopay',
         ]);
 
-        config()->set('app-version.version', 'asdfg2');
+        config()->set('app-version.version.sha', 'asdfg2');
     }
 }

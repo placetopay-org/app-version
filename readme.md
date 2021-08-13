@@ -135,7 +135,7 @@ If you're using tinker you can get the version information with the following co
 
 To access the version information generated with the step 1 of the usage
 ```php 
-config('app-version.version'); 
+config('app-version.version.sha'); 
 ```
 
 To access the sha

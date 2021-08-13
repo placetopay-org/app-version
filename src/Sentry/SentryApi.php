@@ -6,7 +6,7 @@ use PlacetoPay\AppVersion\Helpers\HttpClient;
 
 class SentryApi
 {
-    const API_URL = 'https://sentry.io/api/0/';
+    public const API_URL = 'https://sentry.io/api/0/';
 
     /**
      * @var HttpClient

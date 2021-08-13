@@ -17,7 +17,6 @@ class CreateVersionFile extends Command
     protected $signature = 'app-version:create 
                             {--sha= : Commit hash being deployed}
                             {--time= : Timestamp of the current deployment formatted as YmdHis}
-                            {--project= : Deployment path as defined within the server config}
                             {--branch= : Branch being deployed}
                             ';
 
@@ -41,7 +40,6 @@ class CreateVersionFile extends Command
         VersionFile::generate([
             'sha' => $options['sha'],
             'time' => $options['time'],
-            'project' => $options['project'] ?? '',
             'branch' => $options['branch'],
         ]);
 

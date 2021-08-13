@@ -18,7 +18,9 @@ class SentryApiTest extends TestCase
         $this->fakeClient->push('success_release');
 
         $this->sentryApi()->createRelease(
-            'aaaaab', 'placetopay/app-version', 'test-project'
+            'aaaaab',
+            'placetopay/app-version',
+            'test-project'
         );
 
         $this->fakeClient->assertAuthenticationHeaderSent(config()->get('app-version.sentry.auth_token'));

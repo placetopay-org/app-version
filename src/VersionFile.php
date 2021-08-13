@@ -16,11 +16,17 @@ class VersionFile
 
     public static function exists()
     {
-        return file_exists(self::path());
+        if (!self::isEnvironmental()) {
+            return file_exists(self::path());
+        }
+        return true;
     }
 
     public static function delete(): void
     {
+        if (self::isEnvironmental()) {
+            return;
+        }
         if (self::exists()) {
             unlink(self::path());
         }
@@ -28,6 +34,10 @@ class VersionFile
 
     public static function read(): array
     {
+        if (self::isEnvironmental()) {
+            return config('app-version.version');
+        }
+
         if (self::exists()) {
             return json_decode(file_get_contents(self::path()), JSON_OBJECT_AS_ARRAY);
         }
@@ -41,6 +51,14 @@ class VersionFile
      */
     public static function readSha(): string
     {
+        if (self::isEnvironmental()) {
+            return config('app-version.version.sha');
+        }
         return self::read()['sha'] ?? '';
+    }
+
+    public static function isEnvironmental(): bool
+    {
+        return (bool)config('app-version.version.sha');
     }
 }

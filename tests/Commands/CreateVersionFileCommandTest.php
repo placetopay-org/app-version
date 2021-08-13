@@ -20,14 +20,12 @@ class CreateVersionFileCommandTest extends TestCase
         $input = [
             'sha' => 'abcdef',
             'time' => '20200315170330',
-            'project' => 'test-project',
             'branch' => 'master',
         ];
 
         $this->artisan('app-version:create', [
             '--sha' => $input['sha'],
             '--time' => $input['time'],
-            '--project' => $input['project'],
             '--branch' => $input['branch'],
         ])->assertExitCode(0);
 
@@ -42,7 +40,6 @@ class CreateVersionFileCommandTest extends TestCase
             'sha' => 'abcdef',
             'time' => '20200315170330',
             'branch' => 'master',
-            'project' => '',
         ];
 
         $this->artisan('app-version:create', [
