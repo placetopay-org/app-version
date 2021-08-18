@@ -32,8 +32,10 @@ class CreateDeploy extends Command
         try {
             $appVersion = $config->get('app-version.version.sha');
 
-            $this->sentryDeploy($config, $appVersion);
-            $this->newrelicDeploy($config, $appVersion);
+            if ($appVersion) {
+                $this->sentryDeploy($config, $appVersion);
+                $this->newrelicDeploy($config, $appVersion);
+            }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
             return 1;

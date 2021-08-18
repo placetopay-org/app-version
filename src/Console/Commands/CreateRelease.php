@@ -27,11 +27,13 @@ class CreateRelease extends Command
     {
         try {
             $sentry = ApiFactory::sentryApi();
-            $sentry->createRelease(
-                $config->get('app-version.version.sha'),
-                $config->get('app-version.sentry.repository'),
-                $config->get('app-version.sentry.project')
-            );
+            if ($appVersion = $config->get('app-version.version.sha')) {
+                $sentry->createRelease(
+                    $appVersion,
+                    $config->get('app-version.sentry.repository'),
+                    $config->get('app-version.sentry.project')
+                );
+            }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
 
