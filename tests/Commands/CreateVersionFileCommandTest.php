@@ -21,12 +21,14 @@ class CreateVersionFileCommandTest extends TestCase
             'sha' => 'abcdef',
             'time' => '20200315170330',
             'branch' => 'master',
+            'version' => '1.0.0',
         ];
 
         $this->artisan('app-version:create', [
             '--sha' => $input['sha'],
             '--time' => $input['time'],
             '--branch' => $input['branch'],
+            '--tag' => $input['version'],
         ])->assertExitCode(0);
 
         $this->assertTrue(VersionFile::exists());
@@ -40,14 +42,31 @@ class CreateVersionFileCommandTest extends TestCase
             'sha' => 'abcdef',
             'time' => '20200315170330',
             'branch' => 'master',
+            'version' => '1.0.0',
         ];
 
         $this->artisan('app-version:create', [
             '--sha' => $input['sha'],
             '--time' => $input['time'],
             '--branch' => $input['branch'],
+            '--tag' => $input['version'],
         ])->assertExitCode(0);
 
+        $this->assertTrue(VersionFile::exists());
+        $this->assertEquals(VersionFile::read(), $input);
+    }
+
+    /** @test  */
+    public function can_create_version_file_default_values()
+    {
+        $input = [
+            'sha' => exec('git rev-parse HEAD'),
+            'version' => exec('git describe --tags'),
+            'branch' => exec('git symbolic-ref -q --short HEAD'),
+            'time' => date('c'),
+        ];
+
+        $this->artisan('app-version:create')->assertSuccessful();
         $this->assertTrue(VersionFile::exists());
         $this->assertEquals(VersionFile::read(), $input);
     }

@@ -18,6 +18,7 @@ class CreateVersionFile extends Command
                             {--sha= : Commit hash being deployed}
                             {--time= : Timestamp of the current deployment formatted as YmdHis}
                             {--branch= : Branch being deployed}
+                            {--tag= : Tag being deployed}
                             ';
 
     /**
@@ -38,9 +39,10 @@ class CreateVersionFile extends Command
         }
 
         VersionFile::generate([
-            'sha' => $options['sha'],
-            'time' => $options['time'],
-            'branch' => $options['branch'],
+            'sha' => $options['sha'] ?? exec('git rev-parse HEAD'),
+            'time' => $options['time'] ??  date('c'),
+            'branch' => $options['branch'] ?? exec('git symbolic-ref -q --short HEAD'),
+            'version' => $options['tag'] ?? exec('git describe --tags'),
         ]);
 
         return 0;
@@ -54,10 +56,11 @@ class CreateVersionFile extends Command
     private function validateOptions(Factory $validator): array
     {
         return $validator->make($this->options(), [
-            'sha' => 'required',
-            'time' => 'required',
+            'sha' => 'nullable',
+            'time' => 'nullable',
             'project' => 'nullable',
-            'branch' => 'required',
+            'branch' => 'nullable',
+            'tag' => 'nullable',
         ])->validate();
     }
 }
