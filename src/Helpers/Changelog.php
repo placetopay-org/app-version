@@ -14,12 +14,14 @@ class Changelog
         return file_exists(self::path());
     }
 
-    public static function read(): string
+    public static function read(int $charactersLimit): string
     {
         $content = 'Not available right now';
         if (self::exists()) {
-            // The line breaks replacement is necessary to see it properly on the Newrelic panel
-            $content = str_replace("\n", '\n\n', file_get_contents(self::path()));
+            $content = file_get_contents(self::path());
+            if (strlen($content) > $charactersLimit) {
+                $content = substr($content, 0, $charactersLimit);
+            }
         }
         return $content;
     }
