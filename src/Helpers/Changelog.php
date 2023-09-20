@@ -18,7 +18,8 @@ class Changelog
     {
         $content = 'Not available right now';
         if (self::exists()) {
-            $content = file_get_contents(self::path());
+            // The line breaks replacement is necessary to see it properly on the Newrelic panel
+            $content = str_replace("\n", '\n\n', file_get_contents(self::path()));
         }
         return $content;
     }
