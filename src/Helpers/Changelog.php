@@ -6,7 +6,7 @@ class Changelog
 {
     public static function path(): string
     {
-        return app_path('CHANGELOG.md');
+        return base_path('CHANGELOG.md');
     }
 
     public static function exists(): bool
