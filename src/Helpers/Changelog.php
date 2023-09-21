@@ -14,12 +14,12 @@ class Changelog
         return file_exists(self::path());
     }
 
-    public static function read(int $charactersLimit): string
+    public static function read(int $charactersLimit = 0): string
     {
         $content = 'Not available right now';
         if (self::exists()) {
             $content = file_get_contents(self::path());
-            if (strlen($content) > $charactersLimit) {
+            if ($charactersLimit > 0 && strlen($content) > $charactersLimit) {
                 $content = substr($content, 0, $charactersLimit);
             }
         }
