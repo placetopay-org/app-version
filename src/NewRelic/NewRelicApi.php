@@ -21,8 +21,6 @@ class NewRelicApi
      */
     private $applicationId;
 
-    private int $characterLimit = 4095;
-
     public function __construct(HttpClient $client, string $apiKey, string $applicationId)
     {
         $this->client = $client;
@@ -49,7 +47,7 @@ class NewRelicApi
         return $this->client->post($this->constructUrl(), [
             'deployment' => [
                 'revision' => $version,
-                'changelog' => Changelog::read($this->characterLimit),
+                'changelog' => Changelog::read(),
                 'description' => 'Commit on ' . $environment,
                 'user' => 'Not available right now',
             ],

@@ -2,6 +2,9 @@
 
 namespace PlacetoPay\AppVersion\Helpers;
 
+/**
+ * The Changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ */
 class Changelog
 {
     public static function path(): string
@@ -14,15 +17,17 @@ class Changelog
         return file_exists(self::path());
     }
 
-    public static function read(int $charactersLimit = 0): string
+    public static function read(): string
     {
         $content = 'Not available right now';
         if (self::exists()) {
             $content = file_get_contents(self::path());
-            if ($charactersLimit > 0 && strlen($content) > $charactersLimit) {
-                $content = substr($content, 0, $charactersLimit);
+            preg_match_all("/##\s\[\d/", $content, $matches, PREG_OFFSET_CAPTURE);
+            if (count($matches) === 1 && count($matches[0]) > 1) {
+                $content = substr($content, 0, $matches[0][1][1]);
             }
         }
+
         return $content;
     }
 }
