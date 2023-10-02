@@ -11,7 +11,7 @@ class CreateDeployCommandTest extends TestCase
     use InteractsWithFakeClient;
 
     /** @test */
-    public function can_create_a_release_for_sentry()
+    public function can_create_a_release_for_sentry(): void
     {
         $this->setSentryEnvironmentSetUp();
 
@@ -26,7 +26,7 @@ class CreateDeployCommandTest extends TestCase
     }
 
     /** @test */
-    public function can_create_a_release_for_newrelic()
+    public function can_create_a_deploy_for_newrelic_without_changelog(): void
     {
         $this->setNewRelicEnvironmentSetUp();
 
@@ -37,15 +37,113 @@ class CreateDeployCommandTest extends TestCase
 
         $this->fakeClient->assertLastRequestHas('deployment', [
             'revision' => 'asdfg2',
-            'changelog' => 'Not available right now',
+            'changelog' => 'Not Available',
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
 
-        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'X-Api-Key: ' . config('app-version.newrelic.api_key'));
+        $this->assertEquals(
+            $this->fakeClient->lastRequest()['headers'][0],
+            'X-Api-Key: ' . config('app-version.newrelic.api_key')
+        );
     }
 
-    public function test_create_newrelic_deploy_with_last_changelog(): void
+    /** @test */
+    public function can_create_a_newrelic_deploy_with_wrong_changelog_name(): void
+    {
+        $changelogContent = '# Changelog
+            All notable changes to this project will be documented in this file.
+            
+            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+            and this project adheres to [Semantic Versioning](https://semver.org/).
+            
+            ## [Unreleased]
+            
+            ## [0.0.2 (2023-09-25)](https://bitbucket.org/)
+            
+            ### Updated
+            - Change number 1.
+            ';
+
+        $name = str_replace('CHANGELOG.md', 'changelog.md', Changelog::path());
+
+        file_put_contents($name, $changelogContent);
+
+        $this->setNewRelicEnvironmentSetUp();
+        $this->bindNewRelicFakeClient();
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')->assertExitCode(0);
+
+        $this->fakeClient->assertLastRequestHas('deployment', [
+            'revision' => 'asdfg2',
+            'changelog' => 'Not Available',
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]);
+
+        $this->assertEquals(
+            $this->fakeClient->lastRequest()['headers'][0],
+            'X-Api-Key: ' . config('app-version.newrelic.api_key')
+        );
+
+        unlink($name);
+    }
+
+    /** @test */
+    public function can_create_a_newrelic_deploy_with_wrong_format(): void
+    {
+        $changelogContent = '# Changelog
+            All notable changes to this project will be documented in this file.
+            
+            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+            and this project adheres to [Semantic Versioning](https://semver.org/).
+            
+            ## [Unreleased]
+            
+            ### 0.0.3 (2023-09-25)(https://bitbucket.org/)
+            
+            ### Updated
+            - Change number 1.
+            
+            ### [0.0.2 (2023-09-25)](https://bitbucket.org/)
+            
+            ### Updated
+            - Change number 1.
+            - Change number 2. [TK-002](https://app.clickup.com/)
+            
+            ## (0.0.1 (2023-09-10))(https://bitbucket.org/)
+            
+            ### Fixed
+            
+            - Fix api parameters
+            ';
+
+        file_put_contents(Changelog::path(), $changelogContent);
+
+        $this->setNewRelicEnvironmentSetUp();
+        $this->bindNewRelicFakeClient();
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')->assertExitCode(0);
+
+        $this->fakeClient->assertLastRequestHas('deployment', [
+            'revision' => 'asdfg2',
+            'changelog' => $changelogContent,
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]);
+
+        $this->assertEquals(
+            $this->fakeClient->lastRequest()['headers'][0],
+            'X-Api-Key: ' . config('app-version.newrelic.api_key')
+        );
+
+        unlink(Changelog::path());
+    }
+
+    /** @test */
+    public function can_create_a_newrelic_deploy_with_last_changelog(): void
     {
         $changelogContent = '# Changelog
             All notable changes to this project will be documented in this file.

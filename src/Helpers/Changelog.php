@@ -7,6 +7,8 @@ namespace PlacetoPay\AppVersion\Helpers;
  */
 class Changelog
 {
+    public const H2_REGEX = "/##\s\[\d/";
+
     public static function path(): string
     {
         return base_path('CHANGELOG.md');
@@ -19,7 +21,7 @@ class Changelog
 
     public static function read(): string
     {
-        $content = 'Not available right now';
+        $content = 'Not Available';
         if (self::exists()) {
             $content = self::getLastVersion(file_get_contents(self::path()));
         }
@@ -28,12 +30,11 @@ class Changelog
     }
 
     /**
-     * Returns the content up to the beginning of the second H2 of the Markdown
-     * that meets the following regular expression: /##\s\[\d/ .
+     * Returns the content up to the beginning of the second H2 of the Markdown that meets the H2_REGEX.
      */
     private static function getLastVersion(string $content): string
     {
-        preg_match_all("/##\s\[\d/", $content, $matches, PREG_OFFSET_CAPTURE);
+        preg_match_all(self::H2_REGEX, $content, $matches, PREG_OFFSET_CAPTURE);
         if (count($matches) === 1 && count($matches[0]) > 1) {
             $content = substr($content, 0, $matches[0][1][1]);
         }
