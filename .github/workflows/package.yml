@@ -2,9 +2,9 @@ name: Laravel Package
 
 on:
   push:
-    branches: [ "feature/newrelic_deploy", "master" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "feature/newrelic_deploy", "master" ]
+    branches: [ "master" ]
 
 jobs:
   laravel-tests:
