@@ -142,3 +142,5 @@ To access the sha
 ```php 
 PlacetoPay\AppVersion\VersionFile::readSha()
 ```
+### Note
+The Newrelic deploy will read the CHANGELOG.md as long as it meets the following standard [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).

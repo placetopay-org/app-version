@@ -2,13 +2,25 @@
 
 namespace PlacetoPay\AppVersion\Tests\Commands;
 
-use PlacetoPay\AppVersion\Helpers\Changelog;
 use PlacetoPay\AppVersion\Tests\Mocks\InteractsWithFakeClient;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
 class CreateDeployCommandTest extends TestCase
 {
     use InteractsWithFakeClient;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->expectedChangelog = '## [0.0.2 (2023-09-25)](https://bitbucket.org/)
+
+### Updated
+- Change number 1.
+- Change number 2. [TK-002](https://app.clickup.com/)
+
+';
+        $this->expectedDefaultMessage = 'Not Available';
+    }
 
     /** @test */
     public function can_create_a_release_for_sentry(): void
@@ -37,7 +49,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->fakeClient->assertLastRequestHas('deployment', [
             'revision' => 'asdfg2',
-            'changelog' => 'Not Available',
+            'changelog' => $this->expectedDefaultMessage,
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
@@ -51,23 +63,8 @@ class CreateDeployCommandTest extends TestCase
     /** @test */
     public function can_create_a_newrelic_deploy_with_wrong_changelog_name(): void
     {
-        $changelogContent = '# Changelog
-            All notable changes to this project will be documented in this file.
-            
-            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-            and this project adheres to [Semantic Versioning](https://semver.org/).
-            
-            ## [Unreleased]
-            
-            ## [0.0.2 (2023-09-25)](https://bitbucket.org/)
-            
-            ### Updated
-            - Change number 1.
-            ';
-
-        $name = str_replace('CHANGELOG.md', 'changelog.md', Changelog::path());
-
-        file_put_contents($name, $changelogContent);
+        $changelogName = base_path('changelog.md');
+        copy('tests/Mocks/CHANGELOG.md', $changelogName);
 
         $this->setNewRelicEnvironmentSetUp();
         $this->bindNewRelicFakeClient();
@@ -77,7 +74,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->fakeClient->assertLastRequestHas('deployment', [
             'revision' => 'asdfg2',
-            'changelog' => 'Not Available',
+            'changelog' => $this->expectedChangelog,
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
@@ -87,39 +84,14 @@ class CreateDeployCommandTest extends TestCase
             'X-Api-Key: ' . config('app-version.newrelic.api_key')
         );
 
-        unlink($name);
+        unlink($changelogName);
     }
 
     /** @test */
     public function can_create_a_newrelic_deploy_with_wrong_format(): void
     {
-        $changelogContent = '# Changelog
-            All notable changes to this project will be documented in this file.
-            
-            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-            and this project adheres to [Semantic Versioning](https://semver.org/).
-            
-            ## [Unreleased]
-            
-            ### 0.0.3 (2023-09-25)(https://bitbucket.org/)
-            
-            ### Updated
-            - Change number 1.
-            
-            ### [0.0.2 (2023-09-25)](https://bitbucket.org/)
-            
-            ### Updated
-            - Change number 1.
-            - Change number 2. [TK-002](https://app.clickup.com/)
-            
-            ## (0.0.1 (2023-09-10))(https://bitbucket.org/)
-            
-            ### Fixed
-            
-            - Fix api parameters
-            ';
-
-        file_put_contents(Changelog::path(), $changelogContent);
+        $changelogName = base_path('CHANGELOG.md');
+        copy('tests/Mocks/WRONG-CHANGELOG.md', $changelogName);
 
         $this->setNewRelicEnvironmentSetUp();
         $this->bindNewRelicFakeClient();
@@ -129,7 +101,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->fakeClient->assertLastRequestHas('deployment', [
             'revision' => 'asdfg2',
-            'changelog' => $changelogContent,
+            'changelog' => $this->expectedDefaultMessage,
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
@@ -139,49 +111,14 @@ class CreateDeployCommandTest extends TestCase
             'X-Api-Key: ' . config('app-version.newrelic.api_key')
         );
 
-        unlink(Changelog::path());
+        unlink($changelogName);
     }
 
     /** @test */
     public function can_create_a_newrelic_deploy_with_last_changelog(): void
     {
-        $changelogContent = '# Changelog
-            All notable changes to this project will be documented in this file.
-            
-            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-            and this project adheres to [Semantic Versioning](https://semver.org/).
-            
-            ## [Unreleased]
-            
-            ## [0.0.2 (2023-09-25)](https://bitbucket.org/)
-            
-            ### Updated
-            - Change number 1.
-            - Change number 2. [TK-002](https://app.clickup.com/)
-            
-            ## [0.0.1 (2023-09-10)](https://bitbucket.org/)
-            
-            ### Fixed
-            
-            - Fix api parameters';
-
-        $expectedChangelogContent = '# Changelog
-            All notable changes to this project will be documented in this file.
-            
-            The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-            and this project adheres to [Semantic Versioning](https://semver.org/).
-            
-            ## [Unreleased]
-            
-            ## [0.0.2 (2023-09-25)](https://bitbucket.org/)
-            
-            ### Updated
-            - Change number 1.
-            - Change number 2. [TK-002](https://app.clickup.com/)
-            
-            ';
-
-        file_put_contents(Changelog::path(), $changelogContent);
+        $changelogName = base_path('CHANGELOG.md');
+        copy('tests/Mocks/CHANGELOG.md', $changelogName);
 
         $this->setNewRelicEnvironmentSetUp();
         $this->bindNewRelicFakeClient();
@@ -191,7 +128,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->fakeClient->assertLastRequestHas('deployment', [
             'revision' => 'asdfg2',
-            'changelog' => $expectedChangelogContent,
+            'changelog' => $this->expectedChangelog,
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]);
@@ -201,6 +138,6 @@ class CreateDeployCommandTest extends TestCase
             'X-Api-Key: ' . config('app-version.newrelic.api_key')
         );
 
-        unlink(Changelog::path());
+        unlink($changelogName);
     }
 }
