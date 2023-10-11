@@ -7,7 +7,7 @@ namespace PlacetoPay\AppVersion\Helpers;
  */
 class Changelog
 {
-    public const H2_REGEX = "/##\s\[\d/";
+    public const H2_REGEX = "/^##\s\[v?(\d+\.){2}\d+.*]/m";
 
     public const DEFAULT_MESSAGE = 'Not Available';
 
@@ -42,7 +42,7 @@ class Changelog
     private static function getLastVersion(string $content): string
     {
         preg_match_all(self::H2_REGEX, $content, $matches, PREG_OFFSET_CAPTURE);
-        if (count($matches) === 1 && count($matches[0]) > 1) {
+        if (count($matches) === 2 && count($matches[0]) > 1) {
             $firstH2Position = $matches[0][0][1];
             $secondH2Position = $matches[0][1][1];
             return substr($content, $firstH2Position, $secondH2Position - $firstH2Position);
