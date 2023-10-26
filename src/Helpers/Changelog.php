@@ -13,7 +13,18 @@ class Changelog
 
     public const FILENAME_REGEX = "/(?i)changelog(?-i)\.md/";
 
-    public static function path(): string
+    public static function read(): string
+    {
+        $path = self::findFilePath();
+
+        if ($path) {
+            return self::getLastVersion(file_get_contents($path));
+        }
+
+        return self::DEFAULT_MESSAGE;
+    }
+
+    private static function findFilePath(): string
     {
         $basePath = base_path();
         $files = scandir($basePath);
@@ -24,16 +35,6 @@ class Changelog
         }
 
         return '';
-    }
-
-    public static function read(): string
-    {
-        $path = self::path();
-        if ($path) {
-            return self::getLastVersion(file_get_contents($path));
-        }
-
-        return self::DEFAULT_MESSAGE;
     }
 
     /**
