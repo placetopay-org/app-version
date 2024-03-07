@@ -5,18 +5,13 @@ declare(strict_types=1);
 namespace PlacetoPay\AppVersion\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use PlacetoPay\AppVersion\VersionFile;
 
 class VersionController extends Controller
 {
-    public function version(Request $request): JsonResponse
+    public function version(): JsonResponse
     {
-        if ($request->header('token') !== 'delivery') {
-            abort(404);
-        }
-
         if (VersionFile::exists()) {
             return response()
                 ->json(VersionFile::read())

@@ -22,4 +22,8 @@
     <logging>
         <log type="coverage-html" target="./tests/coverage"/>
     </logging>
+    <php>
+        <env name="APP_VERSION_USERNAME" value="admin"/>
+        <env name="APP_VERSION_PASSWORD" value="password"/>
+    </php>
 </phpunit>
