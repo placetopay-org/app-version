@@ -40,7 +40,7 @@ class CreateVersionFile extends Command
 
         VersionFile::generate([
             'sha' => $options['sha'] ?? exec('git rev-parse HEAD'),
-            'time' => $options['time'] ??  date('c'),
+            'time' => $options['time'] ?? date('c'),
             'branch' => $options['branch'] ?? exec('git symbolic-ref -q --short HEAD'),
             'version' => $options['tag'] ?? exec('git describe --tags'),
         ]);

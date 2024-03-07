@@ -9,7 +9,7 @@ class VersionTest extends TestCase
     /** @test */
     public function testItVisitsTheInformationEndpoint()
     {
-        $response = $this->get('/version',['token' => 'delivery']);
+        $response = $this->get('/version', ['token' => 'delivery']);
 
         $this->assertEquals(200, $response->status());
 
@@ -49,7 +49,7 @@ class VersionTest extends TestCase
     /** @test */
     public function testItVisitsTheInformationEndpointWithHeaderWrong()
     {
-        $response = $this->get('/version',['token' => 'wrong']);
+        $response = $this->get('/version', ['token' => 'wrong']);
 
         $this->assertEquals(404, $response->status());
     }
