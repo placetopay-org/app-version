@@ -9,7 +9,7 @@ class VersionTest extends TestCase
     /** @test */
     public function testItVisitsTheInformationEndpoint()
     {
-        $response = $this->get('/version');
+        $response = $this->get('/version',['token' => 'delivery']);
 
         $this->assertEquals(200, $response->status());
 
@@ -33,8 +33,24 @@ class VersionTest extends TestCase
 
         VersionFile::generate($input);
 
-        $this->get('/version')
+        $this->get('/version', ['token' => 'delivery'])
             ->assertSuccessful()
             ->assertJson($input);
+    }
+
+    /** @test */
+    public function testItVisitsTheInformationEndpointWithoutHeader()
+    {
+        $response = $this->get('/version');
+
+        $this->assertEquals(404, $response->status());
+    }
+
+    /** @test */
+    public function testItVisitsTheInformationEndpointWithHeaderWrong()
+    {
+        $response = $this->get('/version',['token' => 'wrong']);
+
+        $this->assertEquals(404, $response->status());
     }
 }
