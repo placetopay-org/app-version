@@ -14,7 +14,7 @@ class CreateVersionFile extends Command
      *
      * @var string
      */
-    protected $signature = 'app-version:create 
+    protected $signature = 'app-version:create
                             {--sha= : Commit hash being deployed}
                             {--time= : Timestamp of the current deployment formatted as YmdHis}
                             {--branch= : Branch being deployed}
