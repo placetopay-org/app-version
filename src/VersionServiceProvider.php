@@ -8,6 +8,7 @@ use PlacetoPay\AppVersion\Console\Commands\CreateDeploy;
 use PlacetoPay\AppVersion\Console\Commands\CreateRelease;
 use PlacetoPay\AppVersion\Console\Commands\CreateVersionFile;
 use PlacetoPay\AppVersion\Http\Controllers\VersionController;
+use PlacetoPay\AppVersion\Http\Middlewares\AuthenticateOnceWithBasicAuth;
 use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
 
@@ -20,7 +21,13 @@ class VersionServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->app['router']->get('/version', ['uses' => VersionController::class . '@version', 'as' => 'app.version']);
+        $this->app['router']->aliasMiddleware('auth.basic.once', AuthenticateOnceWithBasicAuth::class);
+
+        $this->app['router']->get('/version', [
+            'uses' => VersionController::class . '@version',
+            'as' => 'app.version',
+            'middleware' => ['auth.basic.once'],
+        ]);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -33,6 +40,8 @@ class VersionServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/app-version.php' => config_path('app-version.php'),
         ]);
+
+        $this->mergeConfigFrom(__DIR__ . '/../config/app-version.php', 'app-version');
     }
 
     public function register()

@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PlacetoPay\AppVersion\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use PlacetoPay\AppVersion\VersionFile;
 
 class VersionController extends Controller
 {
-    public function version()
+    public function version(): JsonResponse
     {
         if (VersionFile::exists()) {
             return response()

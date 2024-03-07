@@ -31,7 +31,8 @@
     }
   },
   "scripts": {
-    "php-cs-fixer": "vendor/bin/php-cs-fixer fix --config=.php_cs"
+    "php-cs-fixer": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php",
+    "test": "vendor/bin/phpunit"
   },
   "minimum-stability": "stable",
   "extra": {

@@ -9,7 +9,10 @@ class VersionTest extends TestCase
     /** @test */
     public function testItVisitsTheInformationEndpoint()
     {
-        $response = $this->get('/version');
+        $response = $this
+            ->get('/version', [
+                'Authorization' => 'Basic ' . base64_encode(config('app-version.username') . ':' . config('app-version.password')),
+            ]);
 
         $this->assertEquals(200, $response->status());
 
@@ -33,8 +36,18 @@ class VersionTest extends TestCase
 
         VersionFile::generate($input);
 
-        $this->get('/version')
+        $this->get('/version', [
+            'Authorization' => 'Basic ' . base64_encode(config('app-version.username') . ':' . config('app-version.password')),
+        ])
             ->assertSuccessful()
             ->assertJson($input);
+    }
+
+    /** @test */
+    public function testItVisitsTheInformationEndpointWithoutAuth()
+    {
+        $response = $this->get('/version');
+
+        $this->assertEquals(401, $response->status());
     }
 }
