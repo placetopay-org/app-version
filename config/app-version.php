@@ -48,8 +48,8 @@ return [
      */
     'version' => \PlacetoPay\AppVersion\VersionFile::read(),
 
-    /**
-     * the credentials to be able to see the deployed version.
+    /*
+     * The credentials to be able to see the deployed version.
      */
     'username' => env('APP_VERSION_USERNAME', 'admin'),
     'password' => env('APP_VERSION_PASSWORD', 'Testing123!'),
