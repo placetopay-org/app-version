@@ -49,8 +49,7 @@ return [
     'version' => \PlacetoPay\AppVersion\VersionFile::read(),
 
     /*
-     * The credentials to be able to see the deployed version.
+     * The value of query param token to be able showed the deployed version.
      */
-    'username' => env('APP_VERSION_USERNAME', 'admin'),
-    'password' => env('APP_VERSION_PASSWORD', 'Testing123!'),
+    'token' => env('APP_VERSION_TOKEN', 'delivery'),
 ];

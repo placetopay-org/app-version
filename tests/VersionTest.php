@@ -10,9 +10,7 @@ class VersionTest extends TestCase
     public function testItVisitsTheInformationEndpoint()
     {
         $response = $this
-            ->get('/version', [
-                'Authorization' => 'Basic ' . base64_encode(config('app-version.username') . ':' . config('app-version.password')),
-            ]);
+            ->get('/version?token=' . config('app-version.token'));
 
         $this->assertEquals(200, $response->status());
 
@@ -36,18 +34,26 @@ class VersionTest extends TestCase
 
         VersionFile::generate($input);
 
-        $this->get('/version', [
-            'Authorization' => 'Basic ' . base64_encode(config('app-version.username') . ':' . config('app-version.password')),
-        ])
+        $this->get('/version?token=' . config('app-version.token'))
             ->assertSuccessful()
             ->assertJson($input);
     }
 
     /** @test */
-    public function testItVisitsTheInformationEndpointWithoutAuth()
+
+    /** @test */
+    public function testItVisitsTheInformationEndpointWithoutQueryParam()
     {
         $response = $this->get('/version');
 
-        $this->assertEquals(401, $response->status());
+        $this->assertEquals(404, $response->status());
+    }
+
+    /** @test */
+    public function testItVisitsTheInformationEndpointWithQueryParamWrong()
+    {
+        $response = $this->get('/version?token=wrong');
+
+        $this->assertEquals(404, $response->status());
     }
 }
