@@ -44,7 +44,7 @@ class VersionTest extends TestCase
     }
 
     /** @test */
-    public function testItVisitsTheInformationEndpointWithoutHeader()
+    public function testItVisitsTheInformationEndpointWithoutAuth()
     {
         $response = $this->get('/version');
 
