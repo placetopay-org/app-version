@@ -3,6 +3,7 @@
 namespace PlacetoPay\AppVersion\NewRelic;
 
 use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
+use PlacetoPay\AppVersion\Helpers\Changelog;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
 
 class NewRelicApi
@@ -46,7 +47,7 @@ class NewRelicApi
         return $this->client->post($this->constructUrl(), [
             'deployment' => [
                 'revision' => $version,
-                'changelog' => 'Not available right now',
+                'changelog' => Changelog::read(),
                 'description' => 'Commit on ' . $environment,
                 'user' => 'Not available right now',
             ],
