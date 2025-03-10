@@ -34,13 +34,37 @@ class CreateDeployCommandTest extends TestCase
 
         $this->artisan('app-version:create-deploy')->assertExitCode(0);
 
-        $this->fakeClient->assertLastRequestHas('deployment', [
-            'revision' => 'asdfg2',
-            'changelog' => 'Not available right now',
-            'description' => 'Commit on testing',
-            'user' => 'Not available right now',
-        ]);
+        $this->fakeClient->assertLastRequestHas('query', <<<GRAPHQL
+        mutation {
+          changeTrackingCreateDeployment(
+            deployment: {
+              version: "asdfg2",
+              entityGuid: "",
+              user: "Not available right now",
+              timestamp: 0,
+              groupId: "",
+              description: "Commit on testing",
+              deploymentType: BASIC,
+              deepLink: "",
+              commit: "",
+              changelog: "Not available right now"
+            }
+          ) {
+            version
+            user
+            timestamp
+            groupId
+            entityGuid
+            description
+            deploymentType
+            deploymentId
+            deepLink
+            commit
+            changelog
+          }
+        }
+        GRAPHQL);
 
-        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'X-Api-Key: ' . config('app-version.newrelic.api_key'));
+        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 }
