@@ -40,6 +40,8 @@ return [
          * The NewRelic application id, you can get it from the URL in the APM
          */
         'application_id' => env('APP_VERSION_NEWRELIC_APPLICATION_ID'),
+
+        'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'),
     ],
 
     /*
