@@ -40,27 +40,18 @@ class CreateDeployCommandTest extends TestCase
             deployment: {
               version: "asdfg2",
               entityGuid: "",
-              user: "Not available right now",
-              timestamp: 0,
-              groupId: "",
-              description: "Commit on testing",
-              deploymentType: BASIC,
-              deepLink: "",
-              commit: "",
               changelog: "Not available right now"
+              description: "Commit on testing",
+              user: "Not available right now",
             }
           ) {
-            version
-            user
-            timestamp
-            groupId
-            entityGuid
-            description
-            deploymentType
             deploymentId
-            deepLink
-            commit
+            entityGuid
             changelog
+            description
+            version
+            timestamp
+            user
           }
         }
         GRAPHQL);

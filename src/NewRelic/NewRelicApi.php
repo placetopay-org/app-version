@@ -47,7 +47,6 @@ class NewRelicApi
 
         return $this->client->post(self::API_URL, [
             'query' => $this->buildGraphQLQuery($version, $environment),
-            'variables' => '',
         ]);
     }
 
@@ -60,26 +59,18 @@ class NewRelicApi
             deployment: {
               version: "$version",
               entityGuid: "$entityGuid",
-              user: "Not available right now",
-              groupId: "",
-              description: "Commit on $environment",
-              deploymentType: BASIC,
-              deepLink: "",
-              commit: "",
               changelog: "Not available right now"
+              description: "Commit on $environment",
+              user: "Not available right now",
             }
           ) {
-            version
-            user
-            timestamp
-            groupId
-            entityGuid
-            description
-            deploymentType
             deploymentId
-            deepLink
-            commit
+            entityGuid
             changelog
+            description
+            version
+            timestamp
+            user
           }
         }
         GRAPHQL;
@@ -91,11 +82,8 @@ class NewRelicApi
             return $this->entityGuid;
         }
 
-        $query = $this->buildEntitySearchQuery();
-
         $response = $this->client->post(self::API_URL, [
-            'query' => $query,
-            'variables' => '',
+            'query' => $this->buildEntitySearchQuery(),
         ]);
 
         return $this->extractEntityGuid($response);
@@ -103,30 +91,32 @@ class NewRelicApi
 
     private function buildEntitySearchQuery(): string
     {
-        return '{
-        actor {
-            entitySearch(query: "domainId=' . $this->applicationId . '") {
-                count
-                query
-                results {
-                    entities {
-                        entityType
-                        name
-                        guid
+        return <<<GRAPHQL
+        {
+            actor {
+                entitySearch(query: "domainId=$this->applicationId") {
+                    count
+                    query
+                    results {
+                        entities {
+                            entityType
+                            name
+                            guid
+                        }
                     }
                 }
             }
         }
-    }';
+        GRAPHQL;
     }
 
     private function extractEntityGuid($response)
     {
         if ($response
-            && isset($response['data']['actor']['entitySearch']['results']['entities'])
-            && count($entities = $response['data']['actor']['entitySearch']['results']['entities']) > 0
+            && isset($response['data']['actor']['entitySearch']['count'])
+            && $response['data']['actor']['entitySearch']['count'] > 0
         ) {
-            return $entities[0]['guid'];
+            return $response['data']['actor']['entitySearch']['results']['entities'][0]['guid'];
         }
 
         return null;

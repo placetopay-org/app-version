@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Tests\Mocks;
 
+use PlacetoPay\AppVersion\Helpers\HttpClient;
 use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
 
@@ -10,7 +11,7 @@ trait InteractsWithFakeClient
     /**
      * @var \PlacetoPay\AppVersion\Tests\Mocks\FakeSentryClient
      */
-    protected $fakeClient;
+    protected HttpClient $fakeClient;
 
     public function bindSentryFakeClient(): void
     {
