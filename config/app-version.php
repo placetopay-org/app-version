@@ -41,6 +41,11 @@ return [
          */
         'application_id' => env('APP_VERSION_NEWRELIC_APPLICATION_ID'),
 
+        /*
+         * The entityGuid value is the unique identifier assigned by New Relic to your system components during instrumentation and setup processes.
+         * For more information on New Relic Entities and finding Entity GUIDs, see this guide.
+         * https://docs.newrelic.com/docs/new-relic-solutions/new-relic-one/core-concepts/what-entity-new-relic/#find
+         */
         'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'),
     ],
 
