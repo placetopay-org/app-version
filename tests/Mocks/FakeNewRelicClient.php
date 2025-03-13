@@ -26,15 +26,21 @@ class FakeNewRelicClient extends HttpClient
         return new Response([], $this->nextResponse, '');
     }
 
-    /**
-     * @param $key
-     * @param null $expectedContent
-     */
     public function assertLastRequestHas($key, $expectedContent = null)
+    {
+        $this->assertRequestHas($key, 'last', $expectedContent);
+    }
+
+    public function assertFirstRequestHas($key, $expectedContent = null)
+    {
+        $this->assertRequestHas($key, 'first', $expectedContent);
+    }
+
+    public function assertRequestHas(string $key, string $position, $expectedContent = null)
     {
         Assert::assertGreaterThan(0, count($this->requests), 'There were no requests sent');
 
-        $lastPayload = Arr::last($this->requests)['arguments'];
+        $lastPayload = Arr::$position($this->requests)['arguments'];
 
         Assert::assertTrue(Arr::has($lastPayload, $key), 'The last payload doesnt have the expected key. ' . print_r($lastPayload, true));
 
