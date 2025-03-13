@@ -65,12 +65,7 @@ class CreateDeployCommandTest extends TestCase
             }
           ) {
             deploymentId
-            entityGuid
-            changelog
-            description
-            version
             timestamp
-            user
           }
         }
         GRAPHQL);

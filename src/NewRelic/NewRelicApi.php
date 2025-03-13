@@ -65,12 +65,7 @@ class NewRelicApi
             }
           ) {
             deploymentId
-            entityGuid
-            changelog
-            description
-            version
             timestamp
-            user
           }
         }
         GRAPHQL;
