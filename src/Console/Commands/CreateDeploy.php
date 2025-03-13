@@ -67,7 +67,9 @@ class CreateDeploy extends Command
     {
         $apiKey = $config->get('app-version.newrelic.api_key');
         $applicationId = $config->get('app-version.newrelic.application_id');
-        if ($apiKey && $applicationId) {
+        $entityGuid = $config->get('app-version.newrelic.entity_guid');
+
+        if ($apiKey && ($applicationId || $entityGuid)) {
             $newrelic = ApiFactory::newRelicApi();
             $newrelic->createDeploy(
                 $version,
