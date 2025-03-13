@@ -4,6 +4,7 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Validator;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
@@ -66,15 +67,36 @@ class CreateDeploy extends Command
     private function newrelicDeploy(Repository $config, string $version): void
     {
         $apiKey = $config->get('app-version.newrelic.api_key');
-        $applicationId = $config->get('app-version.newrelic.application_id');
         $entityGuid = $config->get('app-version.newrelic.entity_guid');
 
-        if ($apiKey && ($applicationId || $entityGuid)) {
-            $newrelic = ApiFactory::newRelicApi();
-            $newrelic->createDeploy(
-                $version,
-                $config->get('app.env')
-            );
+        if (!$this->isValidConfigurationData($apiKey, $entityGuid)) {
+            return;
         }
+
+        $newrelic = ApiFactory::newRelicApi();
+        $newrelic->createDeploy(
+            $version,
+            $config->get('app.env')
+        );
+    }
+
+    private function isValidConfigurationData($apiKey, $entityGuid): bool
+    {
+        $validator = Validator::make([
+            'api_key' => $apiKey,
+            'entity_guid' => $entityGuid,
+        ], [
+            'api_key' => 'required|string',
+            'entity_guid' => 'required|string',
+        ]);
+
+        try {
+            $validator->validate();
+        } catch (\Exception $e) {
+            $this->error("NewRelic configuration is not valid: \n" . implode("\n", $validator->errors()->all()));
+            return false;
+        }
+
+        return true;
     }
 }
