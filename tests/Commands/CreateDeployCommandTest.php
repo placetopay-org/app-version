@@ -34,24 +34,6 @@ class CreateDeployCommandTest extends TestCase
 
         $this->artisan('app-version:create-deploy')->assertExitCode(0);
 
-        $applicationId = config('app-version.newrelic.application_id');
-        $this->fakeClient->assertFirstRequestHas('query',  <<<GRAPHQL
-        {
-            actor {
-                entitySearch(query: "domainId=$applicationId") {
-                    count
-                    query
-                    results {
-                        entities {
-                            entityType
-                            name
-                            guid
-                        }
-                    }
-                }
-            }
-        }
-        GRAPHQL);
 
         $this->fakeClient->assertLastRequestHas('query', <<<GRAPHQL
         mutation {

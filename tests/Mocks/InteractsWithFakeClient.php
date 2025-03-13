@@ -26,7 +26,7 @@ trait InteractsWithFakeClient
     {
         $this->fakeClient = new FakeNewRelicClient();
 
-        $fakeNewRelic = new NewRelicApi($this->fakeClient, config('app-version.newrelic.api_key'), config('app-version.newrelic.application_id'));
+        $fakeNewRelic = new NewRelicApi($this->fakeClient, config('app-version.newrelic.api_key'));
 
         $this->swap(NewRelicApi::class, $fakeNewRelic);
     }

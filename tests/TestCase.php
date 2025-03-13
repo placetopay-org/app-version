@@ -35,7 +35,7 @@ abstract class TestCase extends Orchestra
     {
         config()->set('app-version.newrelic', [
             'api_key' => 'abcdefg',
-            'application_id' => 'placetopay',
+            'entity_guid' => 'placetopay',
         ]);
 
         config()->set('app-version.version.sha', 'asdfg2');
