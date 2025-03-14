@@ -4,6 +4,7 @@ namespace PlacetoPay\AppVersion\NewRelic;
 
 use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
+use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class NewRelicApi
 {
@@ -36,6 +37,9 @@ class NewRelicApi
         return new self(new HttpClient(), $apiKey, $entityGuid);
     }
 
+    /**
+     * @throws BadResponseCode
+     */
     public function createDeploy(string $version, string $environment)
     {
         $this->client->addHeaders([

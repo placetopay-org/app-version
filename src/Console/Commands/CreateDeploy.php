@@ -5,11 +5,15 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-
+use Illuminate\Validation\Validator as DataValidator;
 class CreateDeploy extends Command
 {
+    private const GENERAL = 'General';
+    private const NEWRELIC = 'Newrelic';
+    private const SENTRY = 'Sentry';
     /**
      * The name and signature of the console command.
      *
@@ -30,18 +34,24 @@ class CreateDeploy extends Command
      */
     public function handle(Repository $config): int
     {
+
         try {
+            if (!$this->isValidGeneralData($config)) {
+                return 0;
+            }
             $appVersion = $config->get('app-version.version.sha');
 
-            if ($appVersion) {
+            if ($this->isValidSentryConfigurationData($config)) {
                 $this->sentryDeploy($config, $appVersion);
+            }
+
+            if ($this->isValidNewRelicConfigurationData($config)) {
                 $this->newrelicDeploy($config, $appVersion);
             }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
             return 1;
         }
-
         return 0;
     }
 
@@ -52,27 +62,18 @@ class CreateDeploy extends Command
      */
     private function sentryDeploy(Repository $config, string $version): void
     {
-        $authToken = $config->get('app-version.sentry.auth_token');
-        $organization = $config->get('app-version.sentry.organization');
-
-        if ($authToken && $organization) {
-            $sentry = ApiFactory::sentryApi();
-            $sentry->createDeploy(
-                $version,
-                $config->get('app.env')
-            );
-        }
+        $sentry = ApiFactory::sentryApi();
+        $sentry->createDeploy(
+            $version,
+            $config->get('app.env')
+        );
     }
 
+    /**
+     * @throws BadResponseCode
+     */
     private function newrelicDeploy(Repository $config, string $version): void
     {
-        $apiKey = $config->get('app-version.newrelic.api_key');
-        $entityGuid = $config->get('app-version.newrelic.entity_guid');
-
-        if (!$this->isValidConfigurationData($apiKey, $entityGuid)) {
-            return;
-        }
-
         $newrelic = ApiFactory::newRelicApi();
         $newrelic->createDeploy(
             $version,
@@ -80,20 +81,50 @@ class CreateDeploy extends Command
         );
     }
 
-    private function isValidConfigurationData($apiKey, $entityGuid): bool
+    private function isValidNewRelicConfigurationData(Repository $config): bool
     {
         $validator = Validator::make([
-            'api_key' => $apiKey,
-            'entity_guid' => $entityGuid,
+            'newrelic.api_key' => $config->get('app-version.newrelic.api_key'),
+            'newrelic.entity_guid' => $config->get('app-version.newrelic.entity_guid'),
         ], [
-            'api_key' => 'required|string',
-            'entity_guid' => 'required|string',
+            'newrelic.api_key' => 'required|string',
+            'newrelic.entity_guid' => 'required|string',
         ]);
 
+        return $this->validate(self::NEWRELIC, $validator);
+
+    }
+
+    private function isValidSentryConfigurationData(Repository $config): bool
+    {
+        $validator = Validator::make([
+            'sentry.auth_token' => $config->get('app-version.sentry.auth_token'),
+            'sentry.organization' => $config->get('app-version.sentry.organization'),
+        ], [
+            'sentry.auth_token' => 'required|string',
+            'sentry.organization' => 'required|string',
+        ]);
+
+        return $this->validate(self::SENTRY, $validator);
+    }
+
+    private function isValidGeneralData(Repository $config): bool
+    {
+        $validator = Validator::make([
+            'version.sha' => $config->get('app-version.version.sha'),
+        ], [
+            'version.sha' => 'required|string',
+        ]);
+
+        return $this->validate(self::GENERAL, $validator);
+    }
+
+    private function validate(string $deployType, DataValidator $validator): bool
+    {
         try {
             $validator->validate();
-        } catch (\Exception $e) {
-            $this->error("NewRelic configuration is not valid: \n" . implode("\n", $validator->errors()->all()));
+        } catch (ValidationException $e) {
+            $this->error("$deployType configuration is not valid: \n" . implode("\n", $validator->errors()->all()));
             return false;
         }
 
