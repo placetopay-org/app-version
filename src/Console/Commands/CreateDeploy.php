@@ -14,6 +14,7 @@ class CreateDeploy extends Command
     private const GENERAL = 'General';
     private const NEWRELIC = 'Newrelic';
     private const SENTRY = 'Sentry';
+
     /**
      * The name and signature of the console command.
      *
@@ -28,10 +29,6 @@ class CreateDeploy extends Command
      */
     protected $description = 'Creates a new deploy on the available sources';
 
-    /**
-     * @param Repository $config
-     * @return int
-     */
     public function handle(Repository $config): int
     {
 
@@ -84,8 +81,10 @@ class CreateDeploy extends Command
     private function isValidNewRelicConfigurationData(Repository $config): bool
     {
         $validator = Validator::make([
-            'newrelic.api_key' => $config->get('app-version.newrelic.api_key'),
-            'newrelic.entity_guid' => $config->get('app-version.newrelic.entity_guid'),
+            'newrelic' => [
+                'api_key' => $config->get('app-version.newrelic.api_key'),
+                'entity_guid' => $config->get('app-version.newrelic.entity_guid'),
+            ]
         ], [
             'newrelic.api_key' => 'required|string',
             'newrelic.entity_guid' => 'required|string',
@@ -98,8 +97,9 @@ class CreateDeploy extends Command
     private function isValidSentryConfigurationData(Repository $config): bool
     {
         $validator = Validator::make([
-            'sentry.auth_token' => $config->get('app-version.sentry.auth_token'),
-            'sentry.organization' => $config->get('app-version.sentry.organization'),
+            'sentry' => [
+                'auth_token' => $config->get('app-version.sentry.auth_token'),
+                'organization' => $config->get('app-version.sentry.organization'),]
         ], [
             'sentry.auth_token' => 'required|string',
             'sentry.organization' => 'required|string',
@@ -111,7 +111,8 @@ class CreateDeploy extends Command
     private function isValidGeneralData(Repository $config): bool
     {
         $validator = Validator::make([
-            'version.sha' => $config->get('app-version.version.sha'),
+            'version' => [
+                'sha' => $config->get('app-version.version.sha')]
         ], [
             'version.sha' => 'required|string',
         ]);
@@ -124,7 +125,7 @@ class CreateDeploy extends Command
         try {
             $validator->validate();
         } catch (ValidationException $e) {
-            $this->error("$deployType configuration is not valid: \n" . implode("\n", $validator->errors()->all()));
+            $this->warn("$deployType configuration is not valid:\n" . implode("\n", $validator->errors()->all()));
             return false;
         }
 
