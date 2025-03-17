@@ -105,7 +105,8 @@ class CreateDeploy extends Command
         $validator = Validator::make([
             'sentry' => [
                 'auth_token' => $config->get('app-version.sentry.auth_token'),
-                'organization' => $config->get('app-version.sentry.organization'),]
+                'organization' => $config->get('app-version.sentry.organization'),
+            ]
         ], [
             'sentry.auth_token' => 'required|string',
             'sentry.organization' => 'required|string',
@@ -118,7 +119,8 @@ class CreateDeploy extends Command
     {
         $validator = Validator::make([
             'version' => [
-                'sha' => $config->get('app-version.version.sha')]
+                'sha' => $config->get('app-version.version.sha'),
+            ]
         ], [
             'version.sha' => 'required|string',
         ]);
