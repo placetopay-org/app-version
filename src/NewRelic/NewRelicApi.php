@@ -10,29 +10,19 @@ class NewRelicApi
 {
     public const API_URL = 'https://api.newrelic.com/graphql';
 
-    /**
-     * @var HttpClient
-     */
-    private $client;
+    private HttpClient $client;
 
-    private $apiKey;
-    /**
-     * @var string
-     */
-    private ?string $entityGuid;
+    private string $apiKey;
+    private string $entityGuid;
 
-    public function __construct(HttpClient $client, string $apiKey, ?string $entityGuid = null)
+    public function __construct(HttpClient $client, string $apiKey, string $entityGuid)
     {
         $this->client = $client;
         $this->apiKey = $apiKey;
         $this->entityGuid = $entityGuid;
     }
 
-    /**
-     * @param string $apiKey
-     * @return \PlacetoPay\AppVersion\Sentry\SentryApi
-     */
-    public static function create(string $apiKey, ?string $entityGuid = null): self
+    public static function create(string $apiKey, string $entityGuid): self
     {
         return new self(new HttpClient(), $apiKey, $entityGuid);
     }

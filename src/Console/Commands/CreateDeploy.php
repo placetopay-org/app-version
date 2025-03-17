@@ -9,11 +9,12 @@ use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 use Illuminate\Validation\Validator as DataValidator;
+
 class CreateDeploy extends Command
 {
-    private const GENERAL = 'General';
-    private const NEWRELIC = 'Newrelic';
-    private const SENTRY = 'Sentry';
+    private const GENERAL = 'GENERAL CONFIGURATION';
+    private const NEWRELIC = 'NEWRELIC';
+    private const SENTRY = 'SENTRY';
 
     /**
      * The name and signature of the console command.
@@ -49,6 +50,7 @@ class CreateDeploy extends Command
             $this->error($e->getMessage());
             return 1;
         }
+
         return 0;
     }
 
@@ -64,6 +66,8 @@ class CreateDeploy extends Command
             $version,
             $config->get('app.env')
         );
+
+        $this->comment('[SENTRY DEPLOY] Deploy created successfully');
     }
 
     /**
@@ -76,6 +80,8 @@ class CreateDeploy extends Command
             $version,
             $config->get('app.env')
         );
+
+        $this->comment('[NEWRELIC DEPLOY] Deploy created successfully');
     }
 
     private function isValidNewRelicConfigurationData(Repository $config): bool
@@ -125,7 +131,10 @@ class CreateDeploy extends Command
         try {
             $validator->validate();
         } catch (ValidationException $e) {
-            $this->warn("$deployType configuration is not valid:\n" . implode("\n", $validator->errors()->all()));
+            $this->warn(
+                "[$deployType DEPLOY] configuration is not valid:\n"
+                . implode("\n", $validator->errors()->all())
+            );
             return false;
         }
 
