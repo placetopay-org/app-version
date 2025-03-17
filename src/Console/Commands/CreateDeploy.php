@@ -134,8 +134,8 @@ class CreateDeploy extends Command
             $validator->validate();
         } catch (ValidationException $e) {
             $this->warn(
-                "[$deployType DEPLOY] configuration is not valid:\n"
-                . implode("\n", $validator->errors()->all())
+                "[$deployType DEPLOY] configuration is not valid:\n\t- "
+                . implode("\n\t- ", $validator->errors()->all())
             );
             return false;
         }
