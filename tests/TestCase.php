@@ -7,6 +7,12 @@ use PlacetoPay\AppVersion\VersionServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config()->set('app.env', 'testing');
+    }
+
     /**
      * Get package providers.
      *
