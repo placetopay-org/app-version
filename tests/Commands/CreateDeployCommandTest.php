@@ -38,8 +38,7 @@ class CreateDeployCommandTest extends TestCase
             ->assertExitCode(0)
             ->expectsOutput('[NEWRELIC DEPLOY] Deploy created successfully');
 
-
-        $this->fakeClient->assertLastRequestHas('query', <<<GRAPHQL
+        $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
         mutation {
           changeTrackingCreateDeployment(
             deployment: {
@@ -62,7 +61,6 @@ class CreateDeployCommandTest extends TestCase
     /** @test */
     public function can_not_create_a_release_if_has_invalid_version_data()
     {
-
         config()->set('app-version.version.sha', '');
 
         $this
@@ -94,5 +92,4 @@ class CreateDeployCommandTest extends TestCase
             ->expectsOutput("[NEWRELIC DEPLOY] configuration is not valid:\n\t- The newrelic.api key field is required.\n\t- The newrelic.entity guid field is required.")
             ->doesntExpectOutput("[GENERAL CONFIGURATION] configuration is not valid:\n\t- The version.sha field is required.");
     }
-
 }

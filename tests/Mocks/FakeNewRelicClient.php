@@ -60,9 +60,9 @@ class FakeNewRelicClient extends HttpClient
         if ($case === 'success_deploy') {
             $this->nextResponse = [
                 'data' => [
-                    "changeTrackingCreateDeployment" => [
-                        "deploymentId" => "8f34ef95-a457-4ff1-b4ef-c43105ec3d13",
-                        "timestamp" => 1742230186539,
+                    'changeTrackingCreateDeployment' => [
+                        'deploymentId' => '8f34ef95-a457-4ff1-b4ef-c43105ec3d13',
+                        'timestamp' => 1742230186539,
                     ],
                 ],
             ];

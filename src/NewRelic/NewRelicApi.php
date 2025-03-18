@@ -65,5 +65,4 @@ class NewRelicApi
     {
         throw new UnsupportedException('Action createRelease not supported for NewRelic');
     }
-
 }

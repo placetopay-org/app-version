@@ -6,9 +6,9 @@ use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator as DataValidator;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-use Illuminate\Validation\Validator as DataValidator;
 
 class CreateDeploy extends Command
 {
@@ -32,7 +32,6 @@ class CreateDeploy extends Command
 
     public function handle(Repository $config): int
     {
-
         try {
             if (!$this->isValidGeneralData($config)) {
                 return 0;
@@ -90,14 +89,13 @@ class CreateDeploy extends Command
             'newrelic' => [
                 'api_key' => $config->get('app-version.newrelic.api_key'),
                 'entity_guid' => $config->get('app-version.newrelic.entity_guid'),
-            ]
+            ],
         ], [
             'newrelic.api_key' => 'required|string',
             'newrelic.entity_guid' => 'required|string',
         ]);
 
         return $this->validate(self::NEWRELIC, $validator);
-
     }
 
     private function isValidSentryConfigurationData(Repository $config): bool
@@ -106,7 +104,7 @@ class CreateDeploy extends Command
             'sentry' => [
                 'auth_token' => $config->get('app-version.sentry.auth_token'),
                 'organization' => $config->get('app-version.sentry.organization'),
-            ]
+            ],
         ], [
             'sentry.auth_token' => 'required|string',
             'sentry.organization' => 'required|string',
@@ -120,7 +118,7 @@ class CreateDeploy extends Command
         $validator = Validator::make([
             'version' => [
                 'sha' => $config->get('app-version.version.sha'),
-            ]
+            ],
         ], [
             'version.sha' => 'required|string',
         ]);
