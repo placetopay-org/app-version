@@ -6,7 +6,6 @@ use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Validator as DataValidator;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
@@ -18,7 +17,7 @@ class CreateDeploy extends Command
 
     private const RULES = [
         self::GENERAL => [
-            'version.sha' => 'required|string'
+            'version.sha' => 'required|string',
         ],
         self::SENTRY => [
             'sentry.auth_token' => 'required|string',
@@ -53,7 +52,7 @@ class CreateDeploy extends Command
                 $this->info('you must execute app-version:create command before');
                 return 0;
             }
-            
+
             $sha = $appVersion['version']['sha'];
             if ($this->validateData(self::SENTRY, $appVersion)) {
                 $this->sentryDeploy($config, $sha);
@@ -104,7 +103,7 @@ class CreateDeploy extends Command
     {
         if (!$rules = self::RULES[$type]) {
             return true;
-        };
+        }
 
         $validator = Validator::make($data, $rules);
 
