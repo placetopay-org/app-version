@@ -44,7 +44,7 @@ class CreateDeploy extends Command
     {
         try {
             $appVersion = $config->get('app-version');
-            $versionSha = $appVersion['version']['sha'];
+            $versionSha = is_array($appVersion['version']) ? $appVersion['version']['sha'] : $appVersion['version'];
 
             if (!$versionSha) {
                 $this->error('You must execute app-version:create command before.');

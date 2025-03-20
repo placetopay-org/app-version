@@ -44,6 +44,6 @@ abstract class TestCase extends Orchestra
             'entity_guid' => 'placetopay',
         ]);
 
-        config()->set('app-version.version.sha', 'asdfg2');
+        config()->set('app-version.version', 'asdfg2');
     }
 }
