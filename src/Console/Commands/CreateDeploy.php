@@ -100,56 +100,12 @@ class CreateDeploy extends Command
         $this->comment('[NEWRELIC DEPLOY] Deploy created successfully');
     }
 
-    private function isValidNewRelicConfigurationData(array $config): bool
-    {
-        $validator = Validator::make($config,[
-            'newrelic.api_key' => 'required|string',
-            'newrelic.entity_guid' => 'required|string',
-        ]);
-
-        return $this->validate(self::NEWRELIC, $validator);
-    }
-
-    private function isValidSentryConfigurationData(array $config): bool
-    {
-        $validator = Validator::make($config, [
-            'sentry.auth_token' => 'required|string',
-            'sentry.organization' => 'required|string',
-        ]);
-
-        return $this->validate(self::SENTRY, $validator);
-    }
-
-    private function isValidGeneralData(array $config): bool
-    {
-        $validator = Validator::make($config, [
-            'version.sha' => 'required|string',
-        ]);
-
-        return $this->validate(self::GENERAL, $validator);
-    }
-
-    private function validate(string $deployType, DataValidator $validator): bool
-    {
-        try {
-            $validator->validate();
-        } catch (ValidationException $e) {
-            $this->warn(
-                "[$deployType DEPLOY] configuration is not valid:\n\t- "
-                . implode("\n\t- ", $validator->errors()->all())
-            );
-            return false;
-        }
-
-        return true;
-    }
-
     private function validateData(string $type, array $data): bool
     {
         if (!$rules = self::RULES[$type]) {
-            dd($type);
             return true;
         };
+
         $validator = Validator::make($data, $rules);
 
         try {
