@@ -16,6 +16,20 @@ class CreateDeploy extends Command
     private const NEWRELIC = 'NEWRELIC';
     private const SENTRY = 'SENTRY';
 
+    private const RULES = [
+        self::GENERAL => [
+            'version.sha' => 'required|string'
+        ],
+        self::SENTRY => [
+            'sentry.auth_token' => 'required|string',
+            'sentry.organization' => 'required|string',
+        ],
+        self::NEWRELIC => [
+            'newrelic.api_key' => 'required|string',
+            'newrelic.entity_guid' => 'required|string',
+        ],
+    ];
+
     /**
      * The name and signature of the console command.
      *
@@ -33,17 +47,20 @@ class CreateDeploy extends Command
     public function handle(Repository $config): int
     {
         try {
-            if (!$this->isValidGeneralData($config)) {
+            $appVersion = $config->get('app-version');
+
+            if (!$this->validateData(self::GENERAL, $appVersion)) {
+                $this->info('you must execute app-version:create command before');
                 return 0;
             }
-            $appVersion = $config->get('app-version.version.sha');
-
-            if ($this->isValidSentryConfigurationData($config)) {
-                $this->sentryDeploy($config, $appVersion);
+            
+            $sha = $appVersion['version']['sha'];
+            if ($this->validateData(self::SENTRY, $appVersion)) {
+                $this->sentryDeploy($config, $sha);
             }
 
-            if ($this->isValidNewRelicConfigurationData($config)) {
-                $this->newrelicDeploy($config, $appVersion);
+            if ($this->validateData(self::NEWRELIC, $appVersion)) {
+                $this->newrelicDeploy($config, $sha);
             }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
@@ -83,14 +100,9 @@ class CreateDeploy extends Command
         $this->comment('[NEWRELIC DEPLOY] Deploy created successfully');
     }
 
-    private function isValidNewRelicConfigurationData(Repository $config): bool
+    private function isValidNewRelicConfigurationData(array $config): bool
     {
-        $validator = Validator::make([
-            'newrelic' => [
-                'api_key' => $config->get('app-version.newrelic.api_key'),
-                'entity_guid' => $config->get('app-version.newrelic.entity_guid'),
-            ],
-        ], [
+        $validator = Validator::make($config,[
             'newrelic.api_key' => 'required|string',
             'newrelic.entity_guid' => 'required|string',
         ]);
@@ -98,14 +110,9 @@ class CreateDeploy extends Command
         return $this->validate(self::NEWRELIC, $validator);
     }
 
-    private function isValidSentryConfigurationData(Repository $config): bool
+    private function isValidSentryConfigurationData(array $config): bool
     {
-        $validator = Validator::make([
-            'sentry' => [
-                'auth_token' => $config->get('app-version.sentry.auth_token'),
-                'organization' => $config->get('app-version.sentry.organization'),
-            ],
-        ], [
+        $validator = Validator::make($config, [
             'sentry.auth_token' => 'required|string',
             'sentry.organization' => 'required|string',
         ]);
@@ -113,13 +120,9 @@ class CreateDeploy extends Command
         return $this->validate(self::SENTRY, $validator);
     }
 
-    private function isValidGeneralData(Repository $config): bool
+    private function isValidGeneralData(array $config): bool
     {
-        $validator = Validator::make([
-            'version' => [
-                'sha' => $config->get('app-version.version.sha'),
-            ],
-        ], [
+        $validator = Validator::make($config, [
             'version.sha' => 'required|string',
         ]);
 
@@ -133,6 +136,27 @@ class CreateDeploy extends Command
         } catch (ValidationException $e) {
             $this->warn(
                 "[$deployType DEPLOY] configuration is not valid:\n\t- "
+                . implode("\n\t- ", $validator->errors()->all())
+            );
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validateData(string $type, array $data): bool
+    {
+        if (!$rules = self::RULES[$type]) {
+            dd($type);
+            return true;
+        };
+        $validator = Validator::make($data, $rules);
+
+        try {
+            $validator->validate();
+        } catch (ValidationException $e) {
+            $this->warn(
+                "[$type DEPLOY] configuration is not valid:\n\t- "
                 . implode("\n\t- ", $validator->errors()->all())
             );
             return false;
