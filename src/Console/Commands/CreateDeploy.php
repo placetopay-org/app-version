@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
+use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
@@ -50,7 +51,7 @@ class CreateDeploy extends Command
 
             if (!$this->validateData(self::GENERAL, $appVersion)) {
                 $this->info('you must execute app-version:create command before');
-                return 0;
+                return CommandStatus::FAILURE;
             }
 
             $sha = $appVersion['version']['sha'];
@@ -63,10 +64,10 @@ class CreateDeploy extends Command
             }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
-            return 1;
+            return CommandStatus::FAILURE;
         }
 
-        return 0;
+        return CommandStatus::SUCCESS;
     }
 
     /**

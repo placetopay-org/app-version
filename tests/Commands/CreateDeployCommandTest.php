@@ -18,7 +18,7 @@ class CreateDeployCommandTest extends TestCase
         $this->fakeClient->push('success_deploy');
 
         $this->artisan('app-version:create-deploy')
-            ->assertExitCode(0)
+            ->assertSuccessful()
             ->expectsOutput('[SENTRY DEPLOY] Deploy created successfully');
 
         $this->fakeClient->assertLastRequestHas('environment', 'testing');
@@ -35,7 +35,7 @@ class CreateDeployCommandTest extends TestCase
         $this->fakeClient->push('success_deploy');
 
         $this->artisan('app-version:create-deploy')
-            ->assertExitCode(0)
+            ->assertSuccessful()
             ->expectsOutput('[NEWRELIC DEPLOY] Deploy created successfully');
 
         $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
@@ -65,6 +65,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this
             ->artisan('app-version:create-deploy')
+            ->assertFailed()
             ->expectsOutput(
                 "[GENERAL CONFIGURATION DEPLOY] configuration is not valid:\n\t- The version.sha field is required."
             );
