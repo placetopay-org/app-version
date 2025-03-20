@@ -67,7 +67,7 @@ class CreateDeployCommandTest extends TestCase
             ->artisan('app-version:create-deploy')
             ->assertFailed()
             ->expectsOutput(
-                "[GENERAL CONFIGURATION DEPLOY] configuration is not valid:\n\t- The version.sha field is required."
+                'You must execute app-version:create command before.'
             );
     }
 
@@ -91,6 +91,6 @@ class CreateDeployCommandTest extends TestCase
             ->assertSuccessful()
             ->expectsOutput("[SENTRY DEPLOY] configuration is not valid:\n\t- The sentry.auth token field is required.\n\t- The sentry.organization field is required.")
             ->expectsOutput("[NEWRELIC DEPLOY] configuration is not valid:\n\t- The newrelic.api key field is required.\n\t- The newrelic.entity guid field is required.")
-            ->doesntExpectOutput("[GENERAL CONFIGURATION] configuration is not valid:\n\t- The version.sha field is required.");
+            ->doesntExpectOutput('You must execute app-version:create command before.');
     }
 }

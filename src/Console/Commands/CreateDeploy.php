@@ -12,14 +12,10 @@ use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
-    private const GENERAL = 'GENERAL CONFIGURATION';
     private const NEWRELIC = 'NEWRELIC';
     private const SENTRY = 'SENTRY';
 
     private const RULES = [
-        self::GENERAL => [
-            'version.sha' => 'required|string',
-        ],
         self::SENTRY => [
             'sentry.auth_token' => 'required|string',
             'sentry.organization' => 'required|string',
@@ -48,19 +44,19 @@ class CreateDeploy extends Command
     {
         try {
             $appVersion = $config->get('app-version');
+            $versionSha = $appVersion['version']['sha'];
 
-            if (!$this->validateData(self::GENERAL, $appVersion)) {
-                $this->info('you must execute app-version:create command before');
+            if (!$versionSha) {
+                $this->error('You must execute app-version:create command before.');
                 return CommandStatus::FAILURE;
             }
 
-            $sha = $appVersion['version']['sha'];
-            if ($this->validateData(self::SENTRY, $appVersion)) {
-                $this->sentryDeploy($config, $sha);
+            if ($this->isValidData(self::SENTRY, $appVersion)) {
+                $this->sentryDeploy($config, $versionSha);
             }
 
-            if ($this->validateData(self::NEWRELIC, $appVersion)) {
-                $this->newrelicDeploy($config, $sha);
+            if ($this->isValidData(self::NEWRELIC, $appVersion)) {
+                $this->newrelicDeploy($config, $versionSha);
             }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
@@ -100,7 +96,7 @@ class CreateDeploy extends Command
         $this->comment('[NEWRELIC DEPLOY] Deploy created successfully');
     }
 
-    private function validateData(string $type, array $data): bool
+    private function isValidData(string $type, array $data): bool
     {
         if (!$rules = self::RULES[$type]) {
             return true;
