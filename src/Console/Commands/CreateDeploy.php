@@ -4,6 +4,7 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
@@ -44,7 +45,7 @@ class CreateDeploy extends Command
     {
         try {
             $appVersion = $config->get('app-version');
-            $versionSha = is_array($appVersion['version']) ? $appVersion['version']['sha'] : $appVersion['version'];
+            $versionSha = Arr::get($appVersion, 'version.sha', $appVersion['version']);
 
             if (!$versionSha) {
                 $this->error('You must execute app-version:create command before.');
