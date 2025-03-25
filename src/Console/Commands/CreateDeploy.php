@@ -16,17 +16,6 @@ class CreateDeploy extends Command
     private const NEWRELIC = 'NEWRELIC';
     private const SENTRY = 'SENTRY';
 
-    private const RULES = [
-        self::SENTRY => [
-            'sentry.auth_token' => 'required|string',
-            'sentry.organization' => 'required|string',
-        ],
-        self::NEWRELIC => [
-            'newrelic.api_key' => 'required|string',
-            'newrelic.entity_guid' => 'required|string',
-        ],
-    ];
-
     /**
      * The name and signature of the console command.
      *
@@ -52,11 +41,19 @@ class CreateDeploy extends Command
                 return CommandStatus::FAILURE;
             }
 
-            if ($this->isValidData(self::SENTRY, $appVersion)) {
+            if ($this->isValidData(
+                self::SENTRY,
+                ['sentry.auth_token' => 'required|string', 'sentry.organization' => 'required|string'],
+                $appVersion
+            )) {
                 $this->sentryDeploy($config, $versionSha);
             }
 
-            if ($this->isValidData(self::NEWRELIC, $appVersion)) {
+            if ($this->isValidData(
+                self::NEWRELIC,
+                ['newrelic.api_key' => 'required|string', 'newrelic.entity_guid' => 'required|string'],
+                $appVersion
+            )) {
                 $this->newrelicDeploy($config, $versionSha);
             }
         } catch (BadResponseCode $e) {
@@ -97,12 +94,8 @@ class CreateDeploy extends Command
         $this->comment('[NEWRELIC DEPLOY] Deploy created successfully');
     }
 
-    private function isValidData(string $type, array $data): bool
+    private function isValidData(string $type, array $rules, array $data): bool
     {
-        if (!$rules = self::RULES[$type]) {
-            return true;
-        }
-
         $validator = Validator::make($data, $rules);
 
         try {
