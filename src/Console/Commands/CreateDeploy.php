@@ -34,7 +34,7 @@ class CreateDeploy extends Command
     {
         try {
             $appVersion = $config->get('app-version');
-            $versionSha = Arr::get($appVersion, 'version.sha', $appVersion['version']);
+            $versionSha = Arr::get($appVersion, 'version.sha', $appVersion['version'] ?? null);
 
             if (!$versionSha) {
                 $this->error('You must execute app-version:create command before.');
