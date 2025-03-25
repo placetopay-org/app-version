@@ -24,7 +24,7 @@ Version `3.0.0` introduces a breaking change: the SDK now integrates with the Ne
    - APP_VERSION_NEWRELIC_APPLICATION_ID=YOUR_APPLICATION_ID
    ```
 
-2. Add the new GraphQL API key:
+2. **Add** the new GraphQL API key:
 
    ```
    # .env
