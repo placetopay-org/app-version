@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0 (2025-03-25)
+- Updated the Newrelic API to use GraphQL
+  - Removed env variable `APP_VERSION_NEWRELIC_APPLICATION_ID`.
+  - Added env variable `APP_VERSION_NEWRELIC_ENTITY_GUID`.
+
 ## 2.9.1 (2024-04-03)
 - Adds support for laravel 11
 
