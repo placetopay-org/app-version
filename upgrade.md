@@ -34,7 +34,7 @@ Version `3.0.0` introduces a breaking change: the SDK now integrates with the Ne
 3. Change your newrelic configuration file
 
    Remove the old newrelic application id from your configuration file and add the newrelic entity guid:
- ```
+    ```
  
     'newrelic' => [
         'api_key' => env('APP_VERSION_NEWRELIC_API_KEY'),
@@ -42,7 +42,7 @@ Version `3.0.0` introduces a breaking change: the SDK now integrates with the Ne
         'application_id' => env('APP_VERSION_NEWRELIC_APPLICATION_ID'), // Remove this line
         'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'), // Add this line
     ],
- ```
+    ```
 
 ## 🔍 How to find your New Relic Entity GUID
 The entityGuid value is the unique identifier assigned by New Relic to your system components during instrumentation and setup processes.
