@@ -13,8 +13,8 @@ use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
-    private const NEWRELIC = 'newrelic';
-    private const SENTRY = 'sentry';
+    private const NEWRELIC = 'NEWRELIC';
+    private const SENTRY = 'SENTRY';
 
     /**
      * The name and signature of the console command.
@@ -77,7 +77,7 @@ class CreateDeploy extends Command
             $config->get('app.env')
         );
 
-        $this->comment(self::SENTRY . ' deploy created successfully');
+        $this->comment(self::SENTRY . ' deployment created successfully');
     }
 
     /**
@@ -91,7 +91,7 @@ class CreateDeploy extends Command
             $config->get('app.env')
         );
 
-        $this->comment(self::NEWRELIC . ' deploy created successfully');
+        $this->comment(self::NEWRELIC . ' deployment created successfully');
     }
 
     private function isValidData(string $type, array $rules, array $data): bool

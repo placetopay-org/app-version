@@ -19,7 +19,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->artisan('app-version:create-deploy')
             ->assertSuccessful()
-            ->expectsOutput('sentry deploy created successfully');
+            ->expectsOutput('SENTRY deployment created successfully');
 
         $this->fakeClient->assertLastRequestHas('environment', 'testing');
 
@@ -36,7 +36,7 @@ class CreateDeployCommandTest extends TestCase
 
         $this->artisan('app-version:create-deploy')
             ->assertSuccessful()
-            ->expectsOutput('newrelic deploy created successfully');
+            ->expectsOutput('NEWRELIC deployment created successfully');
 
         $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
         mutation {
@@ -89,8 +89,8 @@ class CreateDeployCommandTest extends TestCase
         $this
             ->artisan('app-version:create-deploy')
             ->assertSuccessful()
-            ->expectsOutput("sentry configuration is not valid:\n\t- The sentry.auth token field is required.\n\t- The sentry.organization field is required.")
-            ->expectsOutput("newrelic configuration is not valid:\n\t- The newrelic.api key field is required.\n\t- The newrelic.entity guid field is required.")
+            ->expectsOutput("SENTRY configuration is not valid:\n\t- The sentry.auth token field is required.\n\t- The sentry.organization field is required.")
+            ->expectsOutput("NEWRELIC configuration is not valid:\n\t- The newrelic.api key field is required.\n\t- The newrelic.entity guid field is required.")
             ->doesntExpectOutput('You must execute app-version:create command before.');
     }
 }
