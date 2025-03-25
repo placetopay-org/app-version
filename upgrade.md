@@ -37,4 +37,4 @@ The entityGuid value is the unique identifier assigned by New Relic to your syst
 
 You may need to set this value manually in your environment or configuration.
 
-To locate your New Relic entity GUID, follow this official guide: [What is an Entity in New Relic?](https://docs.newrelic.com/docs/new-relic-solutions/new-relic-one/core-concepts/what-entity-new-relic/#find)
+To locate your New Relic entity GUID, follow this official guide: [What is an Entity in New Relic?](https://docs.newrelic.com/docs/new-relic-solutions/new-relic-one/core-concepts/what-entity-new-relic/)
