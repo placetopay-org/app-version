@@ -21,26 +21,27 @@ Version `3.0.0` introduces a breaking change: the SDK now integrates with the Ne
 
    ```
    # .env
-   - APP_VERSION_NEWRELIC_APPLICATION_ID=YOUR_APPLICATION_ID
+   APP_VERSION_NEWRELIC_APPLICATION_ID=YOUR_APPLICATION_ID
    ```
 
 2. **Add** the new GraphQL API key:
 
    ```
    # .env
-   - APP_VERSION_NEWRELIC_ENTITY_GUID=YOUR_ENTITY_GUID
+   APP_VERSION_NEWRELIC_ENTITY_GUID=YOUR_ENTITY_GUID
    ```
 
-3. Change your newrelic configuration file
+3. Change your app-version configuration file
 
    Remove the old newrelic application id from your configuration file and add the newrelic entity guid:
-    ```
+   ```
+   # config/app-version.php
  
-    'newrelic' => [
-        'api_key' => env('APP_VERSION_NEWRELIC_API_KEY'),
+   'newrelic' => [
+      'api_key' => env('APP_VERSION_NEWRELIC_API_KEY'),
 
-        'application_id' => env('APP_VERSION_NEWRELIC_APPLICATION_ID'), // Remove this line
-        'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'), // Add this line
+      'application_id' => env('APP_VERSION_NEWRELIC_APPLICATION_ID'), // Remove this line
+      'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'), // Add this line
     ],
     ```
 
