@@ -55,7 +55,7 @@ class VersionServiceProvider extends ServiceProvider
             $this->app->singleton(NewRelicApi::class, function (Application $app) {
                 return NewRelicApi::create(
                     $app['config']->get('app-version.newrelic.api_key'),
-                    $app['config']->get('app-version.newrelic.application_id')
+                    $app['config']->get('app-version.newrelic.entity_guid')
                 );
             });
         }

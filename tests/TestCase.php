@@ -7,6 +7,12 @@ use PlacetoPay\AppVersion\VersionServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        config()->set('app.env', 'testing');
+    }
+
     /**
      * Get package providers.
      *
@@ -35,9 +41,9 @@ abstract class TestCase extends Orchestra
     {
         config()->set('app-version.newrelic', [
             'api_key' => 'abcdefg',
-            'application_id' => 'placetopay',
+            'entity_guid' => 'placetopay',
         ]);
 
-        config()->set('app-version.version.sha', 'asdfg2');
+        config()->set('app-version.version', 'asdfg2');
     }
 }

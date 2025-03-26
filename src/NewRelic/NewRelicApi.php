@@ -4,62 +4,65 @@ namespace PlacetoPay\AppVersion\NewRelic;
 
 use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
+use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class NewRelicApi
 {
-    public const API_URL = 'https://api.newrelic.com/v2/applications/';
+    public const API_URL = 'https://api.newrelic.com/graphql';
 
-    /**
-     * @var HttpClient
-     */
-    private $client;
+    private HttpClient $client;
 
-    private $apiKey;
-    /**
-     * @var string
-     */
-    private $applicationId;
+    private string $apiKey;
+    private string $entityGuid;
 
-    public function __construct(HttpClient $client, string $apiKey, string $applicationId)
+    public function __construct(HttpClient $client, string $apiKey, string $entityGuid)
     {
         $this->client = $client;
         $this->apiKey = $apiKey;
-        $this->applicationId = $applicationId;
+        $this->entityGuid = $entityGuid;
+    }
+
+    public static function create(string $apiKey, string $entityGuid): self
+    {
+        return new self(new HttpClient(), $apiKey, $entityGuid);
     }
 
     /**
-     * @param string $apiKey
-     * @param string $applicationId
-     * @return \PlacetoPay\AppVersion\Sentry\SentryApi
+     * @throws BadResponseCode
      */
-    public static function create(string $apiKey, string $applicationId): self
-    {
-        return new self(new HttpClient(), $apiKey, $applicationId);
-    }
-
     public function createDeploy(string $version, string $environment)
     {
         $this->client->addHeaders([
-            "X-Api-Key: {$this->apiKey}",
+            "API-Key: {$this->apiKey}",
         ]);
 
-        return $this->client->post($this->constructUrl(), [
-            'deployment' => [
-                'revision' => $version,
-                'changelog' => 'Not available right now',
-                'description' => 'Commit on ' . $environment,
-                'user' => 'Not available right now',
-            ],
+        return $this->client->post(self::API_URL, [
+            'query' => $this->buildGraphQLQuery($version, $environment),
         ]);
+    }
+
+    private function buildGraphQLQuery(string $version, string $environment): string
+    {
+        return <<<GRAPHQL
+        mutation {
+          changeTrackingCreateDeployment(
+            deployment: {
+              version: "$version",
+              entityGuid: "$this->entityGuid",
+              changelog: "Not available right now"
+              description: "Commit on $environment",
+              user: "Not available right now",
+            }
+          ) {
+            deploymentId
+            timestamp
+          }
+        }
+        GRAPHQL;
     }
 
     public function createRelease(string $version, string $repository, string $sentryProject)
     {
         throw new UnsupportedException('Action createRelease not supported for NewRelic');
-    }
-
-    public function constructUrl(): string
-    {
-        return self::API_URL . $this->applicationId . '/deployments.json';
     }
 }

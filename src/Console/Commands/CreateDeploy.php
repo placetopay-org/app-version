@@ -4,11 +4,18 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
+use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
+    private const NEWRELIC = 'NEWRELIC';
+    private const SENTRY = 'SENTRY';
+
     /**
      * The name and signature of the console command.
      *
@@ -23,25 +30,38 @@ class CreateDeploy extends Command
      */
     protected $description = 'Creates a new deploy on the available sources';
 
-    /**
-     * @param Repository $config
-     * @return int
-     */
     public function handle(Repository $config): int
     {
         try {
-            $appVersion = $config->get('app-version.version.sha');
+            $appVersion = $config->get('app-version');
+            $versionSha = Arr::get($appVersion, 'version.sha', $appVersion['version'] ?? null);
 
-            if ($appVersion) {
-                $this->sentryDeploy($config, $appVersion);
-                $this->newrelicDeploy($config, $appVersion);
+            if (!$versionSha) {
+                $this->error('You must execute app-version:create command before.');
+                return CommandStatus::FAILURE;
+            }
+
+            if ($this->isValidData(
+                self::SENTRY,
+                ['sentry.auth_token' => 'required|string', 'sentry.organization' => 'required|string'],
+                $appVersion
+            )) {
+                $this->sentryDeploy($config, $versionSha);
+            }
+
+            if ($this->isValidData(
+                self::NEWRELIC,
+                ['newrelic.api_key' => 'required|string', 'newrelic.entity_guid' => 'required|string'],
+                $appVersion
+            )) {
+                $this->newrelicDeploy($config, $versionSha);
             }
         } catch (BadResponseCode $e) {
             $this->error($e->getMessage());
-            return 1;
+            return CommandStatus::FAILURE;
         }
 
-        return 0;
+        return CommandStatus::SUCCESS;
     }
 
     /**
@@ -51,28 +71,43 @@ class CreateDeploy extends Command
      */
     private function sentryDeploy(Repository $config, string $version): void
     {
-        $authToken = $config->get('app-version.sentry.auth_token');
-        $organization = $config->get('app-version.sentry.organization');
+        $sentry = ApiFactory::sentryApi();
+        $sentry->createDeploy(
+            $version,
+            $config->get('app.env')
+        );
 
-        if ($authToken && $organization) {
-            $sentry = ApiFactory::sentryApi();
-            $sentry->createDeploy(
-                $version,
-                $config->get('app.env')
-            );
-        }
+        $this->comment(self::SENTRY . ' deployment created successfully');
     }
 
+    /**
+     * @throws BadResponseCode
+     */
     private function newrelicDeploy(Repository $config, string $version): void
     {
-        $apiKey = $config->get('app-version.newrelic.api_key');
-        $applicationId = $config->get('app-version.newrelic.application_id');
-        if ($apiKey && $applicationId) {
-            $newrelic = ApiFactory::newRelicApi();
-            $newrelic->createDeploy(
-                $version,
-                $config->get('app.env')
+        $newrelic = ApiFactory::newRelicApi();
+        $newrelic->createDeploy(
+            $version,
+            $config->get('app.env')
+        );
+
+        $this->comment(self::NEWRELIC . ' deployment created successfully');
+    }
+
+    private function isValidData(string $type, array $rules, array $data): bool
+    {
+        $validator = Validator::make($data, $rules);
+
+        try {
+            $validator->validate();
+        } catch (ValidationException $e) {
+            $this->warn(
+                "$type configuration is not valid:\n\t- "
+                . implode("\n\t- ", $validator->errors()->all())
             );
+            return false;
         }
+
+        return true;
     }
 }

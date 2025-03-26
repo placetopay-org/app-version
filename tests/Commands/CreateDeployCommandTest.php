@@ -17,7 +17,9 @@ class CreateDeployCommandTest extends TestCase
         $this->bindSentryFakeClient();
         $this->fakeClient->push('success_deploy');
 
-        $this->artisan('app-version:create-deploy')->assertExitCode(0);
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('SENTRY deployment created successfully');
 
         $this->fakeClient->assertLastRequestHas('environment', 'testing');
 
@@ -32,15 +34,63 @@ class CreateDeployCommandTest extends TestCase
         $this->bindNewRelicFakeClient();
         $this->fakeClient->push('success_deploy');
 
-        $this->artisan('app-version:create-deploy')->assertExitCode(0);
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('NEWRELIC deployment created successfully');
 
-        $this->fakeClient->assertLastRequestHas('deployment', [
-            'revision' => 'asdfg2',
-            'changelog' => 'Not available right now',
-            'description' => 'Commit on testing',
-            'user' => 'Not available right now',
+        $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
+        mutation {
+          changeTrackingCreateDeployment(
+            deployment: {
+              version: "asdfg2",
+              entityGuid: "placetopay",
+              changelog: "Not available right now"
+              description: "Commit on testing",
+              user: "Not available right now",
+            }
+          ) {
+            deploymentId
+            timestamp
+          }
+        }
+        GRAPHQL);
+
+        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
+    }
+
+    /** @test */
+    public function can_not_create_a_release_if_has_invalid_version_data()
+    {
+        config()->set('app-version.version.sha', '');
+
+        $this
+            ->artisan('app-version:create-deploy')
+            ->assertFailed()
+            ->expectsOutput(
+                'You must execute app-version:create command before.'
+            );
+    }
+
+    /** @test */
+    public function can_not_create_a_release_if_has_invalid_data()
+    {
+        config()->set('app-version.version.sha', 'asdfg2');
+
+        config()->set('app-version.newrelic', [
+            'api_key' => '',
+            'entity_guid' => '',
         ]);
 
-        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'X-Api-Key: ' . config('app-version.newrelic.api_key'));
+        config()->set('app-version.sentry', [
+            'auth_token' => '',
+            'organization' => '',
+        ]);
+
+        $this
+            ->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput("SENTRY configuration is not valid:\n\t- The sentry.auth token field is required.\n\t- The sentry.organization field is required.")
+            ->expectsOutput("NEWRELIC configuration is not valid:\n\t- The newrelic.api key field is required.\n\t- The newrelic.entity guid field is required.")
+            ->doesntExpectOutput('You must execute app-version:create command before.');
     }
 }
