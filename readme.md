@@ -132,7 +132,8 @@ php artisan app-version:create --sha={{ sha }} --time={{ time }} --project={{ pr
 This will generate your version file at `storage/app/app-version.json`
 
 2. If you are integrating with Sentry or NewRelic Releases/Deployments/Issues, Add these hooks so Sentry and NewRelic
-   can track your deployments. It should be run AFTER running the optimization or configuration cache.
+   can track your deployments. It should be run AFTER running the optimization or configuration cache. If you deploy many
+   tenants is better add key env_app_version in the config app.php, for example uat-gou, uat-latam, uat-ec
 
 ```shell
 cd {{ release }}
