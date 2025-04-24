@@ -7,8 +7,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use PlacetoPay\AppVersion\Exceptions\ConnectionException;
 use PlacetoPay\AppVersion\Services\ClickupService;
-use Placetopay\Utilities\Exceptions\ConnectionException;
 
 class PostClickupCommentsJob implements ShouldQueue
 {

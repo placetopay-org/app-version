@@ -3,7 +3,7 @@
 namespace PlacetoPay\AppVersion\Services;
 
 use Illuminate\Support\Facades\Http;
-use Placetopay\Utilities\Exceptions\ConnectionException;
+use PlacetoPay\AppVersion\Exceptions\ConnectionException;
 
 class ClickupService
 {

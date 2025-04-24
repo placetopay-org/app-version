@@ -1,6 +1,6 @@
 <?php
 
-namespace Placetopay\Utilities\Exceptions;
+namespace PlacetoPay\AppVersion\Exceptions;
 
 use Exception;
 
