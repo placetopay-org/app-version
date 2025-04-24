@@ -1,0 +1,57 @@
+<?php
+
+namespace PlacetoPay\AppVersion\Jobs;
+
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use PlacetoPay\AppVersion\Services\ClickupService;
+use Placetopay\Utilities\Exceptions\ConnectionException;
+
+class PostClickupCommentsJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable;
+
+    public array $data;
+    public Carbon $date;
+    private ClickupService $service;
+
+    public function __construct(string $environment, array $data, Carbon $date)
+    {
+        $this->environment = $environment;
+        $this->data = $data;
+        $this->date = $date;
+    }
+
+    public function handle(ClickupService $service)
+    {
+        $tasks = $this->data['tasks'];
+        $comment = $this->buildCommentText();
+
+        foreach ($tasks as $task) {
+            try {
+                $service->postCommentOnTask($task['id'], $comment, $task['team']);
+            } catch (ConnectionException $e) {
+                logger()->error('[ERROR] ClickUp publish comment', [
+                    'env' => $this->environment,
+                    'deploy_date' => $this->date,
+                    'version' => $this->data['version'],
+                    'task' => $task,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    private function buildCommentText(): string
+    {
+        return sprintf(
+            "Despligue realizado en ambiente: %s\nFecha: %s\nVersion: %s",
+            $this->environment,
+            $this->date->format('Y-m-d H:i:s', config('app.timezone')),
+            $this->data['version']
+        );
+    }
+}
