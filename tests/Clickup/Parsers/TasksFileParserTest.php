@@ -5,13 +5,9 @@ namespace PlacetoPay\AppVersion\Tests\Clickup\Parsers;
 use PHPUnit\Framework\TestCase;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
 use PlacetoPay\AppVersion\Helpers\Changelog;
-use PlacetoPay\AppVersion\Tests\Mocks\InteractsWithFakeClient;
 
 class TasksFileParserTest extends TestCase
 {
-    use InteractsWithFakeClient;
-    private TasksFileParser $parser;
-    private string $tempFilePath;
     private const VERSION = [
         "sha" => "TESTING_SHA",
         "time" => "2025-04-29T11:19:34-05:00",
