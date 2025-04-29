@@ -16,7 +16,7 @@ class PostClickupCommentsJob implements ShouldQueue
     public array $data;
     public Carbon $date;
     public string $environment;
-    private ClickupService $service;
+    private ClickupApi $service;
 
     public function __construct(string $environment, array $data, Carbon $date)
     {
@@ -25,7 +25,7 @@ class PostClickupCommentsJob implements ShouldQueue
         $this->date = $date;
     }
 
-    public function handle(ClickupService $service)
+    public function handle(ClickupApi $service)
     {
         $tasks = $this->data['tasks'];
         $comment = $this->buildCommentText();
