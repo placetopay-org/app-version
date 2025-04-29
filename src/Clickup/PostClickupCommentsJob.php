@@ -1,6 +1,6 @@
 <?php
 
-namespace PlacetoPay\AppVersion\Jobs;
+namespace PlacetoPay\AppVersion\Clickup;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use PlacetoPay\AppVersion\Exceptions\ConnectionException;
-use PlacetoPay\AppVersion\Services\ClickupService;
 
 class PostClickupCommentsJob implements ShouldQueue
 {
@@ -16,6 +15,7 @@ class PostClickupCommentsJob implements ShouldQueue
 
     public array $data;
     public Carbon $date;
+    public string $environment;
     private ClickupService $service;
 
     public function __construct(string $environment, array $data, Carbon $date)

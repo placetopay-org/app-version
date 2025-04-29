@@ -6,9 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
 use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
-use PlacetoPay\AppVersion\Exceptions\ReadFileException;
-use PlacetoPay\AppVersion\Parsers\TasksFileParser;
 use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class NotifyClickup extends Command
@@ -16,9 +15,6 @@ class NotifyClickup extends Command
     protected $signature = 'utilities:notify-clickup';
     protected $description = 'Create a comment on the ClickUp platform on the tasks associated with the deployment version';
 
-    /**
-     * @throws ReadFileException
-     */
     public function handle(Repository $config, TasksFileParser $parser): int
     {
         $appVersion = $config->get('app-version');

@@ -1,6 +1,6 @@
 <?php
 
-namespace PlacetoPay\AppVersion\Services;
+namespace PlacetoPay\AppVersion\Clickup;
 
 use Illuminate\Support\Facades\Http;
 use PlacetoPay\AppVersion\Exceptions\ConnectionException;

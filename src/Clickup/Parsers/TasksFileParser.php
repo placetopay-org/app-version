@@ -1,12 +1,9 @@
 <?php
 
-namespace PlacetoPay\AppVersion\Parsers;
+namespace PlacetoPay\AppVersion\Clickup\Parsers;
 
-use Illuminate\Config\Repository;
 use Illuminate\Support\Arr;
-use PlacetoPay\AppVersion\Exceptions\ReadFileException;
 use PlacetoPay\AppVersion\Helpers\Changelog;
-use PlacetoPay\AppVersion\Helpers\HttpClient;
 
 class TasksFileParser
 {

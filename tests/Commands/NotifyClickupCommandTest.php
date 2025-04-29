@@ -4,8 +4,8 @@ namespace PlacetoPay\AppVersion\Tests\Commands;
 
 use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
-use PlacetoPay\AppVersion\Jobs\PostClickupCommentsJob;
-use PlacetoPay\AppVersion\Parsers\TasksFileParser;
+use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
+use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
 use PlacetoPay\AppVersion\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
 
@@ -21,7 +21,7 @@ class NotifyClickupCommandTest extends TestCase
 
         $this->mock(TasksFileParser::class, function (MockInterface $mock) {
             $mock->makePartial()
-                ->shouldReceive('getTasksData')
+                ->shouldReceive('tasksData')
                 ->once()
                 ->andReturn([
                     'version' => '1.2.0',
@@ -56,7 +56,7 @@ class NotifyClickupCommandTest extends TestCase
 
         $this->mock(TasksFileParser::class, function (MockInterface $mock) {
             $mock->makePartial()
-                ->shouldReceive('getTasksData')
+                ->shouldReceive('tasksData')
                 ->once()
                 ->andReturnNull();
         });
