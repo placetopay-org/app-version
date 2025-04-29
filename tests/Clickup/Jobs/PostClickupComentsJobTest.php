@@ -21,7 +21,7 @@ class PostClickupComentsJobTest extends TestCase
     }
 
     /** @test */
-    public function it_posts_comment_when_changelog_has_clickup_tasks(): void
+    public function can_posts_comment_when_changelog_has_clickup_tasks(): void
     {
         Carbon::setTestNow('2025-01-01');
 
@@ -50,7 +50,7 @@ class PostClickupComentsJobTest extends TestCase
     }
 
     /** @test */
-    public function it_logs_error_when_post_comment_fails_for_a_task(): void
+    public function can_logs_error_when_post_comment_fails_for_a_task(): void
     {
         $errorTask = ['id' => '12345678', 'team' => null];
 

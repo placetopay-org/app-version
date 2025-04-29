@@ -15,7 +15,7 @@ class NotifyClickupCommandTest extends TestCase
     private const ENVIRONMENT = 'testing';
 
     /** @test */
-    public function it_dispatch_post_clickup_job(): void
+    public function can_dispatch_post_clickup_job(): void
     {
         Queue::fake();
 
@@ -50,7 +50,7 @@ class NotifyClickupCommandTest extends TestCase
     }
 
     /** @test */
-    public function it_can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
+    public function can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
     {
         Queue::fake();
 

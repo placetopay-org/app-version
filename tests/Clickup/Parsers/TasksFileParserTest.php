@@ -32,7 +32,7 @@ class TasksFileParserTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_null_when_no_tasks_are_found(): void
+    public function can_returns_null_when_no_tasks_are_found(): void
     {
         $parser = $this->buildParser([]);
 
@@ -45,7 +45,7 @@ class TasksFileParserTest extends TestCase
      * @test
      * @dataProvider changeFormatsProvider
      */
-    public function it_can_process_valid_change_formats(string $changeLogEntry, string $expectedTaskId, ?string $expectedTeamId = null): void
+    public function can_process_valid_change_formats(string $changeLogEntry, string $expectedTaskId, ?string $expectedTeamId = null): void
     {
         $parser = $this->buildParser([$changeLogEntry], self::VERSION['version']);
 
