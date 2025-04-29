@@ -3,27 +3,72 @@
 namespace PlacetoPay\AppVersion\Helpers;
 
 use Illuminate\Support\Arr;
-use RuntimeException;
+use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 
 class Changelog
 {
-    public const REGEX_SECTIONS_FILE = '/^[\+\s]*##\s*\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/m';
+    public const REGEX_SECTIONS_FILE = '/^[\+\s]*(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/m';
     public const REGEX_VERSION = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?/';
 
+    /**
+     * @throws ChangelogException
+     */
     public function lastChanges(array $version): array
     {
-        $currentCommit = trim(shell_exec('git log -n 1 --pretty="%H"'));
-
+        $commitInformation = $this->commitInformation();
+        $currentBranch = Arr::get($commitInformation, 'currentBranch');
+        $currentCommit = Arr::get($commitInformation, 'currentCommit');
 
         $deployCommit = Arr::get($version, 'sha');
         $deployBranch = Arr::get($version,'branch');
 
+
         if (!$deployCommit || !$deployBranch) {
-            throw new RuntimeException('No se pudo obtener información de commit o rama.');
+            throw ChangelogException::forNoDeployConfiguration();
         }
 
-        $changelogDiff = shell_exec("git diff $deployCommit $currentCommit -- changelog.md");
+        if ($currentBranch !== $deployBranch) {
+            throw ChangelogException::forDifferentBranches();
+        }
 
+        $changelogDiff = $this->changelogDiff($deployCommit, $currentCommit);
+
+        return $this->extractChanges($changelogDiff);
+    }
+
+    protected function commitInformation(): array
+    {
+        $currentCommit = trim(shell_exec('git log -n 1 --pretty="%H"'));
+        $currentBranch = trim(shell_exec('git symbolic-ref --short HEAD'));
+
+        return ['currentCommit' => $currentCommit, 'currentBranch' => $currentBranch];
+    }
+
+    private function cleanChanges(string $changes): array
+    {
+        $lines = preg_split('/\r\n|\r|\n/', $changes);
+
+        $result = array_filter(array_map(function($line) {
+            $cleanLine = trim($line);
+            if (strpos($cleanLine, '+') === 0) {
+                $cleanLine = trim(substr($cleanLine, 1));
+            }
+            if (strpos($cleanLine, '-') === 0) {
+                $cleanLine = trim(substr($cleanLine, 1));
+            }
+            return $cleanLine;
+        }, $lines));
+
+        return array_values($result);
+    }
+
+    public function changelogDiff($deployCommit, $currentCommit)
+    {
+        return shell_exec("git diff $deployCommit $currentCommit -- changelog.md");
+    }
+
+    public function extractChanges(string $changelogDiff): array
+    {
         $sections = preg_split(self::REGEX_SECTIONS_FILE, $changelogDiff, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         $version = null;
@@ -41,21 +86,5 @@ class Changelog
         }
 
         return [];
-    }
-
-    private function cleanChanges(string $changes): array
-    {
-        $lines = preg_split('/\r\n|\r|\n/', $changes);
-
-        $result = array_filter(array_map(function($line) {
-            $cleanLine = trim($line);
-
-            if (strpos($cleanLine, '+- ') === 0) {
-                $cleanLine = substr($cleanLine, 3);
-            }
-            return $cleanLine;
-        }, $lines));
-
-        return array_values($result);
     }
 }

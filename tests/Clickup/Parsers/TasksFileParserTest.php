@@ -41,6 +41,21 @@ class TasksFileParserTest extends TestCase
         $this->assertNull($result);
     }
 
+    /** @test */
+    public function can_returns_null_when_changelog_data_is_empty(): void
+    {
+        $mock = $this->createPartialMock(Changelog::class, ['lastChanges']);
+        $mock->expects($this->once())
+            ->method('lastChanges')
+            ->willReturn([]);
+
+        $parser =  new TasksFileParser($mock);
+
+        $result = $parser->tasksData(self::VERSION);
+
+        $this->assertNull($result);
+    }
+
     /**
      * @test
      * @dataProvider changeFormatsProvider
