@@ -5,9 +5,10 @@ namespace PlacetoPay\AppVersion\Console\Commands;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
 use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
+use PlacetoPay\AppVersion\Exceptions\ChangelogException;
+use PlacetoPay\AppVersion\Helpers\Logger;
 use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class NotifyClickup extends Command
@@ -17,14 +18,32 @@ class NotifyClickup extends Command
 
     public function handle(Repository $config, TasksFileParser $parser): int
     {
-        $appVersion = $config->get('app-version');
+        $versionInformation = $config->get('app-version.version');
 
-        if (!Arr::exists($appVersion, 'version')) {
+        if (!$versionInformation) {
             $this->error('You must execute app-version:create command before.');
             return CommandStatus::FAILURE;
         }
 
-        $changelogData = $parser->tasksData(Arr::get($appVersion, 'version'));
+        try {
+            $changelogData = $parser->tasksData(
+                $versionInformation,
+                $config->get('app-version.clickup.changelog_file_name'),
+            );
+            Logger::success(
+                'Tasks received successfully',
+                ['changelogData' => $changelogData]
+            );
+
+        } catch (ChangelogException $exception) {
+            Logger::error(
+                'Error parsing changelog data',
+                ['error' => $exception->getMessage()]);
+
+            $this->error('[ERROR] Error parsing changelog data: ' . $exception->getMessage());
+
+            return CommandStatus::FAILURE;
+        }
 
         if (empty($changelogData)) {
             $this->warn('[WARNING] No task found to post comment');

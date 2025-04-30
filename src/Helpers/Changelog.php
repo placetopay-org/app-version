@@ -13,7 +13,7 @@ class Changelog
     /**
      * @throws ChangelogException
      */
-    public function lastChanges(array $version): array
+    public function lastChanges(array $version, string $fileName): array
     {
         $commitInformation = $this->commitInformation();
         $currentBranch = Arr::get($commitInformation, 'currentBranch');
@@ -30,10 +30,15 @@ class Changelog
             throw ChangelogException::forDifferentBranches();
         }
 
-        $changelogDiff = $this->changelogDiff($deployCommit, $currentCommit);
+        $changelogDiff = $this->changelogDiff($deployCommit, $currentCommit, $fileName);
 
         if (empty($changelogDiff)) {
-            LoggerHelper::warning("No changes were found in the file $fileName.");
+            Logger::warning("No changes were found in the file '$fileName'.", [
+                'currentCommit' => $currentCommit,
+                'currentBranch' => $currentBranch,
+                'deployCommit' => $deployCommit,
+                'deployBranch' => $deployBranch,
+            ]);
             return [];
         }
 
@@ -66,9 +71,9 @@ class Changelog
         return array_values($result);
     }
 
-    public function changelogDiff($deployCommit, $currentCommit)
+    public function changelogDiff(string $deployCommit, string $currentCommit, string $fileName): string
     {
-        return shell_exec("git diff $deployCommit $currentCommit -- changelog.md");
+        return shell_exec("git diff $deployCommit $currentCommit -- $fileName");
     }
 
     public function extractChanges(string $changelogDiff): array

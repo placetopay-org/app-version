@@ -35,7 +35,7 @@ class TasksFileParserTest extends TestCase
     {
         $parser = $this->buildParser([]);
 
-        $result = $parser->tasksData(self::VERSION);
+        $result = $parser->tasksData(self::VERSION, 'changelog.md');
 
         $this->assertNull($result);
     }
@@ -50,7 +50,7 @@ class TasksFileParserTest extends TestCase
 
         $parser = new TasksFileParser($mock);
 
-        $result = $parser->tasksData(self::VERSION);
+        $result = $parser->tasksData(self::VERSION, 'changelog.md');
 
         $this->assertNull($result);
     }
@@ -63,7 +63,7 @@ class TasksFileParserTest extends TestCase
     {
         $parser = $this->buildParser([$changeLogEntry], self::VERSION['version']);
 
-        $result = $parser->tasksData(self::VERSION);
+        $result = $parser->tasksData(self::VERSION, 'changelog.md');
 
         $this->assertNotNull($result);
         $this->assertCount(1, $result['tasks']);

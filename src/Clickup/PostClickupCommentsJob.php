@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use PlacetoPay\AppVersion\Exceptions\ConnectionException;
-use PlacetoPay\AppVersion\Helpers\LoggerHelper;
+use PlacetoPay\AppVersion\Helpers\Logger;
 
 class PostClickupCommentsJob implements ShouldQueue
 {
@@ -36,12 +36,12 @@ class PostClickupCommentsJob implements ShouldQueue
         foreach ($tasks as $task) {
             try {
                 $service->postCommentOnTask($task['id'], $comment, $task['team']);
-                LoggerHelper::success(
+                Logger::success(
                     'ClickUp publish comment',
                     ['version' => $this->data['version'], 'task' => $task]
                 );
             } catch (ConnectionException $e) {
-                logger()->error('[ERROR] ClickUp publish comment', [
+                Logger::error('ClickUp publish comment', [
                     'env' => $this->environment,
                     'deploy_date' => $this->date,
                     'version' => $this->data['version'],

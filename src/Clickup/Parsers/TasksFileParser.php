@@ -19,9 +19,9 @@ class TasksFileParser
     /**
      * @throws ChangelogException
      */
-    public function tasksData(array $version): ?array
+    public function tasksData(array $version, string $changelogFileName): ?array
     {
-        $changelogInformation = $this->changelog->lastChanges($version);
+        $changelogInformation = $this->changelog->lastChanges($version, $changelogFileName);
 
         if (!empty($changelogInformation)) {
             $tasks = $this->extractTasks(Arr::get($changelogInformation, 'information'));

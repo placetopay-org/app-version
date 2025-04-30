@@ -38,6 +38,18 @@ class PostClickupComentsJobTest extends TestCase
                 ->andReturnTrue();
         });
 
+        Log::shouldReceive('log')
+            ->once()
+            ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
+                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
+            }));
+
+        Log::shouldReceive('log')
+            ->once()
+            ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
+                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => '12345678', 'team' => null];
+            }));
+
         $job = new PostClickupCommentsJob(self::ENVIRONMENT, [
             'version' => '1.2.0',
             'tasks' => [
@@ -50,10 +62,8 @@ class PostClickupComentsJobTest extends TestCase
     }
 
     /** @test */
-    public function can_logs_error_when_post_comment_fails_for_a_task(): void
+    public function can_post_comment_when_one_fails(): void
     {
-        $errorTask = ['id' => '12345678', 'team' => null];
-
         $this->partialMock(ClickupApi::class, function (MockInterface $mock) {
             $mock->shouldReceive('postComment')
                 ->twice()
@@ -63,15 +73,24 @@ class PostClickupComentsJobTest extends TestCase
                 );
         });
 
-        Log::shouldReceive('error')
+        $errorTask = ['id' => '12345678', 'team' => null];
+        $successTask = ['id' => 'TST-123', 'team' => '999'];
+
+        Log::shouldReceive('log')
             ->once()
-            ->with('[ERROR] ClickUp publish comment', \Mockery::on(function ($context) use ($errorTask) {
+            ->with('error', '[ERROR - app-version] ClickUp publish comment', \Mockery::on(function ($context) use ($errorTask) {
                 return $context['task'] === $errorTask && str_contains($context['error'], 'Error posting comment');
+            }));
+
+        Log::shouldReceive('log')
+            ->once()
+            ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
+                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
             }));
 
         $job = new PostClickupCommentsJob(self::ENVIRONMENT, [
             'version' => '1.2.0',
-            'tasks' => [$errorTask, ['id' => 'TST-123', 'team' => '999']],
+            'tasks' => [$errorTask, $successTask],
         ], Carbon::now());
 
         dispatch($job);

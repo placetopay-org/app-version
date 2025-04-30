@@ -55,6 +55,11 @@ return [
          * https://developer.clickup.com/docs/authentication
         */
         'api_token' => env('CLICKUP_API_TOKEN'),
+
+        /*
+         * File from which the tasks will be obtained
+        */
+        'changelog_file_name' => env('CHANGELOG_FILE', 'changelog.md'),
     ],
 
     /*
