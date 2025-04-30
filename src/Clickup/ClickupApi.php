@@ -12,10 +12,10 @@ class ClickupApi
 
     public function __construct(Http $client)
     {
-        $this->client = $client::withHeaders(['Authorization' => config('utilities.clickup.api_token')])
+        $this->client = $client::withHeaders(['Authorization' => config('app-version.clickup.api_token')])
             ->contentType('application/json')
             ->accept('application/json')
-            ->baseUrl(rtrim(config('utilities.clickup.base_url', '/'), '/'));
+            ->baseUrl(rtrim(config('app-version.clickup.base_url', '/'), '/'));
     }
 
     /**

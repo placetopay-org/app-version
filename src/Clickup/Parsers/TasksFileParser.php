@@ -3,6 +3,7 @@
 namespace PlacetoPay\AppVersion\Clickup\Parsers;
 
 use Illuminate\Support\Arr;
+use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\Changelog;
 
 class TasksFileParser
@@ -15,6 +16,9 @@ class TasksFileParser
         $this->changelog = $changelog;
     }
 
+    /**
+     * @throws ChangelogException
+     */
     public function tasksData(array $version): ?array
     {
         $changelogInformation = $this->changelog->lastChanges($version);

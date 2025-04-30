@@ -17,7 +17,7 @@ class PostClickupComentsJobTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config()->set('utilities.clickup.base_url', 'https://test.com/api');
+        config()->set('app-version.clickup.base_url', 'https://test.com/api');
     }
 
     /** @test */

@@ -12,7 +12,7 @@ use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class NotifyClickup extends Command
 {
-    protected $signature = 'utilities:notify-clickup';
+    protected $signature = 'app-version:notify-clickup';
     protected $description = 'Create a comment on the ClickUp platform on the tasks associated with the deployment version';
 
     public function handle(Repository $config, TasksFileParser $parser): int
