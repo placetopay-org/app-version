@@ -32,6 +32,11 @@ class Changelog
 
         $changelogDiff = $this->changelogDiff($deployCommit, $currentCommit);
 
+        if (empty($changelogDiff)) {
+            LoggerHelper::warning("No changes were found in the file $fileName.");
+            return [];
+        }
+
         return $this->extractChanges($changelogDiff);
     }
 
