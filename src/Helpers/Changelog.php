@@ -20,8 +20,7 @@ class Changelog
         $currentCommit = Arr::get($commitInformation, 'currentCommit');
 
         $deployCommit = Arr::get($version, 'sha');
-        $deployBranch = Arr::get($version,'branch');
-
+        $deployBranch = Arr::get($version, 'branch');
 
         if (!$deployCommit || !$deployBranch) {
             throw ChangelogException::forNoDeployConfiguration();
@@ -48,7 +47,7 @@ class Changelog
     {
         $lines = preg_split('/\r\n|\r|\n/', $changes);
 
-        $result = array_filter(array_map(function($line) {
+        $result = array_filter(array_map(function ($line) {
             $cleanLine = trim($line);
             if (strpos($cleanLine, '+') === 0) {
                 $cleanLine = trim(substr($cleanLine, 1));

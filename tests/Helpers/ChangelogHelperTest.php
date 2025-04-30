@@ -6,15 +6,14 @@ use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\Changelog;
-use RuntimeException;
 
 class ChangelogHelperTest extends TestCase
 {
     private const VERSION = [
-        "sha" => "TESTING_SHA",
-        "time" => "2025-04-29T11:19:34-05:00",
-        "branch" => "testing",
-        "version" => "1.0.0"
+        'sha' => 'TESTING_SHA',
+        'time' => '2025-04-29T11:19:34-05:00',
+        'branch' => 'testing',
+        'version' => '1.0.0',
     ];
 
     public function buildChangelogMock(string $currenCommit, string $currentBranch, ?string $differences = null): Changelog
@@ -24,7 +23,7 @@ class ChangelogHelperTest extends TestCase
             ->method('commitInformation')
             ->willReturn([
                 'currentCommit' => $currenCommit,
-                'currentBranch' => $currentBranch
+                'currentBranch' => $currentBranch,
             ]);
         $mock->expects(isset($differences) ? $this->once() : $this->never())
             ->method('changelogDiff')
@@ -51,7 +50,6 @@ class ChangelogHelperTest extends TestCase
         $changelog = $this->buildChangelogMock('develop', 'abcdef');
 
         $changelog->lastChanges(['sha' => 'abcdef', 'branch' => 'master']);
-
     }
 
     /** @test */
@@ -60,7 +58,7 @@ class ChangelogHelperTest extends TestCase
         $changelog = $this->buildChangelogMock(
             'abcdef',
             'testing',
-                "-## Unreleased\n
+            "-## Unreleased\n
                                 +## 1.1.0 (2025-04-28)\n
                                 +- Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
                                 +- Change (https://app.clickup.com/t/789/CU-12345)
@@ -92,10 +90,10 @@ class ChangelogHelperTest extends TestCase
         $changelog = $this->buildChangelogMock(
             'abcdef',
             'testing',
-            "+- Change (https://app.clickup.com/t/789/CU-12345)
+            '+- Change (https://app.clickup.com/t/789/CU-12345)
                     +  -  Change (https://app.clickup.com/t/789/CU-12389)
                     +Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)"
+                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
         );
         $result = $changelog->lastChanges(self::VERSION);
 
@@ -108,10 +106,10 @@ class ChangelogHelperTest extends TestCase
         $changelog = $this->buildChangelogMock(
             'abcdef',
             'testing',
-            "+- Change (https://app.clickup.com/t/789/CU-12345)
+            '+- Change (https://app.clickup.com/t/789/CU-12345)
                     +  -  Change (https://app.clickup.com/t/789/CU-12389)
                     +Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)"
+                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
         );
         $result = $changelog->lastChanges(self::VERSION);
 
@@ -147,8 +145,8 @@ class ChangelogHelperTest extends TestCase
 +### Fixed
 +
 +- other task [@user](https://bitbucket.org/user/) [#PT_1234](https://app.clickup.com/t/123456/PT-1234)
-+');
-
++'
+        );
 
         $result = $changelog->lastChanges(self::VERSION);
 
@@ -174,7 +172,8 @@ class ChangelogHelperTest extends TestCase
     {
         $changelog = $this->buildChangelogMock(
             'abcdef',
-            'testing',"
+            'testing',
+            "
             $versionHeader
 
 +- A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
@@ -182,7 +181,8 @@ class ChangelogHelperTest extends TestCase
 +
 +[2.0.0]
 +- Other Change [CU-4321](https://app.clickup.com/t/123/CU-4321)
-+");
++"
+        );
 
         $result = $changelog->lastChanges(self::VERSION);
 

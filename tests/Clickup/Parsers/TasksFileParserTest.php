@@ -9,10 +9,10 @@ use PlacetoPay\AppVersion\Helpers\Changelog;
 class TasksFileParserTest extends TestCase
 {
     private const VERSION = [
-        "sha" => "TESTING_SHA",
-        "time" => "2025-04-29T11:19:34-05:00",
-        "branch" => "master",
-        "version" => "3.12.0"
+        'sha' => 'TESTING_SHA',
+        'time' => '2025-04-29T11:19:34-05:00',
+        'branch' => 'master',
+        'version' => '3.12.0',
     ];
 
     public function buildParser(array $changelogData, ?string $version = null): TasksFileParser
@@ -28,7 +28,6 @@ class TasksFileParserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
     }
 
     /** @test */
@@ -49,7 +48,7 @@ class TasksFileParserTest extends TestCase
             ->method('lastChanges')
             ->willReturn([]);
 
-        $parser =  new TasksFileParser($mock);
+        $parser = new TasksFileParser($mock);
 
         $result = $parser->tasksData(self::VERSION);
 

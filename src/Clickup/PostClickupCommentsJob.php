@@ -11,7 +11,9 @@ use PlacetoPay\AppVersion\Exceptions\ConnectionException;
 
 class PostClickupCommentsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public array $data;
     public Carbon $date;
