@@ -73,6 +73,23 @@ return [
         'entity_guid' => env('APP_VERSION_NEWRELIC_ENTITY_GUID'),
 
     ],
+    'clickup' => [
+        /*
+         * The ClickUp API URL
+        */
+        'base_url' => env('CLICKUP_BASE_URL', 'https://api.clickup.com/api/v2'),
+
+        /*
+         * The ClickUp api token, you can get it by following the following documentation
+         * https://developer.clickup.com/docs/authentication
+        */
+        'api_token' => env('CLICKUP_API_TOKEN'),
+
+        /*
+         * File from which the tasks will be obtained
+        */
+        'changelog_file_name' => env('CHANGELOG_FILE', 'changelog.md'),
+    ],
     
     /*
     * The current deployed version, will be read from version file
@@ -155,3 +172,51 @@ To access the sha
 ```php 
 PlacetoPay\AppVersion\VersionFile::readSha()
 ```
+
+## ClickUp Integration
+This package also provides a command to post comments on ClickUp tasks based on the changelog file.
+This is useful for tracking changes and updates in your projects.
+
+>It is important that you run the `app-version:create` command before committing the change to the changelog.
+
+```shell
+php artisan app-version:create
+``` 
+
+### Configuration
+
+1. You need to make sure you have the clickup environment variables set in your `config/app-version` configuration file.
+   You can see the variables to configure in step two of the [installation](installation) process.
+
+
+2. After creating the commit with the version changes in the changelog, run the command 'command'
+    ```shell
+    php artisan app-version:notify-clickup
+    ``` 
+
+3. After this, your tasks will have a comment similar to the following:
+
+   >Despligue realizado en ambiente: develop
+   Fecha: 2025-04-30 02:06:21
+   Version: 3.1.0
+
+
+The supported formats for reading ClickUp tasks in the change log file are:
+* Versions:
+     ```
+  Unreleased
+  [Unreleased]
+  1.0.0
+  [1.0.0]
+  1.0.0 (2024-01-01)
+  [1.0.0 (2024-01-01)]
+  [1.0.0 (2024-01-01)](https://bitbucket.org/project/commits/tag/6.1.15) 
+     ```
+
+* Tasks
+     ```
+  Change [@user](https://bitbucket.org/user/) [#{CustomTaskId}](https://app.clickup.com/t/{TeamId}/{CustomTaskId})
+  Change [{CustomTaskId}](https://app.clickup.com/t/{TeamId}/{CustomTaskId})
+  Change (https://app.clickup.com/t/{TeamId}/{CustomTaskId}) 
+  Change [868c4frhp](https://app.clickup.com/t/{TaskId})
+     ```
