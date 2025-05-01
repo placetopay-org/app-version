@@ -7,8 +7,11 @@ use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 
 class Changelog
 {
-    public const REGEX_SECTIONS_FILE = '/^[\+\s]*(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/m';
-    public const REGEX_VERSION = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?/';
+    public const REGEX_SECTIONS_FILE = '/^[\+\s]*(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/mi';
+    public const REGEX_VERSION = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?/i';
+
+        public const REGEX_NEW_CHANGES = '/^\+(?!\+).*/m';
+    public const DEFAULT_VERSION = 'Unreleased';
 
     /**
      * @throws ChangelogException
@@ -53,9 +56,10 @@ class Changelog
         return ['currentCommit' => $currentCommit, 'currentBranch' => $currentBranch];
     }
 
-    private function cleanChanges(string $changes): array
+    private function cleanChanges( $changes): array
     {
-        $lines = preg_split('/\r\n|\r|\n/', $changes);
+        preg_match_all(self::REGEX_NEW_CHANGES, $changes, $lines);
+        $lines = reset($lines);
 
         $result = array_filter(array_map(function ($line) {
             $cleanLine = trim($line);
@@ -79,6 +83,7 @@ class Changelog
     public function extractChanges(string $changelogDiff): array
     {
         $sections = preg_split(self::REGEX_SECTIONS_FILE, $changelogDiff, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $changes = '';
 
         $version = null;
         foreach ($sections as $section) {
@@ -91,7 +96,17 @@ class Changelog
                 continue;
             }
 
-            return ['version' => $version, 'information' => self::cleanChanges($section)];
+            $changes = $section;
+            break;
+        }
+
+        if (!$version) {
+            $changes = $changelogDiff;
+        }
+
+        $changes = self::cleanChanges($changes);
+        if (!empty($changes)) {
+            return  ['version' => $version ?? self::DEFAULT_VERSION, 'information' => $changes];
         }
 
         return [];

@@ -34,10 +34,12 @@ class ChangelogHelperTest extends TestCase
     /** @test */
     public function can_throws_exception_if_deploy_commit_or_branch_is_missing(): void
     {
-        $changelog = new Changelog();
         $this->expectException(ChangelogException::class);
         $this->expectExceptionMessage('Could not get commit or branch information from the deployment.');
+        $changelog = $this->buildChangelogMock('abcdef', 'testing');
+        $changelog->expects($this->never())->method('changelogDiff');
 
+        /** @var $changelog Changelog */
         $changelog->lastChanges(['sha' => null, 'branch' => 'master'], 'changelog.md');
     }
 
@@ -63,15 +65,15 @@ class ChangelogHelperTest extends TestCase
             ->method('changelogDiff')
             ->willReturn(
                 "-## Unreleased\n
-                    +## 1.1.0 (2025-04-28)\n
-                    +- Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    +- Change (https://app.clickup.com/t/789/CU-12345)
-                    +  -  Change (https://app.clickup.com/t/789/CU-12389)
-                    +- Change [868c4frhp](https://app.clickup.com/t/868c4frhp)
-                    + - Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    +Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    +Change (https://app.clickup.com/t/789/CU-12345)
-                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)"
++## 1.1.0 (2025-04-28)\n
++   - Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
++   - Change (https://app.clickup.com/t/789/CU-12345)
++     -  Change (https://app.clickup.com/t/789/CU-12389)
++   - Change [868c4frhp](https://app.clickup.com/t/868c4frhp)
++    - Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)
++   Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
++   Change (https://app.clickup.com/t/789/CU-12345)
+Change [868c4frhp](https://app.clickup.com/t/868c4frhp)"
             );
 
         /** @var $changelog Changelog */
@@ -85,30 +87,11 @@ class ChangelogHelperTest extends TestCase
             'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
-            'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
         ]], $result);
     }
 
     /** @test */
-    public function can_returns_empty_array_if_no_version_is_found(): void
-    {
-        $changelog = $this->buildChangelogMock('abcdef', 'testing',);
-        $changelog->expects($this->once())->method('changelogDiff')
-            ->willReturn(
-                '+- Change (https://app.clickup.com/t/789/CU-12345)
-                +  -  Change (https://app.clickup.com/t/789/CU-12389)
-                +Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
-            );
-
-        /** @var $changelog Changelog */
-        $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
-
-        $this->assertEmpty($result);
-    }
-
-    /** @test */
-    public function can_returns_version_and_information_when_valid_diff_is_provided(): void
+    public function can_returns_changes_when_do_not_have_version(): void
     {
         $changelog = $this->buildChangelogMock(
             'abcdef',
@@ -118,64 +101,23 @@ class ChangelogHelperTest extends TestCase
         $changelog->expects($this->once())->method('changelogDiff')
             ->willReturn(
                 '+- Change (https://app.clickup.com/t/789/CU-12345)
-                    +  -  Change (https://app.clickup.com/t/789/CU-12389)
-                    +Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
-                    Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
++  -  Change (https://app.clickup.com/t/789/CU-12389)
+Change [868c4frhp](https://app.clickup.com/t/868c4frhp)
++Change [CU-12345](https://app.clickup.com/t/789/CU-12345)
+Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
             );
 
         /** @var $changelog Changelog */
         $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
 
-        $this->assertEmpty($result);
+        $this->assertEquals($result['version'], 'Unreleased');
+        $this->assertEquals($result['information'], [
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12389)',
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+        ]);
     }
 
-    /** @test */
-    public function can_handles_unreleased_section_with_tasks(): void
-    {
-        $changelog = $this->buildChangelogMock('abcdef', 'testing');
-        $changelog->expects($this->once())->method('changelogDiff')
-            ->willReturn('## Unreleased
-+### Removed
-+
-+- `Testing` "changes" [@user](https://bitbucket.org/user/) [#PT-123456](https://app.clickup.com/t/123456/PT-123456)
-+    - Other testing changes
-+    - Other change
-+    - Other testing [TK-97122](https://app.clickup.com/t/11111/TK-97122)
-+
-+- Other change [868c4frhp](https://app.clickup.com/t/123a4asdf)
-+
-+### Fixed
-+
-+- Fix change. [@user](https://bitbucket.org/user/) [#PT-2222](https://app.clickup.com/t/22333/PT-2222)
-+
-+### Updated
-+
-+- Update [@user](https://bitbucket.org/user/) [#PT-5432](https://app.clickup.com/t/323232/PT-5432)
-+
-+## [6.1.14 (2024-12-11)](https://bitbucket.org/project/commits/tag/6.1.14)
-+
-+### Fixed
-+
-+- other task [@user](https://bitbucket.org/user/) [#PT_1234](https://app.clickup.com/t/123456/PT-1234)
-+');
-
-        /** @var $changelog Changelog */
-
-        $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
-
-        $this->assertEquals(['version' => 'Unreleased', 'information' => [
-            '### Removed',
-            '`Testing` "changes" [@user](https://bitbucket.org/user/) [#PT-123456](https://app.clickup.com/t/123456/PT-123456)',
-            'Other testing changes',
-            'Other change',
-            'Other testing [TK-97122](https://app.clickup.com/t/11111/TK-97122)',
-            'Other change [868c4frhp](https://app.clickup.com/t/123a4asdf)',
-            '### Fixed',
-            'Fix change. [@user](https://bitbucket.org/user/) [#PT-2222](https://app.clickup.com/t/22333/PT-2222)',
-            '### Updated',
-            'Update [@user](https://bitbucket.org/user/) [#PT-5432](https://app.clickup.com/t/323232/PT-5432)',
-        ]], $result);
-    }
 
     /**
      * @test
@@ -188,7 +130,9 @@ class ChangelogHelperTest extends TestCase
             ->willReturn("
             $versionHeader
 
+An unchanged task
 +- A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
++    - A sub Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
 +- Task without link
 +
 +[2.0.0]
@@ -199,9 +143,9 @@ class ChangelogHelperTest extends TestCase
         $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
 
         $this->assertEquals($expectedVersion, $result['version']);
-        $this->assertCount(2, $result['information']);
         $this->assertEquals([
             'A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)',
+            'A sub Change [CU-9876](https://app.clickup.com/t/123/CU-9876)',
             'Task without link',
         ], $result['information']);
     }
@@ -210,14 +154,18 @@ class ChangelogHelperTest extends TestCase
     {
         return [
             ['+## Unreleased', 'Unreleased'],
+            ['+## unreleased', 'unreleased'],
             ['+## [Unreleased]', 'Unreleased'],
+            ['+## [unreleased]', 'unreleased'],
             ['+## 1.0.0', '1.0.0'],
             ['+## [1.0.0]', '1.0.0'],
             ['+## 1.0.0 (2024-01-01)', '1.0.0'],
             ['+## [1.0.0 (2024-01-01)]', '1.0.0'],
             ['+## [1.0.0 (2024-01-01)](https://bitbucket.org/project/commits/tag/6.1.15)', '1.0.0'],
             ['+Unreleased', 'Unreleased'],
-            ['+[Unreleased]', 'Unreleased'],
+            ['+Unreleased', 'Unreleased'],
+            ['+[unreleased]', 'unreleased'],
+            ['+[unreleased]', 'unreleased'],
             ['+1.0.0', '1.0.0'],
             ['+[1.0.0]', '1.0.0'],
             ['+1.0.0 (2024-01-01)', '1.0.0'],
@@ -232,7 +180,6 @@ class ChangelogHelperTest extends TestCase
      */
     public function can_process_empty_changes(string $diff = null): void
     {
-
         Log::shouldReceive('log')
             ->once()
             ->with('warning', "[WARNING - app-version] No changes were found in the file 'changelog.md'.", \Mockery::on(function ($context) {
@@ -242,9 +189,11 @@ class ChangelogHelperTest extends TestCase
                     && $context['deployBranch'] === 'testing';
             }));
 
+        $changelog = $this->buildChangelogMock('abcdef', 'testing');
+        $changelog->expects($this->once())->method('changelogDiff')
+            ->willReturn($diff);
 
-        $changelog = $this->buildChangelogMock('abcdef', 'testing', $diff);
-
+        /** @var $changelog Changelog */
         $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
         $this->assertEmpty(Arr::get($result, 'information', $result));
 
