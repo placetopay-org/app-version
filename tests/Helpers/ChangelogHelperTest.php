@@ -60,7 +60,8 @@ class ChangelogHelperTest extends TestCase
     {
         $changelog = $this->buildChangelogMock(
             'abcdef',
-            'testing');
+            'testing'
+        );
         $changelog->expects($this->once())
             ->method('changelogDiff')
             ->willReturn(
@@ -96,7 +97,6 @@ Change [868c4frhp](https://app.clickup.com/t/868c4frhp)"
         $changelog = $this->buildChangelogMock(
             'abcdef',
             'testing',
-
         );
         $changelog->expects($this->once())->method('changelogDiff')
             ->willReturn(
@@ -117,7 +117,6 @@ Change [868c4frhp](https://app.clickup.com/t/868c4frhp)'
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
         ]);
     }
-
 
     /**
      * @test
@@ -196,7 +195,6 @@ An unchanged task
         /** @var $changelog Changelog */
         $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
         $this->assertEmpty(Arr::get($result, 'information', $result));
-
     }
 
     public function emptyDataProvider(): array

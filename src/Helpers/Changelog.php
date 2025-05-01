@@ -10,7 +10,7 @@ class Changelog
     public const REGEX_SECTIONS_FILE = '/^[\+\s]*(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/mi';
     public const REGEX_VERSION = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?/i';
 
-        public const REGEX_NEW_CHANGES = '/^\+(?!\+).*/m';
+    public const REGEX_NEW_CHANGES = '/^\+(?!\+).*/m';
     public const DEFAULT_VERSION = 'Unreleased';
 
     /**
@@ -56,7 +56,7 @@ class Changelog
         return ['currentCommit' => $currentCommit, 'currentBranch' => $currentBranch];
     }
 
-    private function cleanChanges( $changes): array
+    private function cleanChanges($changes): array
     {
         preg_match_all(self::REGEX_NEW_CHANGES, $changes, $lines);
         $lines = reset($lines);

@@ -41,13 +41,13 @@ class PostClickupComentsJobTest extends TestCase
         Log::shouldReceive('log')
             ->once()
             ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
-                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
+                return $context['version'] === '1.2.0' && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
             }));
 
         Log::shouldReceive('log')
             ->once()
             ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
-                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => '12345678', 'team' => null];
+                return $context['version'] === '1.2.0' && $context['task'] === ['id' => '12345678', 'team' => null];
             }));
 
         $job = new PostClickupCommentsJob(self::ENVIRONMENT, [
@@ -85,7 +85,7 @@ class PostClickupComentsJobTest extends TestCase
         Log::shouldReceive('log')
             ->once()
             ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) {
-                return $context['version'] === '1.2.0'  && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
+                return $context['version'] === '1.2.0' && $context['task'] === ['id' => 'TST-123', 'team' => '999'];
             }));
 
         $job = new PostClickupCommentsJob(self::ENVIRONMENT, [

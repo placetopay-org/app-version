@@ -27,7 +27,6 @@ class NotifyClickupCommandTest extends TestCase
         ]);
     }
 
-
     /** @test */
     public function can_dispatch_post_clickup_job(): void
     {
@@ -49,8 +48,8 @@ class NotifyClickupCommandTest extends TestCase
         Log::shouldReceive('log')
             ->once()
             ->with('info', '[SUCCESS - app-version] Tasks received successfully', \Mockery::on(function ($context) {
-                return $context['changelogData'] == ["version" => '1.2.0', 'tasks' => [
-                        ['id' => 'TST-123', 'team' => '999'], ['id' => '12345678', 'team' => null]
+                return $context['changelogData'] == ['version' => '1.2.0', 'tasks' => [
+                        ['id' => 'TST-123', 'team' => '999'], ['id' => '12345678', 'team' => null],
                     ]];
             }));
 

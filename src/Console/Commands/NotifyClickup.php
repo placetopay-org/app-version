@@ -34,11 +34,11 @@ class NotifyClickup extends Command
                 'Tasks received successfully',
                 ['changelogData' => $changelogData]
             );
-
         } catch (ChangelogException $exception) {
             Logger::error(
                 'Error parsing changelog data',
-                ['error' => $exception->getMessage()]);
+                ['error' => $exception->getMessage()]
+            );
 
             $this->error('[ERROR] Error parsing changelog data: ' . $exception->getMessage());
 
