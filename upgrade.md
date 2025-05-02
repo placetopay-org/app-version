@@ -11,8 +11,8 @@ Add into your app-version configuration file the clickup configuration:
       'clickup' => [
         'base_url' => env('CLICKUP_BASE_URL', 'https://api.clickup.com/api/v2'),
         'api_token' => env('CLICKUP_API_TOKEN'),
-        'changelog_file_name' => env('CHANGELOG_FILE', 'changelog.md'),
     ]
+      'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
    ```
 
 Add To enable this feature, add the following environment variables:

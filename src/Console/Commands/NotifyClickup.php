@@ -28,7 +28,7 @@ class NotifyClickup extends Command
         try {
             $changelogData = $parser->tasksData(
                 $versionInformation,
-                $config->get('app-version.clickup.changelog_file_name'),
+                $config->get('app-version.changelog_file_name'),
             );
             Logger::success(
                 'Tasks received successfully',

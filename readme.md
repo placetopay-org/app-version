@@ -86,9 +86,9 @@ return [
         'api_token' => env('CLICKUP_API_TOKEN'),
 
         /*
-         * File from which the tasks will be obtained
+         * Name of the file that lists the changes made to the project
         */
-        'changelog_file_name' => env('CHANGELOG_FILE', 'changelog.md'),
+        'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
     ],
     
     /*
