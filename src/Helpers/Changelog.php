@@ -75,7 +75,7 @@ class Changelog
         return array_values($result);
     }
 
-    public function changelogDiff(string $deployCommit, string $currentCommit, string $fileName): string
+    public function changelogDiff(string $deployCommit, string $currentCommit, string $fileName): ?string
     {
         return shell_exec("git diff $deployCommit $currentCommit -- $fileName");
     }
