@@ -84,12 +84,12 @@ return [
          * https://developer.clickup.com/docs/authentication
         */
         'api_token' => env('CLICKUP_API_TOKEN'),
-
-        /*
-         * Name of the file that lists the changes made to the project
-        */
-        'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
     ],
+
+    /*
+     * Name of the file that lists the changes made to the project
+    */
+    'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
     
     /*
     * The current deployed version, will be read from version file
@@ -189,7 +189,7 @@ php artisan app-version:create
    You can see the variables to configure in step two of the [installation](installation) process.
 
 
-2. After creating the commit with the version changes in the changelog, run the command 'command'
+2. After creating the commit with the version changes in the changelog, run the 'app-version:notify-clickup' command
     ```shell
     php artisan app-version:notify-clickup
     ``` 
