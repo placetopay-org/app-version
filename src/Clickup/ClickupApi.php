@@ -30,10 +30,14 @@ class ClickupApi
         }
     }
 
-    public function postComment(string $taskId, ?string $team, string $message): \Illuminate\Http\Client\Response
+    public function postComment(string $taskId, string $message, ?string $team = null): Response
     {
-        return $this->client->post(
-            "/task/$taskId/comment" . (!empty($team) ? "?custom_task_ids=true&team_id=$team" : ''),
+        return $this->client->timeout(10)->post(
+            sprintf(
+                '/task/%s/commeaaant%s',
+                $taskId,
+                !empty($team) ? "?custom_task_ids=true&team_id=$team" : ''
+            ),
             ['comment_text' => $message]
         );
     }
