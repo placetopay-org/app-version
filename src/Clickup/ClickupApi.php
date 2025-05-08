@@ -4,16 +4,15 @@ namespace PlacetoPay\AppVersion\Clickup;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 use PlacetoPay\AppVersion\Exceptions\BadResponseException;
 
 class ClickupApi
 {
     private PendingRequest $client;
 
-    public function __construct(Http $client)
+    public function __construct(PendingRequest $client)
     {
-        $this->client = $client::withHeaders(['Authorization' => config('app-version.clickup.api_token')])
+        $this->client = $client->withHeaders(['Authorization' => config('app-version.clickup.api_token')])
             ->contentType('application/json')
             ->accept('application/json')
             ->baseUrl(rtrim(config('app-version.clickup.base_url', '/'), '/'));

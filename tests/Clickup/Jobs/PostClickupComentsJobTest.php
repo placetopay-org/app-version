@@ -3,10 +3,10 @@
 namespace PlacetoPay\AppVersion\Tests\Clickup\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
-use PlacetoPay\AppVersion\Clickup\ClickupApi;
 use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
@@ -25,17 +25,10 @@ class PostClickupComentsJobTest extends TestCase
     {
         Carbon::setTestNow('2025-01-01');
 
-        $this->partialMock(ClickupApi::class, function (MockInterface $mock) {
-            $message = "Despligue realizado en ambiente: testing\nFecha: 2025-01-01 00:00:00\nVersion: 1.2.0";
-
-            $mock->shouldReceive('postCommentOnTask')
-                ->once()
-                ->withArgs(['TST-123', $message, 999])
-                ->andReturnTrue();
-            $mock->shouldReceive('postCommentOnTask')
-                ->once()
-                ->withArgs(['12345678', $message, null])
-                ->andReturnTrue();
+        $this->partialMock(PendingRequest::class, function (MockInterface $mock) {
+            $mock->shouldReceive('post')
+                ->twice()
+                ->andReturn(new Response(new \GuzzleHttp\Psr7\Response()));
         });
 
         Log::shouldReceive('log')
@@ -64,8 +57,8 @@ class PostClickupComentsJobTest extends TestCase
     /** @test */
     public function can_post_comment_when_one_fails(): void
     {
-        $this->partialMock(ClickupApi::class, function (MockInterface $mock) {
-            $mock->shouldReceive('postComment')
+        $this->partialMock(PendingRequest::class, function (MockInterface $mock) {
+            $mock->shouldReceive('post')
                 ->twice()
                 ->andReturn(
                     new Response(new \GuzzleHttp\Psr7\Response(401, [], '', '1.1', 'Error posting comment')),

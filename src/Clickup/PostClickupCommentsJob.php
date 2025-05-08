@@ -43,7 +43,7 @@ class PostClickupCommentsJob implements ShouldQueue
             } catch (Throwable $e) {
                 Logger::error('ClickUp publish comment', [
                     'env' => $this->environment,
-                    'deploy_date' => $this->date,
+                    'deploy_date' => $this->date->format('Y-m-d H:i:s'),
                     'version' => $this->data['version'],
                     'task' => $task,
                     'error' => $e->getMessage(),
