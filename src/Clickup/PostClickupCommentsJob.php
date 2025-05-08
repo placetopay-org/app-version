@@ -7,8 +7,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use PlacetoPay\AppVersion\Exceptions\ConnectionException;
 use PlacetoPay\AppVersion\Helpers\Logger;
+use Throwable;
 
 class PostClickupCommentsJob implements ShouldQueue
 {
@@ -40,7 +40,7 @@ class PostClickupCommentsJob implements ShouldQueue
                     'ClickUp publish comment',
                     ['version' => $this->data['version'], 'task' => $task]
                 );
-            } catch (ConnectionException $e) {
+            } catch (Throwable $e) {
                 Logger::error('ClickUp publish comment', [
                     'env' => $this->environment,
                     'deploy_date' => $this->date,

@@ -3,8 +3,9 @@
 namespace PlacetoPay\AppVersion\Clickup;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use PlacetoPay\AppVersion\Exceptions\ConnectionException;
+use PlacetoPay\AppVersion\Exceptions\BadResponseException;
 
 class ClickupApi
 {
@@ -19,26 +20,27 @@ class ClickupApi
     }
 
     /**
-     * @throws ConnectionException
+     * @throws BadResponseException
      */
     public function postCommentOnTask(string $taskId, string $message, ?string $team = null): void
     {
-        $response = $this->postComment($taskId, $team, $message);
-
-        if (!$response->successful()) {
-            throw ConnectionException::forNoConnectionService($response->reason());
-        }
-    }
-
-    public function postComment(string $taskId, string $message, ?string $team = null): Response
-    {
-        return $this->client->timeout(10)->post(
-            sprintf(
-                '/task/%s/commeaaant%s',
-                $taskId,
-                !empty($team) ? "?custom_task_ids=true&team_id=$team" : ''
-            ),
+        $this->post(
+            sprintf('/task/%s/comment%s', $taskId, !empty($team) ? "?custom_task_ids=true&team_id=$team" : ''),
             ['comment_text' => $message]
         );
+    }
+
+    /**
+     * @throws BadResponseException
+     */
+    public function post(string $url, array $data = []): Response
+    {
+        $response = $this->client->timeout(10)->post($url, $data);
+
+        if (!$response->successful()) {
+            throw BadResponseException::forUnsuccessfulResponse($response->reason());
+        }
+
+        return $response;
     }
 }
