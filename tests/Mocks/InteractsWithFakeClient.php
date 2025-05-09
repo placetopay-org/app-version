@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Tests\Mocks;
 
+use PlacetoPay\AppVersion\Helpers\Changelog;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
 use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
@@ -22,11 +23,20 @@ trait InteractsWithFakeClient
         $this->swap(SentryApi::class, $fakeSentry);
     }
 
-    public function bindNewRelicFakeClient(): void
+    public function bindNewRelicFakeClient(?array $changelogData = []): void
     {
         $this->fakeClient = new FakeNewRelicClient();
+        $mock = $this->createPartialMock(Changelog::class, ['lastChanges']);
+        $mock->expects($this->once())
+            ->method('lastChanges')
+            ->willReturn($changelogData);
 
-        $fakeNewRelic = new NewRelicApi($this->fakeClient, config('app-version.newrelic.api_key'), config('app-version.newrelic.entity_guid'));
+        $fakeNewRelic = new NewRelicApi(
+            $this->fakeClient,
+            config('app-version.newrelic.api_key'),
+            config('app-version.newrelic.entity_guid'),
+            $mock
+        );
 
         $this->swap(NewRelicApi::class, $fakeNewRelic);
     }
