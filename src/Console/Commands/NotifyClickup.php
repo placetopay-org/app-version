@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
-use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
+use PlacetoPay\AppVersion\Clickup\PostClickupCommentJob;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\Logger;
 use Symfony\Component\Console\Command\Command as CommandStatus;
@@ -30,16 +30,10 @@ class NotifyClickup extends Command
                 $versionInformation,
                 $config->get('app-version.changelog_file_name'),
             );
-            Logger::success(
-                'Tasks received successfully',
-                ['changelogData' => $changelogData]
-            );
-        } catch (ChangelogException $exception) {
-            Logger::error(
-                'Error parsing changelog data',
-                ['error' => $exception->getMessage()]
-            );
+            Logger::success('Tasks received successfully', ['changelogData' => $changelogData]);
 
+        } catch (ChangelogException $exception) {
+            Logger::error('Error parsing changelog data', ['error' => $exception->getMessage()]);
             $this->error('[ERROR] Error parsing changelog data: ' . $exception->getMessage());
 
             return CommandStatus::FAILURE;
@@ -50,9 +44,16 @@ class NotifyClickup extends Command
             return CommandStatus::SUCCESS;
         }
 
-        dispatch(new PostClickupCommentsJob($config->get('app.env'), $changelogData, Carbon::now()));
+        foreach ($changelogData['tasks'] as $task) {
+            dispatch(new PostClickupCommentJob(
+                $config->get('app.env'),
+                $task,
+                $changelogData['version'],
+                Carbon::now()
+            ));
+        }
 
-        $this->info('[PROCESSING] Reported tasks');
+        $this->info(sprintf('[PROCESSING] Reported %d tasks',  count($changelogData['tasks'])));
 
         return CommandStatus::SUCCESS;
     }

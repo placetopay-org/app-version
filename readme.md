@@ -196,9 +196,9 @@ php artisan app-version:create
 
 3. After this, your tasks will have a comment similar to the following:
 
-   >Despligue realizado en ambiente: develop
+   >Despliegue realizado en ambiente: develop
    Fecha: 2025-04-30 02:06:21
-   Version: 3.1.0
+   Versión: 3.1.0
 
 
 The supported formats for reading ClickUp tasks in the change log file are:

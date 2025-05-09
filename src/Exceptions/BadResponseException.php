@@ -8,6 +8,6 @@ class BadResponseException extends Exception
 {
     public static function forUnsuccessfulResponse(string $reason): self
     {
-        return new self('Unsuccessful responser: ' . $reason);
+        return new self('Unsuccessful response: ' . $reason);
     }
 }

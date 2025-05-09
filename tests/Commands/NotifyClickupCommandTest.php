@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
-use PlacetoPay\AppVersion\Clickup\PostClickupCommentsJob;
+use PlacetoPay\AppVersion\Clickup\PostClickupCommentJob;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
@@ -32,43 +32,46 @@ class NotifyClickupCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->mock(TasksFileParser::class, function (MockInterface $mock) {
+        $tasks = [
+            ['id' => 'TST-123', 'team' => '999'],
+            ['id' => '12345678', 'team' => null],
+        ];
+
+        $this->mock(TasksFileParser::class, function (MockInterface $mock) use ($tasks) {
             $mock->makePartial()
                 ->shouldReceive('tasksData')
                 ->once()
                 ->andReturn([
                     'version' => '1.2.0',
-                    'tasks' => [
-                        ['id' => 'TST-123', 'team' => '999'],
-                        ['id' => '12345678', 'team' => null],
-                    ],
+                    'tasks' => $tasks,
                 ]);
         });
 
         Log::shouldReceive('log')
             ->once()
-            ->with('info', '[SUCCESS - app-version] Tasks received successfully', \Mockery::on(function ($context) {
-                return $context['changelogData'] == ['version' => '1.2.0', 'tasks' => [
-                        ['id' => 'TST-123', 'team' => '999'], ['id' => '12345678', 'team' => null],
-                    ]];
+            ->with('info', '[SUCCESS - app-version] Tasks received successfully', \Mockery::on(function ($context) use ($tasks) {
+                return $context['changelogData'] === ['version' => '1.2.0', 'tasks' => $tasks];
             }));
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::SUCCESS)
-            ->expectsOutput('[PROCESSING] Reported tasks');
+            ->expectsOutput('[PROCESSING] Reported 2 tasks');
 
-        Queue::assertPushed(PostClickupCommentsJob::class, function ($job) {
-            $tasks = $job->data['tasks'];
+        Queue::assertPushed(PostClickupCommentJob::class, 2);
 
+        Queue::assertPushed(PostClickupCommentJob::class, function (PostClickupCommentJob $job) use ($tasks) {
             return $job->environment === self::ENVIRONMENT
-                && $job->data['version']
-                && count($tasks) === 2
-                && $tasks[0]['id'] === 'TST-123'
-                && $tasks[0]['team'] === '999'
-                && $tasks[1]['id'] === '12345678'
-                && $tasks[1]['team'] === null;
+                && $job->version === '1.2.0'
+                && $job->task === $tasks[0];
+        });
+
+        Queue::assertPushed(PostClickupCommentJob::class, function (PostClickupCommentJob $job) use ($tasks) {
+            return $job->environment === self::ENVIRONMENT
+                && $job->version === '1.2.0'
+                && $job->task === $tasks[1];
         });
     }
+
 
     /** @test */
     public function can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
@@ -86,7 +89,7 @@ class NotifyClickupCommandTest extends TestCase
             ->assertExitCode(Command::SUCCESS)
             ->expectsOutput('[WARNING] No task found to post comment');
 
-        Queue::assertNotPushed(PostClickupCommentsJob::class);
+        Queue::assertNotPushed(PostClickupCommentJob::class);
     }
 
     /** @test */
@@ -111,6 +114,6 @@ class NotifyClickupCommandTest extends TestCase
             ->assertExitCode(Command::FAILURE)
             ->expectsOutput('[ERROR] Error parsing changelog data: The deployment branch does not match the current branch.');
 
-        Queue::assertNotPushed(PostClickupCommentsJob::class);
+        Queue::assertNotPushed(PostClickupCommentJob::class);
     }
 }
