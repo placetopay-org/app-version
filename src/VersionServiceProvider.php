@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use PlacetoPay\AppVersion\Console\Commands\CreateDeploy;
 use PlacetoPay\AppVersion\Console\Commands\CreateRelease;
 use PlacetoPay\AppVersion\Console\Commands\CreateVersionFile;
+use PlacetoPay\AppVersion\Console\Commands\NotifyClickup;
 use PlacetoPay\AppVersion\Http\Controllers\VersionController;
 use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
 use PlacetoPay\AppVersion\Sentry\SentryApi;
@@ -30,6 +31,7 @@ class VersionServiceProvider extends ServiceProvider
                 CreateVersionFile::class,
                 CreateRelease::class,
                 CreateDeploy::class,
+                NotifyClickup::class,
             ]);
         }
 
