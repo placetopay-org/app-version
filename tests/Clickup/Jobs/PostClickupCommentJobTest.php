@@ -37,7 +37,7 @@ class PostClickupCommentJobTest extends TestCase
 
         Log::shouldReceive('log')
             ->once()
-            ->with('info', '[SUCCESS - app-version] ClickUp publish comment', \Mockery::on(function ($context) use ($task) {
+            ->with('info', '[SUCCESS - app-version] ClickUp published comment', \Mockery::on(function ($context) use ($task) {
                 return $context['version'] === '1.2.0' && $context['task'] === $task;
             }));
 
@@ -63,7 +63,7 @@ class PostClickupCommentJobTest extends TestCase
 
         Log::shouldReceive('log')
             ->once()
-            ->with('error', '[ERROR - app-version] ClickUp publish comment', \Mockery::on(function ($context) use ($failTask) {
+            ->with('error', '[ERROR - app-version] ClickUp publishing comment', \Mockery::on(function ($context) use ($failTask) {
                 return $context['task'] === $failTask && str_contains($context['error'], 'Error posting comment');
             }));
 

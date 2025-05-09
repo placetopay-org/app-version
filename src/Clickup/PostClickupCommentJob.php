@@ -37,7 +37,7 @@ class PostClickupCommentJob implements ShouldQueue
     public function handle(ClickupApi $service)
     {
         $service->postCommentOnTask($this->task['id'], $this->buildCommentText(), $this->task['team']);
-        Logger::success('ClickUp publish comment', [
+        Logger::success('ClickUp published comment', [
             'version' => $this->version,
             'task' => $this->task,
         ]);
@@ -55,7 +55,7 @@ class PostClickupCommentJob implements ShouldQueue
 
     public function failed(\Throwable $exception)
     {
-        Logger::error('ClickUp publish comment', [
+        Logger::error('ClickUp publishing comment', [
             'environment' => $this->environment,
             'version' => $this->version,
             'task' => $this->task,
