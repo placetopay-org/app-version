@@ -175,7 +175,7 @@ An unchanged task
 
     /**
      * @test
-     * @dataProvider emptyDataProvider()
+     * @dataProvider versionDataProvider()
      */
     public function can_process_only_version_changes(string $diff): void
     {
@@ -188,7 +188,7 @@ An unchanged task
         $this->assertEmpty(Arr::get($result, 'information', $result));
     }
 
-    public function emptyDataProvider(): array
+    public function versionDataProvider(): array
     {
         return [
             ['+'],
@@ -201,10 +201,7 @@ An unchanged task
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider emptyDataProvider()
-     */
+    /** @test */
     public function can_process_empty_changes(): void
     {
         Log::shouldReceive('log')
