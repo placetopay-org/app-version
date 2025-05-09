@@ -5,9 +5,9 @@ namespace PlacetoPay\AppVersion\Tests\Helpers;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\Changelog;
+use PlacetoPay\AppVersion\Tests\TestCase;
 
 class ChangelogHelperTest extends TestCase
 {
@@ -175,9 +175,34 @@ An unchanged task
 
     /**
      * @test
-     * @dataProvider emptyDataProvider()
+     * @dataProvider versionDataProvider()
      */
-    public function can_process_empty_changes(string $diff = null): void
+    public function can_process_only_version_changes(string $diff): void
+    {
+        $changelog = $this->buildChangelogMock('abcdef', 'testing');
+        $changelog->expects($this->once())->method('changelogDiff')
+            ->willReturn($diff);
+
+        /** @var $changelog Changelog */
+        $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
+        $this->assertEmpty(Arr::get($result, 'information', $result));
+    }
+
+    public function versionDataProvider(): array
+    {
+        return [
+            ['+'],
+            ["+\n"],
+            ['+##Unreleased'],
+            ['+## [Unreleased]'],
+            ['+## 1.0.0'],
+            ['+## [1.0.0 (2024-01-01)]'],
+            ['+[1.0.0 (2024-01-01)](https://bitbucket.org/project/commits/tag/6.1.15)'],
+        ];
+    }
+
+    /** @test */
+    public function can_process_empty_changes(): void
     {
         Log::shouldReceive('log')
             ->once()
@@ -190,24 +215,10 @@ An unchanged task
 
         $changelog = $this->buildChangelogMock('abcdef', 'testing');
         $changelog->expects($this->once())->method('changelogDiff')
-            ->willReturn($diff);
+            ->willReturn(null);
 
         /** @var $changelog Changelog */
         $result = $changelog->lastChanges(self::VERSION, 'changelog.md');
         $this->assertEmpty(Arr::get($result, 'information', $result));
-    }
-
-    public function emptyDataProvider(): array
-    {
-        return [
-            ['+'],
-            [''],
-            ["+\n"],
-            ['+##Unreleased'],
-            ['+## [Unreleased]'],
-            ['+## 1.0.0'],
-            ['+## [1.0.0 (2024-01-01)]'],
-            ['+[1.0.0 (2024-01-01)](https://bitbucket.org/project/commits/tag/6.1.15)'],
-        ];
     }
 }
