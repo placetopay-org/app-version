@@ -31,7 +31,17 @@ class CreateDeployCommandTest extends TestCase
     {
         $this->setNewRelicEnvironmentSetUp();
 
-        $this->bindNewRelicFakeClient();
+        $changelogData = ['version' => '1.1.0', 'information' => [
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12389)',
+            'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
+            'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+        ]];
+        $this->bindNewRelicFakeClient($changelogData);
+
         $this->fakeClient->push('success_deploy');
 
         $this->artisan('app-version:create-deploy')
@@ -39,25 +49,51 @@ class CreateDeployCommandTest extends TestCase
             ->expectsOutput('NEWRELIC deployment created successfully');
 
         $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
-        mutation {
-          changeTrackingCreateDeployment(
-            deployment: {
-              version: "asdfg2",
-              entityGuid: "placetopay",
-              changelog: "Not available right now"
-              description: "Commit on testing",
-              user: "Not available right now",
-            }
-          ) {
-            deploymentId
-            timestamp
-          }
-        }
-        GRAPHQL);
+mutation ($deployment: DeploymentInput!) {
+  changeTrackingCreateDeployment(deployment: $deployment) {
+    deploymentId
+    timestamp
+  }
+}
+GRAPHQL);
+
+        $this->fakeClient->assertLastRequestHas('variables', ['deployment' => [
+            'version' => 'asdfg2',
+            'entityGuid' => 'placetopay',
+            'changelog' => json_encode($changelogData),
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]]);
 
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
+    /** @test */
+    public function can_not_create_a_release_for_newrelic_if_query_has_error()
+    {
+        $this->setNewRelicEnvironmentSetUp();
+
+        $this->bindNewRelicFakeClient(['version' => '1.1.0', 'information' => [
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+        ]]);
+        $this->fakeClient->push('failed_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertFailed()
+            ->expectsOutput('Error creating newrelic deployment');
+
+        $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
+mutation ($deployment: DeploymentInput!) {
+  changeTrackingCreateDeployment(deployment: $deployment) {
+    deploymentId
+    timestamp
+  }
+}
+GRAPHQL);
+
+        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
+    }
     /** @test */
     public function can_not_create_a_release_if_has_invalid_version_data()
     {
