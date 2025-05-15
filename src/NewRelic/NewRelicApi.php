@@ -46,7 +46,7 @@ class NewRelicApi
         return $this->client->post(self::API_URL, $this->buildGraphQLQuery($version, $environment, $changelogData));
     }
 
-    private function buildGraphQLQuery(string $version, string $environment, $changelog): array
+    private function buildGraphQLQuery(string $version, string $environment, array $changelog): array
     {
         $deployment = [
             'version' => $version,
