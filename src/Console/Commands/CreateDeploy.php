@@ -8,7 +8,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
+use PlacetoPay\AppVersion\Helpers\Logger;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
+use PlacetoPay\AppVersion\Sentry\Exceptions\InvalidData;
 use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
@@ -86,10 +88,15 @@ class CreateDeploy extends Command
     private function newrelicDeploy(Repository $config, string $version): void
     {
         $newrelic = ApiFactory::newRelicApi();
-        $newrelic->createDeploy(
+        $response = $newrelic->createDeploy(
             $version,
             $config->get('app.env')
         );
+
+        if (Arr::exists($response, 'errors')) {
+            Logger::error('Error creating newrelic deployment', ['response' => $response]);
+            throw new InvalidData('Error creating newrelic deployment');
+        }
 
         $this->comment(self::NEWRELIC . ' deployment created successfully');
     }
