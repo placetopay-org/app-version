@@ -1,7 +1,10 @@
 # Changelog
 
-## 3.0.2 (2025-05-22)
+## 3.1.1 (2025-05-22)
   - Allow use env custom to define env when to execute the command create-deploy
+
+## 3.1.0 (2025-05-09)
+- Adds support for Laravel 12
 
 ## 3.0.0 (2025-03-25)
   - Updated the Newrelic API to use GraphQL
@@ -9,7 +12,7 @@
   - Added env variable `APP_VERSION_NEWRELIC_ENTITY_GUID`.
 
 ## 2.9.1 (2024-04-03)
-- Adds support for laravel 11
+- Adds support for Laravel 11
 
 ## 2.9.0 (2024-03-07)
 - Add query param to hidden version
