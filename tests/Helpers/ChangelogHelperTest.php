@@ -43,7 +43,7 @@ class ChangelogHelperTest extends TestCase
     /** @test */
     public function it_can_resolve_when_file_is_empty(): void
     {
-        file_put_contents($this->tempFilePath, "");
+        file_put_contents($this->tempFilePath, '');
         $this->changelog->execute($this->tempFilePath);
         $this->assertEmpty($this->changelog->content());
         $this->assertNull($this->changelog->version());

@@ -30,7 +30,7 @@ class Changelog
 
         while (($line = fgets($handle)) !== false) {
             if (preg_match(self::REGEX_SECTIONS_FILE, $line, $matches)) {
-                $isUnreleasedSection = (bool) preg_match(self::UNRELEASED_SECTION, $this->version);
+                $isUnreleasedSection = (bool)preg_match(self::UNRELEASED_SECTION, $this->version);
                 $content = array_filter($content);
                 if ($isUnreleasedSection && !empty($content)) {
                     return;
@@ -62,7 +62,7 @@ class Changelog
     private function cleanContent($changes): array
     {
         $result = array_map(function ($line) {
-            $cleanLine = ltrim($line, "+-*# ");
+            $cleanLine = ltrim($line, '+-*# ');
             return trim($cleanLine);
         }, $changes);
 

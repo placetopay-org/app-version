@@ -7,7 +7,6 @@ use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
 use PlacetoPay\AppVersion\Helpers\Changelog;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
-use PlacetoPay\AppVersion\VersionFile;
 
 class NewRelicApi
 {
