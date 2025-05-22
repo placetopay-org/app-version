@@ -41,9 +41,9 @@ class NewRelicApi
         $this->client->addHeaders([
             "API-Key: {$this->apiKey}",
         ]);
-        $changelogData = $this->changelog->lastChanges(VersionFile::read(), 'changelog.md');
+        $this->changelog->execute('changelog.md');
 
-        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($version, $environment, $changelogData));
+        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($version, $environment, $this->changelog->content()));
     }
 
     private function buildGraphQLQuery(string $version, string $environment, array $changelog): array

@@ -28,7 +28,7 @@ trait InteractsWithFakeClient
         $this->fakeClient = new FakeNewRelicClient();
         $mock = $this->createPartialMock(Changelog::class, ['lastChanges']);
         $mock->expects($this->once())
-            ->method('lastChanges')
+            ->method('execute')
             ->willReturn($changelogData);
 
         $fakeNewRelic = new NewRelicApi(

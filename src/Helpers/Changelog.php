@@ -2,113 +2,70 @@
 
 namespace PlacetoPay\AppVersion\Helpers;
 
-use Illuminate\Support\Arr;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 
 class Changelog
 {
-    public const REGEX_SECTIONS_FILE = '/^[\+\s]*(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?(?:\s*\(\d{4}-\d{2}-\d{2}\))?)\]?(?:\([^)]+\))?/mi';
-    public const REGEX_VERSION = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?/i';
+    public const REGEX_SECTIONS_FILE = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?(?:\([^)]+\))?/mi';
+    public const UNRELEASED_SECTION = '/\bunreleased\b/i';
 
-    public const REGEX_NEW_CHANGES = '/^\+(?!\+).*/m';
-    public const DEFAULT_VERSION = 'Unreleased';
+    private ?string $version = null;
+    private ?array $content = null;
 
     /**
      * @throws ChangelogException
      */
-    public function lastChanges(array $version, string $fileName): array
+    public function execute(string $fileName): void
     {
-        $commitInformation = $this->commitInformation();
-        $currentBranch = Arr::get($commitInformation, 'currentBranch');
-        $currentCommit = Arr::get($commitInformation, 'currentCommit');
-
-        $deployCommit = Arr::get($version, 'sha');
-        $deployBranch = Arr::get($version, 'branch');
-
-        if (!$deployCommit || !$deployBranch) {
-            throw ChangelogException::forNoDeployConfiguration();
+        if (!file_exists($fileName)) {
+            throw new ChangelogException("File '$fileName' does not exist.");
         }
 
-        if ($currentBranch !== $deployBranch) {
-            throw ChangelogException::forDifferentBranches();
+        if (!is_readable($fileName)) {
+            throw new ChangelogException("The file '$fileName' cannot be accessed.");
         }
 
-        $changelogDiff = $this->changelogDiff($deployCommit, $currentCommit, $fileName);
+        $handle = fopen($fileName, 'r');
+        $content = [];
 
-        if (empty($changelogDiff)) {
-            Logger::warning("No changes were found in the file '$fileName'.", [
-                'currentCommit' => $currentCommit,
-                'currentBranch' => $currentBranch,
-                'deployCommit' => $deployCommit,
-                'deployBranch' => $deployBranch,
-            ]);
-            return [];
+        while (($line = fgets($handle)) !== false) {
+            if (preg_match(self::REGEX_SECTIONS_FILE, $line, $matches)) {
+                $isUnreleasedSection = (bool) preg_match(self::UNRELEASED_SECTION, $this->version);
+                $content = array_filter($content);
+                if ($isUnreleasedSection && !empty($content)) {
+                    return;
+                }
+
+                if ($this->version && !$isUnreleasedSection) {
+                    break;
+                }
+                $this->version = $matches[1];
+            } elseif ($this->version) {
+                $content[] = trim($line);
+            }
         }
 
-        return $this->extractChanges($changelogDiff);
+        fclose($handle);
+        $this->content = $this->cleanContent($content);
     }
 
-    protected function commitInformation(): array
+    public function version(): ?string
     {
-        $currentCommit = trim(shell_exec('git log -n 1 --pretty="%H"'));
-        $currentBranch = trim(shell_exec('git symbolic-ref --short HEAD'));
-
-        return ['currentCommit' => $currentCommit, 'currentBranch' => $currentBranch];
+        return $this->version;
     }
 
-    private function cleanChanges($changes): array
+    public function content(): ?array
     {
-        preg_match_all(self::REGEX_NEW_CHANGES, $changes, $lines);
-        $lines = reset($lines);
+        return $this->content;
+    }
 
-        $result = array_filter(array_map(function ($line) {
-            $cleanLine = trim($line);
-            if (strpos($cleanLine, '+') === 0) {
-                $cleanLine = trim(substr($cleanLine, 1));
-            }
-            if (strpos($cleanLine, '-') === 0) {
-                $cleanLine = trim(substr($cleanLine, 1));
-            }
-            return $cleanLine;
-        }, $lines));
+    private function cleanContent($changes): array
+    {
+        $result = array_map(function ($line) {
+            $cleanLine = ltrim($line, "+-*# ");
+            return trim($cleanLine);
+        }, $changes);
 
         return array_values($result);
-    }
-
-    public function changelogDiff(string $deployCommit, string $currentCommit, string $fileName): ?string
-    {
-        return shell_exec("git diff $deployCommit $currentCommit -- $fileName");
-    }
-
-    public function extractChanges(string $changelogDiff): array
-    {
-        $sections = preg_split(self::REGEX_SECTIONS_FILE, $changelogDiff, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $changes = '';
-
-        $version = null;
-        foreach ($sections as $section) {
-            if (preg_match(self::REGEX_VERSION, $section, $matches)) {
-                $version = array_pop($matches);
-                continue;
-            }
-
-            if (!$version) {
-                continue;
-            }
-
-            $changes = $section;
-            break;
-        }
-
-        if (!$version) {
-            $changes = $changelogDiff;
-        }
-
-        $changes = self::cleanChanges($changes);
-        if (!empty($changes)) {
-            return  ['version' => $version ?? self::DEFAULT_VERSION, 'information' => $changes];
-        }
-
-        return [];
     }
 }
