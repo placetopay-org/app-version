@@ -85,11 +85,11 @@ class CreateDeploy extends Command
     /**
      * @throws BadResponseCode
      */
-    private function newrelicDeploy(Repository $config, string $version): void
+    private function newrelicDeploy(Repository $config, string $versionSha): void
     {
         $newrelic = ApiFactory::newRelicApi();
         $response = $newrelic->createDeploy(
-            $version,
+            $versionSha,
             $config->get('app.env')
         );
 

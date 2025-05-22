@@ -35,20 +35,20 @@ class NewRelicApi
      * @throws BadResponseCode
      * @throws ChangelogException
      */
-    public function createDeploy(string $version, string $environment)
+    public function createDeploy(string $versionSha, string $environment)
     {
         $this->client->addHeaders([
             "API-Key: {$this->apiKey}",
         ]);
         $this->changelog->execute('changelog.md');
 
-        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($version, $environment, $this->changelog->content()));
+        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($versionSha, $environment, $this->changelog->content()));
     }
 
-    private function buildGraphQLQuery(string $version, string $environment, array $changelog): array
+    private function buildGraphQLQuery(string $versionSha, string $environment, array $changelog): array
     {
         $deployment = [
-            'version' => $version,
+            'version' => $versionSha,
             'entityGuid' => $this->entityGuid,
             'changelog' => json_encode($changelog),
             'description' => "Commit on $environment",
