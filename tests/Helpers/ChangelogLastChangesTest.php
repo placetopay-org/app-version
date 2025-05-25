@@ -6,7 +6,7 @@ use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
-class ChangelogHelperTest extends TestCase
+class ChangelogLastChangesTest extends TestCase
 {
     private ChangelogLastChanges $changelog;
     private string $tempFilePath;

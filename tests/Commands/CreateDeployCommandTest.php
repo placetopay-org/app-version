@@ -75,18 +75,21 @@ GRAPHQL);
         $this->setNewRelicEnvironmentSetUp();
 
         $version = '1.1.0';
-        $changes = [
+        $this->bindNewRelicFakeClient($version, [
             'feature',
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
             'Refactor',
+            'Refactor',
             'Change (https://app.clickup.com/t/789/CU-12389)',
+            'Bugfix',
             'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
+            'BREAKING CHANGES',
             'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'dependencies',
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
-        ];
-        $this->bindNewRelicFakeClient($version, $changes);
+        ]);
 
         $this->fakeClient->push('success_deploy');
 
@@ -106,7 +109,25 @@ GRAPHQL);
         $this->fakeClient->assertLastRequestHas('variables', ['deployment' => [
             'version' => 'asdfg2',
             'entityGuid' => 'placetopay',
-            'changelog' => json_encode(['version' => $version, 'content' => $changes]),
+            'changelog' => json_encode(['version' => $version, 'content' => [
+                'Feature' => [
+                    'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+                    'Change (https://app.clickup.com/t/789/CU-12345)',
+                ],
+                'Refactor' => [
+                    'Change (https://app.clickup.com/t/789/CU-12389)',
+                    ],
+                'Bugfix' => [
+                    'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
+                    ],
+                'Breaking changes' => [
+                    'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
+                    ],
+                'Dependencies' => [
+                    'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+                    'Change (https://app.clickup.com/t/789/CU-12345)',
+                ],
+            ]]),
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]]);

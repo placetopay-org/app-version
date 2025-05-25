@@ -10,6 +10,20 @@ use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class NewRelicApi
 {
+    private const AVAILABLE_KEYS = [
+        'feature',
+        'refactor',
+        'bugfix',
+        'breaking changes',
+        'dependencies',
+        'added',
+        'changed',
+        'deprecated',
+        'removed',
+        'fixed',
+        'security',
+    ];
+
     public const API_URL = 'https://api.newrelic.com/graphql';
 
     private HttpClient $client;
@@ -50,10 +64,7 @@ class NewRelicApi
         $deployment = [
             'version' => $versionSha,
             'entityGuid' => $this->entityGuid,
-            'changelog' => json_encode([
-                'version' => $this->changelog->version(),
-                'content' => $this->changelog->content()
-            ]),
+            'changelog' => $this->parseChangelogData(),
             'description' => "Commit on $environment",
             'user' => 'Not available right now',
         ];
@@ -73,6 +84,31 @@ GRAPHQL;
                 'deployment' => $deployment,
             ],
         ];
+    }
+
+    private function parseChangelogData(): string
+    {
+        $result = [];
+        $currentKey = null;
+        $content = $this->changelog->content();
+
+        foreach ($content as $change) {
+            if (in_array(strtolower($change), self::AVAILABLE_KEYS)) {
+                $currentKey = ucfirst(strtolower($change));
+                $result[$currentKey] = [];
+            } elseif ($currentKey) {
+                $result[$currentKey][] = $change;
+            }
+        }
+
+        if (empty($result)) {
+            $result = $content;
+        }
+
+        return json_encode([
+            'version' => $this->changelog->version(),
+            'content' => $result,
+        ]);
     }
 
     public function createRelease(string $version, string $repository, string $sentryProject)
