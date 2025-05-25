@@ -4,7 +4,7 @@ namespace PlacetoPay\AppVersion\Helpers;
 
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 
-class Changelog
+class ChangelogLastChanges
 {
     public const REGEX_SECTIONS_FILE = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?(?:\([^)]+\))?/mi';
     public const UNRELEASED_SECTION = '/\bunreleased\b/i';
@@ -15,15 +15,9 @@ class Changelog
     /**
      * @throws ChangelogException
      */
-    public function execute(string $fileName): void
+    public function read(string $fileName): void
     {
-        if (!file_exists($fileName)) {
-            throw new ChangelogException("File '$fileName' does not exist.");
-        }
-
-        if (!is_readable($fileName)) {
-            throw new ChangelogException("The file '$fileName' cannot be accessed.");
-        }
+        $this->validateFile($fileName);
 
         $handle = fopen($fileName, 'r');
         $content = [];
@@ -67,5 +61,19 @@ class Changelog
         }, $changes);
 
         return array_values($result);
+    }
+
+    /**
+     * @throws ChangelogException
+     */
+    public function validateFile(string $fileName): void
+    {
+        if (!file_exists($fileName)) {
+            throw new ChangelogException("File '$fileName' does not exist.");
+        }
+
+        if (!is_readable($fileName)) {
+            throw new ChangelogException("The file '$fileName' cannot be accessed.");
+        }
     }
 }
