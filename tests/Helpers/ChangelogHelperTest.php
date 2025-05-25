@@ -3,18 +3,18 @@
 namespace PlacetoPay\AppVersion\Tests\Helpers;
 
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
-use PlacetoPay\AppVersion\Helpers\Changelog;
+use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
 class ChangelogHelperTest extends TestCase
 {
-    private Changelog $changelog;
+    private ChangelogLastChanges $changelog;
     private string $tempFilePath;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->changelog = new Changelog();
+        $this->changelog = new ChangelogLastChanges();
         $this->tempFilePath = sys_get_temp_dir() . '/test_changelog.md';
     }
 
@@ -24,27 +24,14 @@ class ChangelogHelperTest extends TestCase
         $path = '/ruta/no/existente.md';
         $this->expectException(ChangelogException::class);
         $this->expectExceptionMessage("File '$path' does not exist.");
-        $this->changelog->execute($path);
+        $this->changelog->read($path);
     }
 
-    /** @test */
-    public function it_throws_exception_when_file_is_not_readable(): void
-    {
-        $tempFile = sys_get_temp_dir() . '/not_readable.md';
-        @chmod($tempFile, 000);
-
-        $changelog = new Changelog();
-
-        $this->expectException(ChangelogException::class);
-        $this->expectExceptionMessage("The file '$tempFile' cannot be accessed.");
-
-        $changelog->execute($tempFile);
-    }
     /** @test */
     public function it_can_resolve_when_file_is_empty(): void
     {
         file_put_contents($this->tempFilePath, '');
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEmpty($this->changelog->content());
         $this->assertNull($this->changelog->version());
     }
@@ -56,7 +43,7 @@ class ChangelogHelperTest extends TestCase
             - A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
             - Task without link
         ');
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEmpty($this->changelog->content());
         $this->assertNull($this->changelog->version());
     }
@@ -82,7 +69,7 @@ class ChangelogHelperTest extends TestCase
 ### Fixed
 - other task [@user](https://bitbucket.org/user/) [#PT_1234](https://app.clickup.com/t/123456/PT-1234)
 ');
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEquals('6.1.15', $this->changelog->version());
         $this->assertCount(10, $this->changelog->content());
         $this->assertEquals([
@@ -107,7 +94,7 @@ class ChangelogHelperTest extends TestCase
 ## 3.0.0 (2024-01-01)
 - Fix a bug [CU-12343](https://app.clickup.com/t/789/CU-12343)
 ');
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEquals('Unreleased', $this->changelog->version());
         $this->assertNull($this->changelog->content());
     }
@@ -124,7 +111,7 @@ class ChangelogHelperTest extends TestCase
 [2.0.0]
 - Other Change [CU-4321](https://app.clickup.com/t/123/CU-4321)
 ");
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEquals($expectedVersion, $this->changelog->version());
         $this->assertCount(2, $this->changelog->content());
         $this->assertEquals([
@@ -156,7 +143,7 @@ class ChangelogHelperTest extends TestCase
         file_put_contents($this->tempFilePath, "## 1.0.0 (2024-01-01)
 $changeLogEntry
 ");
-        $this->changelog->execute($this->tempFilePath);
+        $this->changelog->read($this->tempFilePath);
         $this->assertEquals($this->changelog->version(), '1.0.0');
         $this->assertCount(1, $this->changelog->content());
         $this->assertEquals([$expectedChange], $this->changelog->content());

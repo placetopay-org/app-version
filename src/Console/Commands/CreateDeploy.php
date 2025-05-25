@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Helpers\Logger;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
@@ -83,6 +84,8 @@ class CreateDeploy extends Command
     }
 
     /**
+     * @throws InvalidData
+     * @throws ChangelogException
      * @throws BadResponseCode
      */
     private function newrelicDeploy(Repository $config, string $versionSha): void

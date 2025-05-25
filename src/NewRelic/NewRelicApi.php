@@ -4,7 +4,7 @@ namespace PlacetoPay\AppVersion\NewRelic;
 
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
-use PlacetoPay\AppVersion\Helpers\Changelog;
+use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
@@ -16,9 +16,9 @@ class NewRelicApi
 
     private string $apiKey;
     private string $entityGuid;
-    private Changelog $changelog;
+    private ChangelogLastChanges $changelog;
 
-    public function __construct(HttpClient $client, string $apiKey, string $entityGuid, Changelog $changelog = null)
+    public function __construct(HttpClient $client, string $apiKey, string $entityGuid, ChangelogLastChanges $changelog = null)
     {
         $this->client = $client;
         $this->apiKey = $apiKey;
@@ -28,7 +28,7 @@ class NewRelicApi
 
     public static function create(string $apiKey, string $entityGuid): self
     {
-        return new self(new HttpClient(), $apiKey, $entityGuid, new Changelog());
+        return new self(new HttpClient(), $apiKey, $entityGuid, new ChangelogLastChanges());
     }
 
     /**
@@ -40,17 +40,20 @@ class NewRelicApi
         $this->client->addHeaders([
             "API-Key: {$this->apiKey}",
         ]);
-        $this->changelog->execute('changelog.md');
+        $this->changelog->read('changelog.md');
 
-        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($versionSha, $environment, $this->changelog->content()));
+        return $this->client->post(self::API_URL, $this->buildGraphQLQuery($versionSha, $environment));
     }
 
-    private function buildGraphQLQuery(string $versionSha, string $environment, array $changelog): array
+    private function buildGraphQLQuery(string $versionSha, string $environment): array
     {
         $deployment = [
             'version' => $versionSha,
             'entityGuid' => $this->entityGuid,
-            'changelog' => json_encode($changelog),
+            'changelog' => json_encode([
+                'version' => $this->changelog->version(),
+                'content' => $this->changelog->content()
+            ]),
             'description' => "Commit on $environment",
             'user' => 'Not available right now',
         ];

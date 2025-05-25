@@ -31,7 +31,8 @@ class CreateDeployCommandTest extends TestCase
     {
         $this->setNewRelicEnvironmentSetUp();
 
-        $changelogData = ['version' => '1.1.0', 'information' => [
+        $version = '1.1.0';
+        $changes = [
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12389)',
@@ -39,8 +40,8 @@ class CreateDeployCommandTest extends TestCase
             'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
-        ]];
-        $this->bindNewRelicFakeClient($changelogData);
+        ];
+        $this->bindNewRelicFakeClient($version, $changes);
 
         $this->fakeClient->push('success_deploy');
 
@@ -60,7 +61,52 @@ GRAPHQL);
         $this->fakeClient->assertLastRequestHas('variables', ['deployment' => [
             'version' => 'asdfg2',
             'entityGuid' => 'placetopay',
-            'changelog' => json_encode($changelogData),
+            'changelog' => json_encode(['version' => $version, 'content' => $changes]),
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]]);
+
+        $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
+    }
+
+    /** @test */
+    public function can_create_a_release_for_newrelic_with_subtitles()
+    {
+        $this->setNewRelicEnvironmentSetUp();
+
+        $version = '1.1.0';
+        $changes = [
+            'feature',
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+            'Refactor',
+            'Change (https://app.clickup.com/t/789/CU-12389)',
+            'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
+            'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
+            'Change (https://app.clickup.com/t/789/CU-12345)',
+        ];
+        $this->bindNewRelicFakeClient($version, $changes);
+
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('NEWRELIC deployment created successfully');
+
+        $this->fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
+mutation ($deployment: DeploymentInput!) {
+  changeTrackingCreateDeployment(deployment: $deployment) {
+    deploymentId
+    timestamp
+  }
+}
+GRAPHQL);
+
+        $this->fakeClient->assertLastRequestHas('variables', ['deployment' => [
+            'version' => 'asdfg2',
+            'entityGuid' => 'placetopay',
+            'changelog' => json_encode(['version' => $version, 'content' => $changes]),
             'description' => 'Commit on testing',
             'user' => 'Not available right now',
         ]]);
@@ -73,10 +119,10 @@ GRAPHQL);
     {
         $this->setNewRelicEnvironmentSetUp();
 
-        $this->bindNewRelicFakeClient(['version' => '1.1.0', 'information' => [
+        $this->bindNewRelicFakeClient('1.1.0', [
             'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
             'Change (https://app.clickup.com/t/789/CU-12345)',
-        ]]);
+        ]);
         $this->fakeClient->push('failed_deploy');
 
         $this->artisan('app-version:create-deploy')
