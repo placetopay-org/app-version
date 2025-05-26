@@ -60,6 +60,7 @@ class ChangelogLastChangesTest extends TestCase
     - Other testing changes
     - Other change
     - Other testing [PT-9770](https://app.clickup.com/t/11111/TK-9712)
+- 
 - Other change [868c4frhp](https://app.clickup.com/t/123a4asdf)
 ### Fixed
 - Fix change. [@user](https://bitbucket.org/user/) [#PT-2222](https://app.clickup.com/t/22333/PT-2222)

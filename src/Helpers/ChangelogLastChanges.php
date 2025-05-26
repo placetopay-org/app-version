@@ -60,7 +60,7 @@ class ChangelogLastChanges
             return trim($cleanLine);
         }, $changes);
 
-        return array_values($result);
+        return array_values(array_filter($result));
     }
 
     /**
