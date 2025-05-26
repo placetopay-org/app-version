@@ -10,7 +10,7 @@ class ChangelogLastChanges
     public const UNRELEASED_SECTION = '/\bunreleased\b/i';
 
     private ?string $version = null;
-    private ?array $content = null;
+    private ?array $content = [];
 
     /**
      * @throws ChangelogException

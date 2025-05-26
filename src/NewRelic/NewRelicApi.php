@@ -92,6 +92,10 @@ GRAPHQL;
         $currentKey = null;
         $content = $this->changelog->content();
 
+        if (empty($content)) {
+            return '';
+        }
+
         foreach ($content as $change) {
             if (in_array(strtolower($change), self::AVAILABLE_KEYS)) {
                 $currentKey = ucfirst(strtolower($change));
