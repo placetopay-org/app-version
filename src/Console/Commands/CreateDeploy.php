@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Console\Commands;
 
+use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
@@ -59,7 +60,8 @@ class CreateDeploy extends Command
             )) {
                 $this->newrelicDeploy($config, $versionSha);
             }
-        } catch (BadResponseCode $e) {
+        } catch (Exception $e) {
+            Logger::error('Error creating deploy', ['exception' => $e]);
             $this->error($e->getMessage());
             return CommandStatus::FAILURE;
         }
@@ -93,7 +95,8 @@ class CreateDeploy extends Command
         $newrelic = ApiFactory::newRelicApi();
         $response = $newrelic->createDeploy(
             $versionSha,
-            $config->get('app.env')
+            $config->get('app.env'),
+            $config->get('app-version.changelog_file_name')
         );
 
         if (Arr::exists($response, 'errors')) {
