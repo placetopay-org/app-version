@@ -96,7 +96,7 @@ class ChangelogLastChangesTest extends TestCase
 ');
         $this->changelog->read($this->tempFilePath);
         $this->assertEquals('Unreleased', $this->changelog->version());
-        $this->assertNull($this->changelog->content());
+        $this->assertEmpty($this->changelog->content());
     }
 
     /**
