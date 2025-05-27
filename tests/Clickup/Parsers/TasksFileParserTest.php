@@ -4,7 +4,7 @@ namespace PlacetoPay\AppVersion\Tests\Clickup\Parsers;
 
 use PHPUnit\Framework\TestCase;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
-use PlacetoPay\AppVersion\Helpers\Changelog;
+use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 
 class TasksFileParserTest extends TestCase
 {
@@ -17,9 +17,9 @@ class TasksFileParserTest extends TestCase
 
     public function buildParser(array $changelogData, ?string $version = null): TasksFileParser
     {
-        $mock = $this->createPartialMock(Changelog::class, ['lastChanges']);
+        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['lastChanges']);
         $mock->expects($this->once())
-            ->method('lastChanges')
+            ->method('read')
             ->willReturn($version ? ['version' => $version, 'information' => $changelogData] : $changelogData);
 
         return new TasksFileParser($mock);
@@ -43,9 +43,9 @@ class TasksFileParserTest extends TestCase
     /** @test */
     public function can_returns_null_when_changelog_data_is_empty(): void
     {
-        $mock = $this->createPartialMock(Changelog::class, ['lastChanges']);
+        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['lastChanges']);
         $mock->expects($this->once())
-            ->method('lastChanges')
+            ->method('read')
             ->willReturn([]);
 
         $parser = new TasksFileParser($mock);

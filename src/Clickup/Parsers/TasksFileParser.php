@@ -4,14 +4,14 @@ namespace PlacetoPay\AppVersion\Clickup\Parsers;
 
 use Illuminate\Support\Arr;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
-use PlacetoPay\AppVersion\Helpers\Changelog;
+use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 
 class TasksFileParser
 {
     public const REGEX_CLICKUP_IDENTIFIER = '/\(https:\/\/app\.clickup\.com\/t(?:\/(?<team>\d+))?\/(?<id>[\w-]+)\)/';
-    private Changelog $changelog;
+    private ChangelogLastChanges $changelog;
 
-    public function __construct(Changelog $changelog)
+    public function __construct(ChangelogLastChanges $changelog)
     {
         $this->changelog = $changelog;
     }
@@ -19,16 +19,16 @@ class TasksFileParser
     /**
      * @throws ChangelogException
      */
-    public function tasksData(array $version, string $changelogFileName): ?array
+    public function tasksData(string $changelogFileName): ?array
     {
-        $changelogInformation = $this->changelog->lastChanges($version, $changelogFileName);
+        $this->changelog->read($changelogFileName);
 
-        if (!empty($changelogInformation)) {
-            $tasks = $this->extractTasks(Arr::get($changelogInformation, 'information'));
+        if (!empty($this->changelog->content())) {
+            $tasks = $this->extractTasks($this->changelog->content());
 
             if (!empty($tasks)) {
                 return [
-                    'version' => Arr::get($changelogInformation, 'version'),
+                    'version' => $this->changelog->version(),
                     'tasks' => $tasks,
                 ];
             }
