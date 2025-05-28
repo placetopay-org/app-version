@@ -101,18 +101,18 @@ class NotifyClickupCommandTest extends TestCase
             $mock->makePartial()
                 ->shouldReceive('tasksData')
                 ->once()
-                ->andThrow(ChangelogException::forDifferentBranches());
+                ->andThrow(ChangelogException::forFileNotFound('non_existent_file.md'));
         });
 
         Log::shouldReceive('log')
             ->once()
             ->with('error', '[ERROR - app-version] Error parsing changelog data', \Mockery::on(function ($context) {
-                return  $context['error'] == 'The deployment branch does not match the current branch.';
+                return  $context['error'] == 'non_existent_file.md file not found.';
             }));
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::FAILURE)
-            ->expectsOutput('[ERROR] Error parsing changelog data: The deployment branch does not match the current branch.');
+            ->expectsOutput('[ERROR] Error parsing changelog data: non_existent_file.md file not found.');
 
         Queue::assertNotPushed(PostClickupCommentJob::class);
     }
