@@ -2,13 +2,11 @@
 
 namespace PlacetoPay\AppVersion\Console\Commands;
 
-use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\ApiFactory;
 use PlacetoPay\AppVersion\Helpers\Logger;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
