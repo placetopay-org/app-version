@@ -6,13 +6,13 @@ use Exception;
 
 class ChangelogException extends Exception
 {
-    public static function forFileNotFound(): self
+    public static function forFileNotFound(string $fileName): self
     {
-        return new self("Changelog file not found.");
+        return new self("$fileName file not found.");
     }
 
-    public static function forNoPermissionsToReadTheFile(): self
+    public static function forNoPermissionsToReadTheFile(string $fileName): self
     {
-        return new self('The changelog file cannot be accessed.');
+        return new self("The $fileName file cannot be accessed.");
     }
 }

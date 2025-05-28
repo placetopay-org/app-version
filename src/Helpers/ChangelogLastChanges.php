@@ -6,7 +6,7 @@ use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 
 class ChangelogLastChanges
 {
-    public const REGEX_SECTIONS_FILE = '/^(?:##\s*)?\[?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?(?:\([^)]+\))?/mi';
+    public const REGEX_SECTIONS_FILE = '/^(?:##\s*)?\[?(?:v)?(Unreleased|\d+\.\d+(?:\.\d+)?)(?:\s*\(\d{4}-\d{2}-\d{2}\))?\]?(?:\([^)]+\))?/mi';
     public const UNRELEASED_SECTION = '/\bunreleased\b/i';
 
     private ?string $version = null;
@@ -69,11 +69,11 @@ class ChangelogLastChanges
     public function validateFile(string $fileName): void
     {
         if (!file_exists($fileName)) {
-            throw ChangelogException::forFileNotFound();
+            throw ChangelogException::forFileNotFound($fileName);
         }
 
         if (!is_readable($fileName)) {
-            throw  ChangelogException::forNoPermissionsToReadTheFile();
+            throw  ChangelogException::forNoPermissionsToReadTheFile($fileName);
         }
     }
 }

@@ -87,6 +87,7 @@ GRAPHQL;
             'refactor',
             'bugfix',
             'breaking changes',
+            'continuous integration',
             'dependencies',
             'added',
             'changed',
@@ -101,8 +102,9 @@ GRAPHQL;
         }
 
         foreach ($content as $change) {
-            if (in_array(strtolower($change), $availableKeys)) {
-                $currentKey = ucfirst(strtolower($change));
+            $normalizedKey = ltrim(strtolower($change), " \t\n\r\0\x0B\xE2\x9A\xA0");
+            if (in_array($normalizedKey, $availableKeys)) {
+                $currentKey = $normalizedKey;
                 $result[$currentKey] = [];
             } elseif ($currentKey) {
                 $result[$currentKey][] = $change;

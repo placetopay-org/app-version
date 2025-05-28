@@ -82,7 +82,7 @@ GRAPHQL);
         $mock = $this->createPartialMock(ChangelogLastChanges::class, ['read', 'version', 'content']);
         $mock->expects($this->once())
             ->method('read')
-            ->willThrowException(ChangelogException::forNoPermissionsToReadTheFile());
+            ->willThrowException(ChangelogException::forNoPermissionsToReadTheFile('changelog.md'));
 
         $fakeNewRelic = new NewRelicApi(
             $fakeClient,
@@ -159,20 +159,20 @@ GRAPHQL);
             'version' => 'asdfg2',
             'entityGuid' => 'placetopay',
             'changelog' => json_encode(['version' => $version, 'content' => [
-                'Feature' => [
+                'feature' => [
                     'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
                     'Change (https://app.clickup.com/t/789/CU-12345)',
                 ],
-                'Refactor' => [
+                'refactor' => [
                     'Change (https://app.clickup.com/t/789/CU-12389)',
                     ],
-                'Bugfix' => [
+                'bugfix' => [
                     'Change [868c4frhp](https://app.clickup.com/t/868c4frhp)',
                     ],
-                'Breaking changes' => [
+                'breaking changes' => [
                     'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)',
                     ],
-                'Dependencies' => [
+                'dependencies' => [
                     'Change [CU-12345](https://app.clickup.com/t/789/CU-12345)',
                     'Change (https://app.clickup.com/t/789/CU-12345)',
                 ],
