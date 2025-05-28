@@ -11,20 +11,6 @@ use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class NewRelicApi
 {
-    private const AVAILABLE_KEYS = [
-        'feature',
-        'refactor',
-        'bugfix',
-        'breaking changes',
-        'dependencies',
-        'added',
-        'changed',
-        'deprecated',
-        'removed',
-        'fixed',
-        'security',
-    ];
-
     public const API_URL = 'https://api.newrelic.com/graphql';
 
     private HttpClient $client;
@@ -96,13 +82,26 @@ GRAPHQL;
         $result = [];
         $currentKey = null;
         $content = $this->changelog->content();
+        $availableKeys = [
+            'feature',
+            'refactor',
+            'bugfix',
+            'breaking changes',
+            'dependencies',
+            'added',
+            'changed',
+            'deprecated',
+            'removed',
+            'fixed',
+            'security',
+        ];
 
         if (empty($content)) {
             return '';
         }
 
         foreach ($content as $change) {
-            if (in_array(strtolower($change), self::AVAILABLE_KEYS)) {
+            if (in_array(strtolower($change), $availableKeys)) {
                 $currentKey = ucfirst(strtolower($change));
                 $result[$currentKey] = [];
             } elseif ($currentKey) {
