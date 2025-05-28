@@ -23,7 +23,7 @@ class ChangelogLastChangesTest extends TestCase
     {
         $path = '/ruta/no/existente.md';
         $this->expectException(ChangelogException::class);
-        $this->expectExceptionMessage("File '$path' does not exist.");
+        $this->expectExceptionMessage("Changelog file not found.");
         $this->changelog->read($path);
     }
 

@@ -6,13 +6,13 @@ use Exception;
 
 class ChangelogException extends Exception
 {
-    public static function forNoDeployConfiguration(): self
+    public static function forFileNotFound(): self
     {
-        return new self('Could not get commit or branch information from the deployment.');
+        return new self("Changelog file not found.");
     }
 
-    public static function forDifferentBranches(): self
+    public static function forNoPermissionsToReadTheFile(): self
     {
-        return new self('The deployment branch does not match the current branch.');
+        return new self('The changelog file cannot be accessed.');
     }
 }

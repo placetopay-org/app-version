@@ -60,7 +60,7 @@ class CreateDeploy extends Command
             )) {
                 $this->newrelicDeploy($config, $versionSha);
             }
-        } catch (Exception $e) {
+        } catch (BadResponseCode $e) {
             Logger::error('Error creating deploy', ['exception' => $e]);
             $this->error($e->getMessage());
             return CommandStatus::FAILURE;
@@ -87,7 +87,6 @@ class CreateDeploy extends Command
 
     /**
      * @throws InvalidData
-     * @throws ChangelogException
      * @throws BadResponseCode
      */
     private function newrelicDeploy(Repository $config, string $versionSha): void

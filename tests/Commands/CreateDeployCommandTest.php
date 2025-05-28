@@ -2,6 +2,10 @@
 
 namespace PlacetoPay\AppVersion\Tests\Commands;
 
+use PlacetoPay\AppVersion\Exceptions\ChangelogException;
+use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
+use PlacetoPay\AppVersion\NewRelic\NewRelicApi;
+use PlacetoPay\AppVersion\Tests\Mocks\FakeNewRelicClient;
 use PlacetoPay\AppVersion\Tests\Mocks\InteractsWithFakeClient;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
@@ -67,6 +71,51 @@ GRAPHQL);
         ]]);
 
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
+    }
+
+    /** @test */
+    public function can_create_a_release_for_newrelic_if_fail_to_get_changelog_data()
+    {
+        $this->setNewRelicEnvironmentSetUp();
+
+        $fakeClient = new FakeNewRelicClient();
+        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['read', 'version', 'content']);
+        $mock->expects($this->once())
+            ->method('read')
+            ->willThrowException(ChangelogException::forNoPermissionsToReadTheFile());
+
+        $fakeNewRelic = new NewRelicApi(
+            $fakeClient,
+            config('app-version.newrelic.api_key'),
+            config('app-version.newrelic.entity_guid'),
+            $mock
+        );
+
+        $this->swap(NewRelicApi::class, $fakeNewRelic);
+        $fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('NEWRELIC deployment created successfully');
+
+        $fakeClient->assertLastRequestHas('query', <<<'GRAPHQL'
+mutation ($deployment: DeploymentInput!) {
+  changeTrackingCreateDeployment(deployment: $deployment) {
+    deploymentId
+    timestamp
+  }
+}
+GRAPHQL);
+
+        $fakeClient->assertLastRequestHas('variables', ['deployment' => [
+            'version' => 'asdfg2',
+            'entityGuid' => 'placetopay',
+            'changelog' => '',
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]]);
+
+        $this->assertEquals($fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
     /** @test */
@@ -161,6 +210,7 @@ GRAPHQL);
 
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
+
     /** @test */
     public function can_not_create_a_release_if_has_invalid_version_data()
     {

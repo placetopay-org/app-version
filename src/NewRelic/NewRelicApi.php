@@ -6,6 +6,7 @@ use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Exceptions\UnsupportedException;
 use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 use PlacetoPay\AppVersion\Helpers\HttpClient;
+use PlacetoPay\AppVersion\Helpers\Logger;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 
 class NewRelicApi
@@ -47,14 +48,18 @@ class NewRelicApi
 
     /**
      * @throws BadResponseCode
-     * @throws ChangelogException
      */
     public function createDeploy(string $versionSha, string $environment, string $changelogFileName): array
     {
         $this->client->addHeaders([
             "API-Key: {$this->apiKey}",
         ]);
-        $this->changelog->read($changelogFileName);
+
+        try {
+            $this->changelog->read($changelogFileName);
+        } catch (ChangelogException $exception) {
+            Logger::error('Error reading changelog file: ', ['exception' => $exception]);
+        }
 
         return $this->client->post(self::API_URL, $this->buildGraphQLQuery($versionSha, $environment));
     }

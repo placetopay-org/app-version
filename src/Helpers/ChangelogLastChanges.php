@@ -69,11 +69,11 @@ class ChangelogLastChanges
     public function validateFile(string $fileName): void
     {
         if (!file_exists($fileName)) {
-            throw new ChangelogException("File '$fileName' does not exist.");
+            throw ChangelogException::forFileNotFound();
         }
 
         if (!is_readable($fileName)) {
-            throw new ChangelogException("The file '$fileName' cannot be accessed.");
+            throw  ChangelogException::forNoPermissionsToReadTheFile();
         }
     }
 }
