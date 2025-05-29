@@ -1,28 +1,27 @@
-## Upgrade to 3.1.0
+# Upgrade Guide to v3.2.0
 
-This release introduces optional support for posting a comment in ClickUp using the `app-version:notify-clickup` command.
+This release includes optional support for posting comments in ClickUp using the `app-version:notify-clickup` command.
 
 ## ✅ Required Actions
-Add into your app-version configuration file the clickup configuration:
+Add the Clickup configuration to your app version configuration file:
 
    ```
    # config/app-version.php
-    
+
    'clickup' => [
-     'base_url' => env('CLICKUP_BASE_URL', 'https://api.clickup.com/api/v2'),
-     'api_token' => env('CLICKUP_API_TOKEN'),
+      'base_url' => env('CLICKUP_BASE_URL', 'https://api.clickup.com/api/v2'),
+      'api_token' => env('CLICKUP_API_TOKEN'),
    ],
 
-   'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
+   'changelog_file_name' => env('CHANGELOG_FILE', 'CHANGELOG.md'),
    ```
 
-Add To enable this feature, add the following environment variables:
+To use this feature, add the following environment variables:
 
 - `CLICKUP_API_TOKEN=YOUR-CLICKUP-API-TOKEN`
-- `changelog_file_name=YOUR-CHANGELOG-FILE-NAME` (if required)
+- `CHANGELOG_FILE=YOUR-CHANGELOG-FILE-NAME` (if needed)
 
-If you do not need this functionality, no action is required.
-
+If you don't need this functionality, no action is required.
 
 # Upgrade Guide to v3.0.0
 
