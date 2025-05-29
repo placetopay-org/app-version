@@ -67,5 +67,11 @@ class FakeNewRelicClient extends HttpClient
                 ],
             ];
         }
+
+        if ($case === 'failed_deploy') {
+            $this->nextResponse = [
+                'errors' => [['message' => 'Invalid data']],
+            ];
+        }
     }
 }

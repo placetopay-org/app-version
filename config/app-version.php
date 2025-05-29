@@ -60,7 +60,7 @@ return [
     /*
      * Name of the file that lists the changes made to the project
     */
-    'changelog_file_name' => env('CHANGELOG_FILE_NAME', 'CHANGELOG.md'),
+    'changelog_file_name' => env('CHANGELOG_FILE', 'CHANGELOG.md'),
 
     /*
      * The current deployed version, will be read from version file
