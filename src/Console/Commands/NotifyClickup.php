@@ -30,7 +30,6 @@ class NotifyClickup extends Command
                 $config->get('app-version.changelog_file_name'),
             );
             Logger::success('Tasks received successfully', ['changelogData' => $changelogData]);
-
         } catch (ChangelogException $exception) {
             Logger::error('Error parsing changelog data', ['error' => $exception->getMessage()]);
             $this->error('[ERROR] Error parsing changelog data: ' . $exception->getMessage());
@@ -52,7 +51,7 @@ class NotifyClickup extends Command
             ));
         }
 
-        $this->info(sprintf('[PROCESSING] Reported %d tasks',  count($changelogData['tasks'])));
+        $this->info(sprintf('[PROCESSING] Reported %d tasks', count($changelogData['tasks'])));
 
         return CommandStatus::SUCCESS;
     }

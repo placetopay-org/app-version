@@ -72,7 +72,6 @@ class NotifyClickupCommandTest extends TestCase
         });
     }
 
-
     /** @test */
     public function can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
     {

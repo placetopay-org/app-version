@@ -1,4 +1,5 @@
 <?php
+
 namespace PlacetoPay\AppVersion\Clickup;
 
 use Carbon\Carbon;
@@ -12,7 +13,9 @@ use Throwable;
 
 class PostClickupCommentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public int $tries = 3;
     public int $backoff = 60;
@@ -53,7 +56,7 @@ class PostClickupCommentJob implements ShouldQueue
         );
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(Throwable $exception)
     {
         Logger::error('ClickUp publishing comment', [
             'environment' => $this->environment,

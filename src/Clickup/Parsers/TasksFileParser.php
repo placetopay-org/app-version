@@ -2,7 +2,6 @@
 
 namespace PlacetoPay\AppVersion\Clickup\Parsers;
 
-use Illuminate\Support\Arr;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 

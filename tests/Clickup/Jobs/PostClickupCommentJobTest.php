@@ -22,7 +22,6 @@ class PostClickupCommentJobTest extends TestCase
     }
 
     /** @test */
-                //
     public function can_post_a_comment_successfully(): void
     {
         Carbon::setTestNow('2025-01-01');
@@ -71,5 +70,4 @@ class PostClickupCommentJobTest extends TestCase
 
         dispatch($job);
     }
-
 }
