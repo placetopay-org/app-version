@@ -18,13 +18,6 @@ class NotifyClickup extends Command
 
     public function handle(Repository $config, TasksFileParser $parser): int
     {
-        $versionInformation = $config->get('app-version.version');
-
-        if (!$versionInformation) {
-            $this->error('You must execute app-version:create command before.');
-            return CommandStatus::FAILURE;
-        }
-
         try {
             $changelogData = $parser->tasksData(
                 $config->get('app-version.changelog_file_name'),
