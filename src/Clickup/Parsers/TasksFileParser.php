@@ -22,8 +22,9 @@ class TasksFileParser
     {
         $this->changelog->read($changelogFileName);
 
-        if (!empty($this->changelog->content())) {
-            $tasks = $this->extractTasks($this->changelog->content());
+        $content = $this->changelog->content();
+        if (!empty($content)) {
+            $tasks = $this->extractTasks($content);
 
             if (!empty($tasks)) {
                 return [

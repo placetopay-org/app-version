@@ -17,10 +17,12 @@ class TasksFileParserTest extends TestCase
 
     public function buildParser(array $changelogData, ?string $version = null): TasksFileParser
     {
-        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['lastChanges']);
+        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['read', 'version', 'content']);
         $mock->expects($this->once())
-            ->method('read')
-            ->willReturn($version ? ['version' => $version, 'information' => $changelogData] : $changelogData);
+            ->method('read');
+
+        $mock->method('version')->willReturn($version);
+        $mock->expects($this->once())->method('content')->willReturn($changelogData);
 
         return new TasksFileParser($mock);
     }
@@ -35,7 +37,7 @@ class TasksFileParserTest extends TestCase
     {
         $parser = $this->buildParser([]);
 
-        $result = $parser->tasksData(self::VERSION, 'changelog.md');
+        $result = $parser->tasksData('changelog.md');
 
         $this->assertNull($result);
     }
@@ -43,14 +45,9 @@ class TasksFileParserTest extends TestCase
     /** @test */
     public function can_returns_null_when_changelog_data_is_empty(): void
     {
-        $mock = $this->createPartialMock(ChangelogLastChanges::class, ['lastChanges']);
-        $mock->expects($this->once())
-            ->method('read')
-            ->willReturn([]);
+        $parser = $this->buildParser([]);
 
-        $parser = new TasksFileParser($mock);
-
-        $result = $parser->tasksData(self::VERSION, 'changelog.md');
+        $result = $parser->tasksData('changelog.md');
 
         $this->assertNull($result);
     }
@@ -63,7 +60,7 @@ class TasksFileParserTest extends TestCase
     {
         $parser = $this->buildParser([$changeLogEntry], self::VERSION['version']);
 
-        $result = $parser->tasksData(self::VERSION, 'changelog.md');
+        $result = $parser->tasksData('changelog.md');
 
         $this->assertNotNull($result);
         $this->assertCount(1, $result['tasks']);
