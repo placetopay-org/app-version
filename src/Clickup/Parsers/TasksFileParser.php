@@ -23,18 +23,19 @@ class TasksFileParser
         $this->changelog->read($changelogFileName);
 
         $content = $this->changelog->content();
-        if (!empty($content)) {
-            $tasks = $this->extractTasks($content);
-
-            if (!empty($tasks)) {
-                return [
-                    'version' => $this->changelog->version(),
-                    'tasks' => $tasks,
-                ];
-            }
+        if (empty($content)) {
+            return null;
         }
 
-        return null;
+        $tasks = $this->extractTasks($content);
+        if (empty($tasks)) {
+            return null;
+        }
+
+        return [
+            'version' => $this->changelog->version(),
+            'tasks' => $tasks,
+        ];
     }
 
     private function extractTasks(array $changes): array
