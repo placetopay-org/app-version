@@ -176,12 +176,6 @@ PlacetoPay\AppVersion\VersionFile::readSha()
 This package also provides a command to post comments on ClickUp tasks based on the changelog file.
 This is useful for tracking changes and updates in your projects.
 
->It is important that you run the `app-version:create` command before committing the change to the changelog.
-
-```shell
-php artisan app-version:create
-``` 
-
 ### Configuration
 
 1. You need to make sure you have the clickup environment variables set in your `config/app-version` configuration file.

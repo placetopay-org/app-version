@@ -19,9 +19,7 @@ class NotifyClickup extends Command
     public function handle(Repository $config, TasksFileParser $parser): int
     {
         try {
-            $changelogData = $parser->tasksData(
-                $config->get('app-version.changelog_file_name'),
-            );
+            $changelogData = $parser->tasksData($config->get('app-version.changelog_file_name'));
             Logger::success('Tasks received successfully', ['changelogData' => $changelogData]);
         } catch (ChangelogException $exception) {
             Logger::error('Error parsing changelog data', ['error' => $exception->getMessage()]);
