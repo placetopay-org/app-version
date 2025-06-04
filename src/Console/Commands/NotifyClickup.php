@@ -33,10 +33,10 @@ class NotifyClickup extends Command
         }
 
         Logger::success(sprintf(
-            'It\'ll report %s tasks in clickup with version $s',
-            count($tasksData['tasks'],
+            'It\'ll report %s tasks in clickup with version %s',
+            count($tasksData['tasks']),
             $tasksData['version']
-        )));
+        ));
 
         foreach ($tasksData['tasks'] as $task) {
             dispatch(new CommentClickupTaskJob(
