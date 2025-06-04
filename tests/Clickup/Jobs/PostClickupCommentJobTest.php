@@ -7,7 +7,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
-use PlacetoPay\AppVersion\Clickup\PostClickupCommentJob;
+use PlacetoPay\AppVersion\Clickup\CommentClickupTaskJob;
 use PlacetoPay\AppVersion\Exceptions\BadResponseException;
 use PlacetoPay\AppVersion\Tests\TestCase;
 
@@ -40,7 +40,7 @@ class PostClickupCommentJobTest extends TestCase
                 return $context['version'] === '1.2.0' && $context['task'] === $task;
             }));
 
-        $job = new PostClickupCommentJob(self::ENVIRONMENT, $task, '1.2.0', Carbon::now());
+        $job = new CommentClickupTaskJob(self::ENVIRONMENT, $task, '1.2.0', Carbon::now());
 
         dispatch($job);
     }
@@ -66,7 +66,7 @@ class PostClickupCommentJobTest extends TestCase
                 return $context['task'] === $failTask && str_contains($context['error'], 'Error posting comment');
             }));
 
-        $job = new PostClickupCommentJob(self::ENVIRONMENT, $failTask, '1.2.0', Carbon::now());
+        $job = new CommentClickupTaskJob(self::ENVIRONMENT, $failTask, '1.2.0', Carbon::now());
 
         dispatch($job);
     }

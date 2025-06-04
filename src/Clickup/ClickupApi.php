@@ -21,12 +21,15 @@ class ClickupApi
     /**
      * @throws BadResponseException
      */
-    public function postCommentOnTask(string $taskId, string $message, ?string $team = null): void
+    public function commentTask(array $task, string $message): void
     {
-        $this->post(
-            sprintf('/task/%s/comment%s', $taskId, !empty($team) ? "?custom_task_ids=true&team_id=$team" : ''),
-            ['comment_text' => $message]
+        $url = sprintf(
+            '/task/%s/comment%s',
+            $task['id'],
+            !empty($team) ? '?custom_task_ids=true&team_id=' . $task['team'] : ''
         );
+
+        $this->post($url, ['comment_text' => $message]);
     }
 
     /**

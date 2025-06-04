@@ -11,7 +11,7 @@ use PlacetoPay\AppVersion\Exceptions\BadResponseException;
 use PlacetoPay\AppVersion\Helpers\Logger;
 use Throwable;
 
-class PostClickupCommentJob implements ShouldQueue
+class CommentClickupTaskJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -39,7 +39,7 @@ class PostClickupCommentJob implements ShouldQueue
      */
     public function handle(ClickupApi $service)
     {
-        $service->postCommentOnTask($this->task['id'], $this->buildCommentText(), $this->task['team']);
+        $service->commentTask($this->task, $this->buildCommentText());
         Logger::success('ClickUp published comment', [
             'version' => $this->version,
             'task' => $this->task,

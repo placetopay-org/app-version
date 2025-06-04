@@ -5,8 +5,8 @@ namespace PlacetoPay\AppVersion\Tests\Commands;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
+use PlacetoPay\AppVersion\Clickup\CommentClickupTaskJob;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
-use PlacetoPay\AppVersion\Clickup\PostClickupCommentJob;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
@@ -49,23 +49,21 @@ class NotifyClickupCommandTest extends TestCase
 
         Log::shouldReceive('log')
             ->once()
-            ->with('info', '[SUCCESS - app-version] Tasks received successfully', \Mockery::on(function ($context) use ($tasks) {
-                return $context['changelogData'] === ['version' => '1.2.0', 'tasks' => $tasks];
-            }));
+            ->with('info', "[SUCCESS - app-version] It'll report 2 tasks in clickup with version", []);
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::SUCCESS)
             ->expectsOutput('[PROCESSING] Reported 2 tasks');
 
-        Queue::assertPushed(PostClickupCommentJob::class, 2);
+        Queue::assertPushed(CommentClickupTaskJob::class, 2);
 
-        Queue::assertPushed(PostClickupCommentJob::class, function (PostClickupCommentJob $job) use ($tasks) {
+        Queue::assertPushed(CommentClickupTaskJob::class, function (CommentClickupTaskJob $job) use ($tasks) {
             return $job->environment === self::ENVIRONMENT
                 && $job->version === '1.2.0'
                 && $job->task === $tasks[0];
         });
 
-        Queue::assertPushed(PostClickupCommentJob::class, function (PostClickupCommentJob $job) use ($tasks) {
+        Queue::assertPushed(CommentClickupTaskJob::class, function (CommentClickupTaskJob $job) use ($tasks) {
             return $job->environment === self::ENVIRONMENT
                 && $job->version === '1.2.0'
                 && $job->task === $tasks[1];
@@ -86,9 +84,9 @@ class NotifyClickupCommandTest extends TestCase
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::SUCCESS)
-            ->expectsOutput('[WARNING] No task found to post comment');
+            ->expectsOutput('[WARNING] No task found to post to comment');
 
-        Queue::assertNotPushed(PostClickupCommentJob::class);
+        Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
 
     /** @test */
@@ -113,6 +111,6 @@ class NotifyClickupCommandTest extends TestCase
             ->assertExitCode(Command::FAILURE)
             ->expectsOutput('[ERROR] Error parsing changelog data: non_existent_file.md file not found.');
 
-        Queue::assertNotPushed(PostClickupCommentJob::class);
+        Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
 }
