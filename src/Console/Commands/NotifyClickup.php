@@ -28,6 +28,7 @@ class NotifyClickup extends Command
         }
 
         if (empty($tasksData)) {
+            $this->warn('[WARNING] No task found to post to comment');
             return CommandStatus::SUCCESS;
         }
 
