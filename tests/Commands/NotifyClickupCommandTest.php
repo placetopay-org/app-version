@@ -49,7 +49,7 @@ class NotifyClickupCommandTest extends TestCase
 
         Log::shouldReceive('log')
             ->once()
-            ->with('info', "[SUCCESS - app-version] It'll report 2 tasks in clickup with version", []);
+            ->with('info', "[SUCCESS - app-version] It'll report 2 tasks in clickup with version 1.2.0", []);
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::SUCCESS)
