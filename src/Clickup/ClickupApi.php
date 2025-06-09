@@ -26,7 +26,7 @@ class ClickupApi
         $url = sprintf(
             '/task/%s/comment%s',
             $task['id'],
-            !empty($team) ? '?custom_task_ids=true&team_id=' . $task['team'] : ''
+            !empty($task['team']) ? '?custom_task_ids=true&team_id=' . $task['team'] : ''
         );
 
         $this->post($url, ['comment_text' => $message]);
