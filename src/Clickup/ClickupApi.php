@@ -5,6 +5,7 @@ namespace PlacetoPay\AppVersion\Clickup;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use PlacetoPay\AppVersion\Exceptions\BadResponseException;
+use PlacetoPay\AppVersion\Helpers\Logger;
 
 class ClickupApi
 {
@@ -40,6 +41,13 @@ class ClickupApi
         $response = $this->client->timeout(10)->post($url, $data);
 
         if (!$response->successful()) {
+            Logger::error('Clickup Api request failed', [
+                'url' => $url,
+                'status' => $response->status(),
+                'reason' => $response->reason(),
+                'data' => $data,
+            ]);
+
             throw BadResponseException::forUnsuccessfulResponse($response->reason());
         }
 

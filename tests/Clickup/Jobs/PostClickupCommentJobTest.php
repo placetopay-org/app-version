@@ -66,6 +66,19 @@ class PostClickupCommentJobTest extends TestCase
                 return $context['task'] === $failTask && str_contains($context['error'], 'Error posting comment');
             }));
 
+        Log::shouldReceive('log')
+            ->once()
+            ->with('error', '[ERROR - app-version] Clickup Api request failed', \Mockery::on(function ($context) use ($failTask) {
+                return [
+                        'url' => '/task/12345678/comment',
+                        "status" => 401,
+                        "reason" => "Error posting comment",
+                        "data" => [
+                            "comment_text" => "Despliegue realizado en ambiente: testing\nFecha: 2025-01-01 00:00:00\nVersión: 1.2.0",
+                        ]
+                    ] === $context;
+            }));
+
         $job = new CommentClickupTaskJob(self::ENVIRONMENT, $failTask, '1.2.0', Carbon::now());
 
         dispatch($job);
