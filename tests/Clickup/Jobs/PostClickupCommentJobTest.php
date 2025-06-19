@@ -71,11 +71,11 @@ class PostClickupCommentJobTest extends TestCase
             ->with('error', '[ERROR - app-version] Clickup Api request failed', \Mockery::on(function ($context) use ($failTask) {
                 return [
                         'url' => '/task/12345678/comment',
-                        "status" => 401,
-                        "reason" => "Error posting comment",
-                        "data" => [
-                            "comment_text" => "Despliegue realizado en ambiente: testing\nFecha: 2025-01-01 00:00:00\nVersión: 1.2.0",
-                        ]
+                        'status' => 401,
+                        'reason' => 'Error posting comment',
+                        'data' => [
+                            'comment_text' => "Despliegue realizado en ambiente: testing\nFecha: 2025-01-01 00:00:00\nVersión: 1.2.0",
+                        ],
                     ] === $context;
             }));
 
