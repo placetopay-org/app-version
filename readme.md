@@ -215,3 +215,5 @@ Some of the supported formats for reading ClickUp tasks in the change log file a
   Change (https://app.clickup.com/t/{TeamId}/{CustomTaskId}) 
   Change [868c4frhp](https://app.clickup.com/t/{TaskId})
      ```
+
+> ⚠️ **Important:** You must add the full URL of the corresponding ClickUp task, as this will retrieve both the task ID and team ID, which are necessary to generate the comment.
