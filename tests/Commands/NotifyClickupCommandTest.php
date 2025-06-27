@@ -19,12 +19,7 @@ class NotifyClickupCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config()->set('app-version.version', [
-            'sha' => 'TESTING_SHA',
-            'time' => '2025-04-29T11:19:34-05:00',
-            'branch' => 'testing',
-            'version' => '1.0.0',
-        ]);
+        config()->set('app-version.clickup.api_token', 'fake-api-token');
     }
 
     /** @test */
@@ -110,6 +105,19 @@ class NotifyClickupCommandTest extends TestCase
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::FAILURE)
             ->expectsOutput('[ERROR] Error parsing changelog data: non_existent_file.md file not found.');
+
+        Queue::assertNotPushed(CommentClickupTaskJob::class);
+    }
+
+    /** @test */
+    public function finish_process_if_api_token_not_found(): void
+    {
+        config()->set('app-version.clickup.api_token');
+        Queue::fake();
+
+        $this->artisan(self::COMMAND_NAME)
+            ->assertExitCode(Command::SUCCESS)
+            ->expectsOutput('[ERROR] ClickUp API token not found. Please check your system settings. Please check your configuration.');
 
         Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
