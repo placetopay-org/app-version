@@ -19,7 +19,7 @@ class NotifyClickup extends Command
     public function handle(Repository $config, TasksFileParser $parser): int
     {
         if (empty(config('app-version.clickup.api_token'))) {
-            $this->error('[ERROR] ClickUp API token not found. Please check your system settings. Please check your configuration.');
+            $this->error('[ERROR] ClickUp API token not found. Please check your system settings.');
             return CommandStatus::SUCCESS;
         }
 
