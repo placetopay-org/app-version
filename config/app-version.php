@@ -51,8 +51,8 @@ return [
         'base_url' => env('CLICKUP_BASE_URL', 'https://api.clickup.com/api/v2'),
 
         /*
-         * The ClickUp api token, you can get it by following the following documentation
-         * https://developer.clickup.com/docs/authentication
+         * You can generate the ClickUp API token from the ClickUp settings at the following link:
+         * https://app.clickup.com/settings/apps
         */
         'api_token' => env('CLICKUP_API_TOKEN'),
     ],
