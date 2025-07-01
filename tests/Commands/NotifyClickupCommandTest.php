@@ -117,7 +117,7 @@ class NotifyClickupCommandTest extends TestCase
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::SUCCESS)
-            ->expectsOutput('[ERROR] ClickUp API token not found. Please check your system settings. Please check your configuration.');
+            ->expectsOutput('[ERROR] ClickUp API token not found. Please check your system settings.');
 
         Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
