@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.2.0 (2025-07-02)
 - Add support for posting a comment to ClickUp using the `app-version:notify-clickup` command.
 
 ## 3.1.0 (2025-05-09)
