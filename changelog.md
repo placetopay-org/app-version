@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.3.0 (2025-09-03)
+- Allow use env custom to define env when to execute the command create-deploy
+
 ## 3.2.0 (2025-07-02)
 - Add support for posting a comment to ClickUp using the `app-version:notify-clickup` command.
 
@@ -7,7 +10,7 @@
 - Adds support for Laravel 12
 
 ## 3.0.0 (2025-03-25)
-- Updated the Newrelic API to use GraphQL
+  - Updated the Newrelic API to use GraphQL
   - Removed env variable `APP_VERSION_NEWRELIC_APPLICATION_ID`.
   - Added env variable `APP_VERSION_NEWRELIC_ENTITY_GUID`.
 

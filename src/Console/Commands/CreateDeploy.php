@@ -77,7 +77,7 @@ class CreateDeploy extends Command
         $sentry = ApiFactory::sentryApi();
         $sentry->createDeploy(
             $version,
-            $config->get('app.env')
+            $config->get('sentry.environment', $config->get('app.env'))
         );
 
         $this->comment(self::SENTRY . ' deployment created successfully');
@@ -92,7 +92,7 @@ class CreateDeploy extends Command
         $newrelic = ApiFactory::newRelicApi();
         $response = $newrelic->createDeploy(
             $versionSha,
-            $config->get('app.env'),
+            $config->get('sentry.environment', $config->get('app.env')),
             $config->get('app-version.changelog_file_name')
         );
 
