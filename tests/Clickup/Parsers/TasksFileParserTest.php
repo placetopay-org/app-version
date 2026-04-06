@@ -71,7 +71,7 @@ class TasksFileParserTest extends TestCase
         }
     }
 
-    public function changeFormatsProvider(): array
+    public static function changeFormatsProvider(): array
     {
         return [
             ['Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)', 'CU-12345', '789'],

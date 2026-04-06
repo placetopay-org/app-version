@@ -120,7 +120,7 @@ class ChangelogLastChangesTest extends TestCase
             'Task without link',
         ], $this->changelog->content());
     }
-    public function versionFormatsProvider(): array
+    public static function versionFormatsProvider(): array
     {
         return [
             ['## 1.0.0', '1.0.0'],
@@ -149,7 +149,7 @@ $changeLogEntry
         $this->assertCount(1, $this->changelog->content());
         $this->assertEquals([$expectedChange], $this->changelog->content());
     }
-    public function changeFormatsProvider(): array
+    public static function changeFormatsProvider(): array
     {
         return [
             ['- Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)', 'Change [@user](https://bitbucket.org/user/) [#CU-12345](https://app.clickup.com/t/789/CU-12345)'],
