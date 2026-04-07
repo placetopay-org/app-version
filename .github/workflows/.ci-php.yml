@@ -15,7 +15,7 @@ jobs:
           php-version: '8.1'
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer install -vvv
       - name: Check Code Style
         run: composer php-cs-fixer
       - name: Execute tests
