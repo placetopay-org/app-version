@@ -34,7 +34,7 @@ class HttpClient
      * @param array $arguments
      *
      * @return array|false
-     * @throws \PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode
+     * @throws BadResponseCode
      */
     public function post(string $url, array $arguments = [])
     {
@@ -47,7 +47,7 @@ class HttpClient
      * @param array $arguments
      *
      * @return array
-     * @throws \PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode
+     * @throws BadResponseCode
      */
     public function makeRequest(string $method, string $url, array $arguments = [])
     {
