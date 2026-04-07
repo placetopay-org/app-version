@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.3.1 (2026-04-07)
+- Remove the deprecation `$request->get()`, use `$request->input()` instead.
+
 ## 3.3.0 (2025-09-03)
 - Allow use env custom to define env when to execute the command create-deploy
 

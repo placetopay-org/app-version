@@ -10,7 +10,7 @@ use PlacetoPay\AppVersion\Sentry\SentryApi;
 trait InteractsWithFakeClient
 {
     /**
-     * @var \PlacetoPay\AppVersion\Tests\Mocks\FakeSentryClient
+     * @var FakeSentryClient
      */
     protected HttpClient $fakeClient;
 
@@ -47,7 +47,7 @@ trait InteractsWithFakeClient
     }
 
     /**
-     * @return \PlacetoPay\AppVersion\Sentry\SentryApi
+     * @return SentryApi
      */
     public function sentryApi()
     {

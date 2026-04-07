@@ -13,7 +13,7 @@ class VersionController extends Controller
 {
     public function version(Request $request): JsonResponse
     {
-        if ($request->get('token') !== config('app-version.token')) {
+        if ($request->input('token') !== config('app-version.token')) {
             abort(404);
         }
 
