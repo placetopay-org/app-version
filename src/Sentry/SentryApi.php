@@ -29,7 +29,7 @@ class SentryApi
     /**
      * @param string $apiKey
      * @param string $organization
-     * @return \PlacetoPay\AppVersion\Sentry\SentryApi
+     * @return SentryApi
      */
     public static function create(string $apiKey, string $organization): self
     {
