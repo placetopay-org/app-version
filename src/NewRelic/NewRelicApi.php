@@ -13,18 +13,8 @@ class NewRelicApi
 {
     public const API_URL = 'https://api.newrelic.com/graphql';
 
-    private HttpClient $client;
-
-    private string $apiKey;
-    private string $entityGuid;
-    private ChangelogLastChanges $changelog;
-
-    public function __construct(HttpClient $client, string $apiKey, string $entityGuid, ChangelogLastChanges $changelog = null)
+    public function __construct(private HttpClient $client, private string $apiKey, private string $entityGuid, private ChangelogLastChanges $changelog = null)
     {
-        $this->client = $client;
-        $this->apiKey = $apiKey;
-        $this->entityGuid = $entityGuid;
-        $this->changelog = $changelog;
     }
 
     public static function create(string $apiKey, string $entityGuid): self

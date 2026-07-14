@@ -20,17 +20,8 @@ class CommentClickupTaskJob implements ShouldQueue
     public int $tries = 3;
     public int $backoff = 60;
 
-    public string $environment;
-    public array $task;
-    public string $version;
-    public Carbon $date;
-
-    public function __construct(string $environment, array $task, string $version, Carbon $date)
+    public function __construct(public string $environment, public array $task, public string $version, public Carbon $date)
     {
-        $this->environment = $environment;
-        $this->task = $task;
-        $this->version = $version;
-        $this->date = $date;
     }
 
     /**

@@ -8,11 +8,9 @@ use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 class TasksFileParser
 {
     public const REGEX_CLICKUP_IDENTIFIER = '/\(https:\/\/app\.clickup\.com\/t(?:\/(?<team>\d+))?\/(?<id>[\w-]+)\)/';
-    private ChangelogLastChanges $changelog;
 
-    public function __construct(ChangelogLastChanges $changelog)
+    public function __construct(private ChangelogLastChanges $changelog)
     {
-        $this->changelog = $changelog;
     }
 
     /**
