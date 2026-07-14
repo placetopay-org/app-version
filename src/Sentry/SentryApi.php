@@ -43,7 +43,7 @@ class SentryApi
         ]);
     }
 
-    public function constructUrl(string $version = null): string
+    public function constructUrl(?string $version = null): string
     {
         $url = self::API_URL . 'organizations/' . $this->organization . '/releases/';
         if ($version) {

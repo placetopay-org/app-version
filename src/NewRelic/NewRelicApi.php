@@ -13,7 +13,7 @@ class NewRelicApi
 {
     public const API_URL = 'https://api.newrelic.com/graphql';
 
-    public function __construct(private HttpClient $client, private string $apiKey, private string $entityGuid, private ChangelogLastChanges $changelog = null)
+    public function __construct(private HttpClient $client, private string $apiKey, private string $entityGuid, private ?ChangelogLastChanges $changelog = null)
     {
     }
 
