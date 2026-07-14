@@ -13,8 +13,8 @@ use Symfony\Component\Console\Command\Command;
 
 class NotifyClickupCommandTest extends TestCase
 {
-    private const COMMAND_NAME = 'app-version:notify-clickup';
-    private const ENVIRONMENT = 'testing';
+    private const string COMMAND_NAME = 'app-version:notify-clickup';
+    private const string ENVIRONMENT = 'testing';
 
     protected function setUp(): void
     {

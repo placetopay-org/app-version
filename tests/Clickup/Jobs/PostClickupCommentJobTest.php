@@ -13,7 +13,7 @@ use PlacetoPay\AppVersion\Tests\TestCase;
 
 class PostClickupCommentJobTest extends TestCase
 {
-    private const ENVIRONMENT = 'testing';
+    private const string ENVIRONMENT = 'testing';
 
     protected function setUp(): void
     {

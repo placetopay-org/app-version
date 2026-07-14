@@ -15,8 +15,8 @@ use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
-    private const NEWRELIC = 'NEWRELIC';
-    private const SENTRY = 'SENTRY';
+    private const string NEWRELIC = 'NEWRELIC';
+    private const string SENTRY = 'SENTRY';
 
     /**
      * The name and signature of the console command.

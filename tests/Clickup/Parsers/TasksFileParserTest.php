@@ -9,7 +9,7 @@ use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 
 class TasksFileParserTest extends TestCase
 {
-    private const VERSION = [
+    private const array VERSION = [
         'sha' => 'TESTING_SHA',
         'time' => '2025-04-29T11:19:34-05:00',
         'branch' => 'master',
