@@ -13,8 +13,7 @@ class VersionFileTest extends TestCase
         'branch' => 'master',
     ];
 
-    /** @test */
-    public function can_generate_the_file()
+    public function test_it_can_generate_the_file(): void
     {
         VersionFile::generate($this->input);
 
@@ -22,8 +21,7 @@ class VersionFileTest extends TestCase
         $this->assertEquals(VersionFile::read(), $this->input);
     }
 
-    /** @test */
-    public function can_delete_the_file()
+    public function test_it_can_delete_the_file(): void
     {
         VersionFile::generate($this->input);
         $this->assertTrue(VersionFile::exists());
@@ -32,16 +30,14 @@ class VersionFileTest extends TestCase
         $this->assertFalse(VersionFile::exists());
     }
 
-    /** @test */
-    public function can_read_the_sha()
+    public function test_it_can_read_the_sha(): void
     {
         VersionFile::generate($this->input);
 
         $this->assertEquals('abcdef', VersionFile::readSha());
     }
 
-    /** @test */
-    public function can_read_the_file()
+    public function test_it_can_read_the_file(): void
     {
         VersionFile::generate($this->input);
 

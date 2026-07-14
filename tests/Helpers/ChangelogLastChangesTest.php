@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Tests\Helpers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PlacetoPay\AppVersion\Exceptions\ChangelogException;
 use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 use PlacetoPay\AppVersion\Tests\TestCase;
@@ -18,8 +19,7 @@ class ChangelogLastChangesTest extends TestCase
         $this->tempFilePath = sys_get_temp_dir() . '/test_changelog.md';
     }
 
-    /** @test */
-    public function it_throws_exception_if_file_does_not_exist(): void
+    public function test_it_throws_exception_if_file_does_not_exist(): void
     {
         $path = '/ruta/no/existente.md';
         $this->expectException(ChangelogException::class);
@@ -27,8 +27,7 @@ class ChangelogLastChangesTest extends TestCase
         $this->changelog->read($path);
     }
 
-    /** @test */
-    public function it_can_resolve_when_file_is_empty(): void
+    public function test_it_can_resolve_when_file_is_empty(): void
     {
         file_put_contents($this->tempFilePath, '');
         $this->changelog->read($this->tempFilePath);
@@ -36,8 +35,7 @@ class ChangelogLastChangesTest extends TestCase
         $this->assertNull($this->changelog->version());
     }
 
-    /** @test */
-    public function it_returns_resolve_when_file_has_no_version(): void
+    public function test_it_returns_resolve_when_file_has_no_version(): void
     {
         file_put_contents($this->tempFilePath, '
             - A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
@@ -48,8 +46,7 @@ class ChangelogLastChangesTest extends TestCase
         $this->assertNull($this->changelog->version());
     }
 
-    /** @test */
-    public function it_extracts_content_correctly_from_changelog(): void
+    public function test_it_extracts_content_correctly_from_changelog(): void
     {
         file_put_contents($this->tempFilePath, '# Changelog
 ## [Unreleased]
@@ -87,8 +84,7 @@ class ChangelogLastChangesTest extends TestCase
         ], $this->changelog->content());
     }
 
-    /** @test */
-    public function it_ignore_unreleased_section(): void
+    public function test_it_ignore_unreleased_section(): void
     {
         file_put_contents($this->tempFilePath, '## Unreleased
 - Fix the bug [CU-1111](https://app.clickup.com/t/789/CU-1111)
@@ -100,11 +96,8 @@ class ChangelogLastChangesTest extends TestCase
         $this->assertEmpty($this->changelog->content());
     }
 
-    /**
-     * @test
-     * @dataProvider versionFormatsProvider
-     */
-    public function it_can_process_different_version_format(string $versionHeader, string $expectedVersion): void
+    #[DataProvider('versionFormatsProvider')]
+    public function test_it_can_process_different_version_format(string $versionHeader, string $expectedVersion): void
     {
         file_put_contents($this->tempFilePath, "$versionHeader
 - A Change [CU-9876](https://app.clickup.com/t/123/CU-9876)
@@ -135,11 +128,8 @@ class ChangelogLastChangesTest extends TestCase
             ['[1.0.0 (2024-01-01)](https://bitbucket.org/project/commits/tag/6.1.15)', '1.0.0'],
         ];
     }
-    /**
-     * @test
-     * @dataProvider changeFormatsProvider
-     */
-    public function it_can_process_valid_change_formats(string $changeLogEntry, string $expectedChange): void
+    #[DataProvider('changeFormatsProvider')]
+    public function testIt_can_process_valid_change_formats(string $changeLogEntry, string $expectedChange): void
     {
         file_put_contents($this->tempFilePath, "## 1.0.0 (2024-01-01)
 $changeLogEntry

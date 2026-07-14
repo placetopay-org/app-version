@@ -9,8 +9,7 @@ class CreateReleaseCommandTest extends TestCase
 {
     use InteractsWithFakeClient;
 
-    /** @test */
-    public function can_create_a_release()
+    public function test_it_can_create_a_release(): void
     {
         $this->setSentryEnvironmentSetUp();
 
