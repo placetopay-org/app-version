@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\AppVersion\Helpers;
 
+use CurlHandle;
 use PlacetoPay\AppVersion\Sentry\Exceptions\BadResponseCode;
 use PlacetoPay\AppVersion\Sentry\Exceptions\InvalidData;
 use PlacetoPay\AppVersion\Sentry\Exceptions\NotFound;
@@ -55,7 +56,7 @@ class HttpClient
     }
 
     /**
-     * @return \PlacetoPay\AppVersion\Sentry\Http\Response
+     * @return Response
      */
     public function makeCurlRequest(string $httpVerb, string $fullUrl, array $headers, array $arguments)
     {
@@ -75,10 +76,7 @@ class HttpClient
         return new Response($headers, $body, $error);
     }
 
-    /**
-     * @return resource
-     */
-    private function getCurlHandle(string $fullUrl, array $headers = [])
+    private function getCurlHandle(string $fullUrl, array $headers = []): CurlHandle
     {
         $curlHandle = curl_init();
 
@@ -99,10 +97,7 @@ class HttpClient
         return $curlHandle;
     }
 
-    /**
-     * @param $curlHandle
-     */
-    private function attachRequestPayload(&$curlHandle, array $data)
+    private function attachRequestPayload(CurlHandle $curlHandle, array $data)
     {
         $encoded = json_encode($data);
         $this->lastRequest['body'] = $encoded;
