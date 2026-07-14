@@ -23,9 +23,6 @@ class HttpClient
     }
 
     /**
-     * @param string $url
-     * @param array $arguments
-     *
      * @return array|false
      * @throws BadResponseCode
      */
