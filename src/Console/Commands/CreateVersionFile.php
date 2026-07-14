@@ -49,8 +49,6 @@ class CreateVersionFile extends Command
     }
 
     /**
-     * @param Factory $validator
-     * @return array
      * @throws ValidationException
      */
     private function validateOptions(Factory $validator): array

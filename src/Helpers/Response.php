@@ -48,9 +48,6 @@ class Response
         return $this->body;
     }
 
-    /**
-     * @return bool
-     */
     public function hasBody(): bool
     {
         return $this->body != false;

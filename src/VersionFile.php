@@ -37,7 +37,6 @@ class VersionFile
 
     /**
      * You should only read the sha by using a config variable, given it should be in cache.
-     * @return string
      */
     public static function readSha(): string
     {

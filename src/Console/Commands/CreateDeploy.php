@@ -68,8 +68,6 @@ class CreateDeploy extends Command
     }
 
     /**
-     * @param Repository $config
-     * @param string $version
      * @throws BadResponseCode
      */
     private function sentryDeploy(Repository $config, string $version): void
