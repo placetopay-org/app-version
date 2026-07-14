@@ -73,7 +73,7 @@ class ChangelogLastChanges
         }
 
         if (!is_readable($fileName)) {
-            throw  ChangelogException::forNoPermissionsToReadTheFile($fileName);
+            throw ChangelogException::forNoPermissionsToReadTheFile($fileName);
         }
     }
 }
