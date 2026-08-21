@@ -30,6 +30,9 @@ class HttpClient
     }
 
     /**
+     * @param string $url
+     * @param array $arguments
+     *
      * @return array|false
      * @throws BadResponseCode
      */
@@ -39,6 +42,10 @@ class HttpClient
     }
 
     /**
+     * @param string $httpVerb
+     * @param string $url
+     * @param array $arguments
+     *
      * @return array
      * @throws BadResponseCode
      */
@@ -62,7 +69,11 @@ class HttpClient
     }
 
     /**
-     * @return Response
+     * @param string $httpVerb
+     * @param string $fullUrl
+     * @param array $headers
+     * @param array $arguments
+     * @return \PlacetoPay\AppVersion\Sentry\Http\Response
      */
     public function makeCurlRequest(string $httpVerb, string $fullUrl, array $headers, array $arguments)
     {
