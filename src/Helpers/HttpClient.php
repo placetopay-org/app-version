@@ -10,6 +10,11 @@ use PlacetoPay\AppVersion\Sentry\Exceptions\NotFound;
 class HttpClient
 {
     /**
+     * @var int
+     */
+    private $timeout;
+
+    /**
      * @var array
      */
     private $lastRequest;
@@ -19,8 +24,9 @@ class HttpClient
     /**
      * HttpClient constructor.
      */
-    public function __construct(private int $timeout = 10)
+    public function __construct(int $timeout = 10)
     {
+        $this->timeout = $timeout;
     }
 
     /**
