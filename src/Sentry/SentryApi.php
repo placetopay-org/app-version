@@ -35,9 +35,9 @@ class SentryApi
         ]);
 
         return $this->client->post($this->constructUrl(), [
-            'version' =>  $version,
-            'refs' =>  [
-                ['repository' => $repository, 'commit' =>  $version],
+            'version' => $version,
+            'refs' => [
+                ['repository' => $repository, 'commit' => $version],
             ],
             'projects' => [$sentryProject],
         ]);
