@@ -57,7 +57,7 @@ class PostClickupCommentJobTest extends TestCase
         $this->partialMock(PendingRequest::class, function (MockInterface $mock) {
             $mock->shouldReceive('post')
                 ->once()
-                ->andReturn(new Response(new \GuzzleHttp\Psr7\Response(401, [], '', '1.2.0', 'Error posting comment')));
+                ->andReturn(new Response(new \GuzzleHttp\Psr7\Response(401, [], '', '1.2', 'Error posting comment')));
         });
 
         Log::shouldReceive('log')
