@@ -14,8 +14,7 @@ class CreateVersionFileCommandTest extends TestCase
         VersionFile::delete();
     }
 
-    /** @test */
-    public function can_create_version_file()
+    public function test_it_can_create_version_file(): void
     {
         $input = [
             'sha' => 'abcdef',
@@ -35,8 +34,7 @@ class CreateVersionFileCommandTest extends TestCase
         $this->assertEquals(VersionFile::read(), $input);
     }
 
-    /** @test */
-    public function can_create_version_file_without_project_variable()
+    public function test_it_can_create_version_file_without_project_variable(): void
     {
         $input = [
             'sha' => 'abcdef',
@@ -56,8 +54,7 @@ class CreateVersionFileCommandTest extends TestCase
         $this->assertEquals(VersionFile::read(), $input);
     }
 
-    /** @test  */
-    public function can_create_version_file_default_values()
+    public function test_it_can_create_version_file_default_values(): void
     {
         $input = [
             'sha' => exec('git rev-parse HEAD'),

@@ -2,13 +2,14 @@
 
 namespace PlacetoPay\AppVersion\Tests\Clickup\Parsers;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use PlacetoPay\AppVersion\Clickup\Parsers\TasksFileParser;
 use PlacetoPay\AppVersion\Helpers\ChangelogLastChanges;
 
 class TasksFileParserTest extends TestCase
 {
-    private const VERSION = [
+    private const array VERSION = [
         'sha' => 'TESTING_SHA',
         'time' => '2025-04-29T11:19:34-05:00',
         'branch' => 'master',
@@ -32,8 +33,7 @@ class TasksFileParserTest extends TestCase
         parent::setUp();
     }
 
-    /** @test */
-    public function can_returns_null_when_no_tasks_are_found(): void
+    public function test_it_can_returns_null_when_no_tasks_are_found(): void
     {
         $parser = $this->buildParser([]);
 
@@ -42,8 +42,7 @@ class TasksFileParserTest extends TestCase
         $this->assertNull($result);
     }
 
-    /** @test */
-    public function can_returns_null_when_changelog_data_is_empty(): void
+    public function test_it_can_returns_null_when_changelog_data_is_empty(): void
     {
         $parser = $this->buildParser([]);
 
@@ -52,11 +51,8 @@ class TasksFileParserTest extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @test
-     * @dataProvider changeFormatsProvider
-     */
-    public function can_process_valid_change_formats(string $changeLogEntry, string $expectedTaskId, ?string $expectedTeamId = null): void
+    #[DataProvider('changeFormatsProvider')]
+    public function test_it_can_process_valid_change_formats(string $changeLogEntry, string $expectedTaskId, ?string $expectedTeamId = null): void
     {
         $parser = $this->buildParser([$changeLogEntry], self::VERSION['version']);
 

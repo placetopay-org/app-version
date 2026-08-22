@@ -16,8 +16,6 @@ class VersionServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
     public function boot(): void
     {
@@ -45,21 +43,17 @@ class VersionServiceProvider extends ServiceProvider
     public function register()
     {
         if (config()->get('app-version.sentry.auth_token')) {
-            $this->app->singleton(SentryApi::class, function (Application $app) {
-                return SentryApi::create(
-                    $app['config']->get('app-version.sentry.auth_token'),
-                    $app['config']->get('app-version.sentry.organization')
-                );
-            });
+            $this->app->singleton(SentryApi::class, fn (Application $app) => SentryApi::create(
+                $app['config']->get('app-version.sentry.auth_token'),
+                $app['config']->get('app-version.sentry.organization')
+            ));
         }
 
         if (config()->get('app-version.newrelic.api_key')) {
-            $this->app->singleton(NewRelicApi::class, function (Application $app) {
-                return NewRelicApi::create(
-                    $app['config']->get('app-version.newrelic.api_key'),
-                    $app['config']->get('app-version.newrelic.entity_guid')
-                );
-            });
+            $this->app->singleton(NewRelicApi::class, fn (Application $app) => NewRelicApi::create(
+                $app['config']->get('app-version.newrelic.api_key'),
+                $app['config']->get('app-version.newrelic.entity_guid')
+            ));
         }
     }
 }

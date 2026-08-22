@@ -5,31 +5,13 @@ namespace PlacetoPay\AppVersion\Helpers;
 class Response
 {
     /**
-     * @var mixed
-     */
-    private $headers;
-
-    /**
-     * @var mixed
-     */
-    private $body;
-
-    /**
-     * @var string
-     */
-    private $error;
-
-    /**
      * Response constructor.
-     * @param $headers
-     * @param $body
-     * @param $error
+     * @param mixed $headers
+     * @param mixed $body
+     * @param string $error
      */
-    public function __construct($headers, $body, $error)
+    public function __construct(private $headers, private $body, private $error)
     {
-        $this->headers = $headers;
-        $this->body = $body;
-        $this->error = $error;
     }
 
     /**
@@ -48,9 +30,6 @@ class Response
         return $this->body;
     }
 
-    /**
-     * @return bool
-     */
     public function hasBody(): bool
     {
         return $this->body != false;

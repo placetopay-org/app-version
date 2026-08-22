@@ -8,29 +8,10 @@ class SentryApi
 {
     public const API_URL = 'https://sentry.io/api/0/';
 
-    /**
-     * @var HttpClient
-     */
-    private $client;
-
-    private $apiKey;
-    /**
-     * @var string
-     */
-    private $organization;
-
-    public function __construct(HttpClient $client, string $apiKey, string $organization)
+    public function __construct(private HttpClient $client, private string $apiKey, private string $organization)
     {
-        $this->client = $client;
-        $this->apiKey = $apiKey;
-        $this->organization = $organization;
     }
 
-    /**
-     * @param string $apiKey
-     * @param string $organization
-     * @return SentryApi
-     */
     public static function create(string $apiKey, string $organization): self
     {
         return new self(new HttpClient(), $apiKey, $organization);
@@ -54,15 +35,15 @@ class SentryApi
         ]);
 
         return $this->client->post($this->constructUrl(), [
-            'version' =>  $version,
-            'refs' =>  [
-                ['repository' => $repository, 'commit' =>  $version],
+            'version' => $version,
+            'refs' => [
+                ['repository' => $repository, 'commit' => $version],
             ],
             'projects' => [$sentryProject],
         ]);
     }
 
-    public function constructUrl(string $version = null): string
+    public function constructUrl(?string $version = null): string
     {
         $url = self::API_URL . 'organizations/' . $this->organization . '/releases/';
         if ($version) {

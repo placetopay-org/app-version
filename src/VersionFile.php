@@ -29,7 +29,7 @@ class VersionFile
     public static function read(): array
     {
         if (self::exists()) {
-            return json_decode(file_get_contents(self::path()), JSON_OBJECT_AS_ARRAY);
+            return json_decode(file_get_contents(self::path()), true);
         }
 
         return [];
@@ -37,7 +37,6 @@ class VersionFile
 
     /**
      * You should only read the sha by using a config variable, given it should be in cache.
-     * @return string
      */
     public static function readSha(): string
     {

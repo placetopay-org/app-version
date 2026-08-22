@@ -6,8 +6,7 @@ use PlacetoPay\AppVersion\VersionFile;
 
 class VersionTest extends TestCase
 {
-    /** @test */
-    public function testItVisitsTheInformationEndpoint()
+    public function testItVisitsTheInformationEndpoint(): void
     {
         $response = $this
             ->get('/version?token=' . config('app-version.token'));
@@ -22,8 +21,7 @@ class VersionTest extends TestCase
         $this->assertArrayHasKey('date', $data);
     }
 
-    /** @test */
-    public function it_returns_version_file_content()
+    public function test_it_returns_version_file_content(): void
     {
         $input = [
             'sha' => 'abcdef',
@@ -39,18 +37,14 @@ class VersionTest extends TestCase
             ->assertJson($input);
     }
 
-    /** @test */
-
-    /** @test */
-    public function testItVisitsTheInformationEndpointWithoutQueryParam()
+    public function testItVisitsTheInformationEndpointWithoutQueryParam(): void
     {
         $response = $this->get('/version');
 
         $this->assertEquals(404, $response->status());
     }
 
-    /** @test */
-    public function testItVisitsTheInformationEndpointWithQueryParamWrong()
+    public function testItVisitsTheInformationEndpointWithQueryParamWrong(): void
     {
         $response = $this->get('/version?token=wrong');
 

@@ -15,8 +15,8 @@ use Symfony\Component\Console\Command\Command as CommandStatus;
 
 class CreateDeploy extends Command
 {
-    private const NEWRELIC = 'NEWRELIC';
-    private const SENTRY = 'SENTRY';
+    private const string NEWRELIC = 'NEWRELIC';
+    private const string SENTRY = 'SENTRY';
 
     /**
      * The name and signature of the console command.
@@ -68,8 +68,6 @@ class CreateDeploy extends Command
     }
 
     /**
-     * @param Repository $config
-     * @param string $version
      * @throws BadResponseCode
      */
     private function sentryDeploy(Repository $config, string $version): void
@@ -110,7 +108,7 @@ class CreateDeploy extends Command
 
         try {
             $validator->validate();
-        } catch (ValidationException $e) {
+        } catch (ValidationException) {
             $this->warn(
                 "$type configuration is not valid:\n\t- "
                 . implode("\n\t- ", $validator->errors()->all())

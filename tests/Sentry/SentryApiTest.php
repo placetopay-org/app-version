@@ -9,8 +9,7 @@ class SentryApiTest extends TestCase
 {
     use InteractsWithFakeClient;
 
-    /** @test */
-    public function can_create_a_sentry_release()
+    public function test_it_can_create_a_sentry_release(): void
     {
         $this->setSentryEnvironmentSetUp();
 
@@ -29,8 +28,7 @@ class SentryApiTest extends TestCase
         $this->fakeClient->assertLastRequestHas('projects.0', 'test-project');
     }
 
-    /** @test */
-    public function can_create_a_sentry_deploy()
+    public function test_it_can_create_a_sentry_deploy(): void
     {
         $this->setSentryEnvironmentSetUp();
 

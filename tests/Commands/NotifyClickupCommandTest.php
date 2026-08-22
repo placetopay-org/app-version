@@ -13,8 +13,8 @@ use Symfony\Component\Console\Command\Command;
 
 class NotifyClickupCommandTest extends TestCase
 {
-    private const COMMAND_NAME = 'app-version:notify-clickup';
-    private const ENVIRONMENT = 'testing';
+    private const string COMMAND_NAME = 'app-version:notify-clickup';
+    private const string ENVIRONMENT = 'testing';
 
     protected function setUp(): void
     {
@@ -22,8 +22,7 @@ class NotifyClickupCommandTest extends TestCase
         config()->set('app-version.clickup.api_token', 'fake-api-token');
     }
 
-    /** @test */
-    public function can_dispatch_post_clickup_job(): void
+    public function test_it_can_dispatch_post_clickup_job(): void
     {
         Queue::fake();
 
@@ -52,25 +51,26 @@ class NotifyClickupCommandTest extends TestCase
 
         Queue::assertPushed(CommentClickupTaskJob::class, 2);
 
-        Queue::assertPushed(CommentClickupTaskJob::class, function (CommentClickupTaskJob $job) use ($tasks) {
-            return $job->environment === self::ENVIRONMENT
+        Queue::assertPushed(
+            CommentClickupTaskJob::class,
+            fn (CommentClickupTaskJob $job) => $job->environment === self::ENVIRONMENT
                 && $job->version === '1.2.0'
-                && $job->task === $tasks[0];
-        });
+                && $job->task === $tasks[0]
+        );
 
-        Queue::assertPushed(CommentClickupTaskJob::class, function (CommentClickupTaskJob $job) use ($tasks) {
-            return $job->environment === self::ENVIRONMENT
+        Queue::assertPushed(
+            CommentClickupTaskJob::class,
+            fn (CommentClickupTaskJob $job) => $job->environment === self::ENVIRONMENT
                 && $job->version === '1.2.0'
-                && $job->task === $tasks[1];
-        });
+                && $job->task === $tasks[1]
+        );
     }
 
-    /** @test */
-    public function can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
+    public function test_it_can_not_publish_comment_if_there_are_no_clickup_tasks_in_changelog(): void
     {
         Queue::fake();
 
-        $this->mock(TasksFileParser::class, function (MockInterface $mock) {
+        $this->mock(TasksFileParser::class, function (MockInterface $mock): void {
             $mock->makePartial()
                 ->shouldReceive('tasksData')
                 ->once()
@@ -84,8 +84,7 @@ class NotifyClickupCommandTest extends TestCase
         Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
 
-    /** @test */
-    public function can_not_publish_comment_if_there_are_an_error_in_changelog_configuration(): void
+    public function test_it_can_not_publish_comment_if_there_are_an_error_in_changelog_configuration(): void
     {
         Queue::fake();
 
@@ -98,9 +97,11 @@ class NotifyClickupCommandTest extends TestCase
 
         Log::shouldReceive('log')
             ->once()
-            ->with('error', '[ERROR - app-version] Error parsing changelog data', \Mockery::on(function ($context) {
-                return  $context['error'] == 'non_existent_file.md file not found.';
-            }));
+            ->with(
+                'error',
+                '[ERROR - app-version] Error parsing changelog data',
+                \Mockery::on(fn ($context) => $context['error'] == 'non_existent_file.md file not found.')
+            );
 
         $this->artisan(self::COMMAND_NAME)
             ->assertExitCode(Command::FAILURE)
@@ -109,8 +110,7 @@ class NotifyClickupCommandTest extends TestCase
         Queue::assertNotPushed(CommentClickupTaskJob::class);
     }
 
-    /** @test */
-    public function finish_process_if_api_token_not_found(): void
+    public function test_it_finish_process_if_api_token_not_found(): void
     {
         config()->set('app-version.clickup.api_token');
         Queue::fake();

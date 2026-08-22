@@ -13,8 +13,7 @@ class CreateDeployCommandTest extends TestCase
 {
     use InteractsWithFakeClient;
 
-    /** @test */
-    public function can_create_a_release_for_sentry()
+    public function test_it_can_create_a_release_for_sentry(): void
     {
         $this->setSentryEnvironmentSetUp();
 
@@ -30,8 +29,7 @@ class CreateDeployCommandTest extends TestCase
         $this->assertStringContainsString('Authorization: Bearer', $this->fakeClient->lastRequest()['headers'][0]);
     }
 
-    /** @test */
-    public function can_create_a_release_for_newrelic()
+    public function test_it_can_create_a_release_for_newrelic(): void
     {
         $this->setNewRelicEnvironmentSetUp();
 
@@ -73,8 +71,7 @@ GRAPHQL);
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
-    /** @test */
-    public function can_create_a_release_for_newrelic_if_fail_to_get_changelog_data()
+    public function test_it_can_create_a_release_for_newrelic_if_fail_to_get_changelog_data(): void
     {
         $this->setNewRelicEnvironmentSetUp();
 
@@ -118,8 +115,7 @@ GRAPHQL);
         $this->assertEquals($fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
-    /** @test */
-    public function can_create_a_release_for_newrelic_with_subtitles()
+    public function test_it_can_create_a_release_for_newrelic_with_subtitles(): void
     {
         $this->setNewRelicEnvironmentSetUp();
 
@@ -184,8 +180,7 @@ GRAPHQL);
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
-    /** @test */
-    public function can_not_create_a_release_for_newrelic_if_query_has_error()
+    public function test_it_can_not_create_a_release_for_newrelic_if_query_has_error(): void
     {
         $this->setNewRelicEnvironmentSetUp();
 
@@ -211,8 +206,7 @@ GRAPHQL);
         $this->assertEquals($this->fakeClient->lastRequest()['headers'][0], 'API-Key: ' . config('app-version.newrelic.api_key'));
     }
 
-    /** @test */
-    public function can_not_create_a_release_if_has_invalid_version_data()
+    public function test_it_can_not_create_a_release_if_has_invalid_version_data(): void
     {
         config()->set('app-version.version.sha', '');
 
@@ -224,8 +218,7 @@ GRAPHQL);
             );
     }
 
-    /** @test */
-    public function can_not_create_a_release_if_has_invalid_data()
+    public function test_it_can_not_create_a_release_if_has_invalid_data(): void
     {
         config()->set('app-version.version.sha', 'asdfg2');
 

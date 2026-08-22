@@ -9,15 +9,9 @@ use PlacetoPay\AppVersion\Helpers\Response;
 
 class FakeSentryClient extends HttpClient
 {
-    /**
-     * @var array
-     */
-    protected $requests = [];
+    protected array $requests = [];
 
-    /**
-     * @var array
-     */
-    private $nextResponse;
+    private array $nextResponse = [];
 
     public function makeCurlRequest(string $httpVerb, string $fullUrl, array $headers = [], array $arguments = []): Response
     {
@@ -28,9 +22,8 @@ class FakeSentryClient extends HttpClient
 
     /**
      * @param $key
-     * @param null $expectedContent
      */
-    public function assertLastRequestHas($key, $expectedContent = null)
+    public function assertLastRequestHas($key, $expectedContent = null): void
     {
         Assert::assertGreaterThan(0, count($this->requests), 'There were no requests sent');
 
@@ -47,7 +40,7 @@ class FakeSentryClient extends HttpClient
         Assert::assertEquals($expectedContent, $actualContent);
     }
 
-    public function assertAuthenticationHeaderSent(string $token)
+    public function assertAuthenticationHeaderSent(string $token): void
     {
         Assert::assertTrue(
             in_array('Authorization: Bearer ' . $token, $this->headers()),
@@ -70,7 +63,7 @@ class FakeSentryClient extends HttpClient
     /**
      * @param $case
      */
-    public function push($case)
+    public function push($case): void
     {
         if ($case === 'success_deploy') {
             $this->nextResponse = [

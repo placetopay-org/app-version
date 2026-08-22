@@ -20,7 +20,7 @@ class BadResponseCode extends Exception
 
         $exception->response = $response;
 
-        $bodyErrors = isset($response->getBody()['errors']) ? $response->getBody()['errors'] : [];
+        $bodyErrors = $response->getBody()['errors'] ?? [];
 
         $exception->errors = $bodyErrors;
 
