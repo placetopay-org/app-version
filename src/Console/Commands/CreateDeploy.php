@@ -71,13 +71,14 @@ class CreateDeploy extends Command
      * @param Repository $config
      * @param string $version
      * @throws BadResponseCode
+     * @throws InvalidData
      */
     private function sentryDeploy(Repository $config, string $version): void
     {
         $sentry = ApiFactory::sentryApi();
         $sentry->createDeploy(
             $version,
-            $config->get('sentry.environment', $config->get('app.env'))
+            $this->resolveEnvironment($config)
         );
 
         $this->comment(self::SENTRY . ' deployment created successfully');
@@ -92,7 +93,7 @@ class CreateDeploy extends Command
         $newrelic = ApiFactory::newRelicApi();
         $response = $newrelic->createDeploy(
             $versionSha,
-            $config->get('sentry.environment', $config->get('app.env')),
+            $this->resolveEnvironment($config),
             $config->get('app-version.changelog_file_name')
         );
 
@@ -102,6 +103,23 @@ class CreateDeploy extends Command
         }
 
         $this->comment(self::NEWRELIC . ' deployment created successfully');
+    }
+
+    /**
+     * @throws InvalidData
+     */
+    private function resolveEnvironment(Repository $config): string
+    {
+        $environment = $config->get('sentry.environment')
+            ?? $config->get('app.env');
+
+        if (!is_string($environment) || trim($environment) === '') {
+            throw new InvalidData(
+                'Unable to resolve the deploy environment. Set the sentry.environment or app.env configuration value.'
+            );
+        }
+
+        return $environment;
     }
 
     private function isValidData(string $type, array $rules, array $data): bool
