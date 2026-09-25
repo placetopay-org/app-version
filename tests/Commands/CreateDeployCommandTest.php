@@ -212,6 +212,80 @@ GRAPHQL);
     }
 
     /** @test */
+    public function can_create_a_deploy_for_sentry_using_custom_sentry_environment()
+    {
+        $this->setSentryEnvironmentSetUp();
+        config()->set('sentry.environment', 'staging');
+
+        $this->bindSentryFakeClient();
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('SENTRY deployment created successfully');
+
+        $this->fakeClient->assertLastRequestHas('environment', 'staging');
+    }
+
+    /** @test */
+    public function can_create_a_deploy_for_sentry_when_sentry_environment_is_null()
+    {
+        $this->setSentryEnvironmentSetUp();
+        config()->set('sentry.environment', null);
+
+        $this->bindSentryFakeClient();
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('SENTRY deployment created successfully');
+
+        $this->fakeClient->assertLastRequestHas('environment', 'testing');
+    }
+
+    /** @test */
+    public function can_not_create_a_deploy_when_environment_cannot_be_resolved()
+    {
+        $this->setSentryEnvironmentSetUp();
+        config()->set('sentry.environment', null);
+        config()->set('app.env', null);
+
+        $this->bindSentryFakeClient();
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertFailed()
+            ->expectsOutput(
+                'Unable to resolve the deploy environment. Set the sentry.environment or app.env configuration value.'
+            );
+    }
+
+    /** @test */
+    public function can_create_a_deploy_for_newrelic_when_sentry_environment_is_null()
+    {
+        $this->setNewRelicEnvironmentSetUp();
+        config()->set('sentry.environment', null);
+
+        $this->bindNewRelicFakeClient('1.1.0', ['Change [CU-12345](https://app.clickup.com/t/789/CU-12345)']);
+        $this->fakeClient->push('success_deploy');
+
+        $this->artisan('app-version:create-deploy')
+            ->assertSuccessful()
+            ->expectsOutput('NEWRELIC deployment created successfully');
+
+        $this->fakeClient->assertLastRequestHas('variables', ['deployment' => [
+            'version' => 'asdfg2',
+            'entityGuid' => 'placetopay',
+            'changelog' => json_encode([
+                'version' => '1.1.0',
+                'content' => ['Change [CU-12345](https://app.clickup.com/t/789/CU-12345)'],
+            ]),
+            'description' => 'Commit on testing',
+            'user' => 'Not available right now',
+        ]]);
+    }
+
+    /** @test */
     public function can_not_create_a_release_if_has_invalid_version_data()
     {
         config()->set('app-version.version.sha', '');
